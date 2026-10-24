@@ -219,20 +219,69 @@ PRESET_SCENARIOS: Dict[str, Dict[str, Any]] = {
 }
 
 
-def build_product_from_dict(d: Dict[str, Any]) -> ProductInput:
-    base = ProductInput()
-    for k, v in (d or {}).items():
+class ApiError(Exception):
+    def __init__(self, message: str, status: int = 400) -> None:
+        super().__init__(message)
+        self.status = status
+
+
+def _coerce_like(default_val: Any, raw_val: Any, field_name: str) -> Any:
+    if raw_val is None:
+        return default_val
+    if isinstance(default_val, bool):
+        if isinstance(raw_val, bool):
+            return raw_val
+        if isinstance(raw_val, (int, float)):
+            return bool(raw_val)
+        if isinstance(raw_val, str):
+            return raw_val.strip().lower() in ("1", "true", "yes", "on")
+        raise ApiError(f"Invalid boolean for '{field_name}'", status=400)
+    if isinstance(default_val, int) and not isinstance(default_val, bool):
+        if isinstance(raw_val, bool):
+            raise ApiError(f"Invalid integer for '{field_name}'", status=400)
+        try:
+            return int(float(str(raw_val).strip()))
+        except (ValueError, TypeError) as exc:
+            raise ApiError(f"Invalid integer for '{field_name}': {raw_val!r}", status=400) from exc
+    if isinstance(default_val, float):
+        if isinstance(raw_val, bool):
+            raise ApiError(f"Invalid number for '{field_name}'", status=400)
+        try:
+            return float(str(raw_val).strip())
+        except (ValueError, TypeError) as exc:
+            raise ApiError(f"Invalid number for '{field_name}': {raw_val!r}", status=400) from exc
+    if isinstance(default_val, str):
+        if isinstance(raw_val, (dict, list)):
+            raise ApiError(f"Invalid string for '{field_name}'", status=400)
+        return str(raw_val)
+    if isinstance(default_val, list):
+        if isinstance(raw_val, list):
+            return [str(x) for x in raw_val if x is not None and str(x).strip()]
+        if isinstance(raw_val, str):
+            return [s.strip() for s in raw_val.replace("，", ",").split(",") if s.strip()]
+        raise ApiError(f"Invalid list for '{field_name}'", status=400)
+    return raw_val
+
+
+def _build_dataclass(cls: Any, d: Any, label: str) -> Any:
+    if d is None:
+        return cls()
+    if not isinstance(d, dict):
+        raise ApiError(f"'{label}' must be a JSON object", status=400)
+    base = cls()
+    for k, v in d.items():
         if hasattr(base, k) and v is not None:
-            setattr(base, k, v)
+            default_val = getattr(base, k)
+            setattr(base, k, _coerce_like(default_val, v, f"{label}.{k}"))
     return base
+
+
+def build_product_from_dict(d: Dict[str, Any]) -> ProductInput:
+    return _build_dataclass(ProductInput, d, "product")
 
 
 def build_stage2_from_dict(d: Dict[str, Any]) -> Stage2ContentInput:
-    base = Stage2ContentInput()
-    for k, v in (d or {}).items():
-        if hasattr(base, k) and v is not None:
-            setattr(base, k, v)
-    return base
+    return _build_dataclass(Stage2ContentInput, d, "stage2")
 
 
 class CalculatorRequestHandler(BaseHTTPRequestHandler):
@@ -254,11 +303,21 @@ class CalculatorRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def _read_json_body(self) -> Dict[str, Any]:
-        length = int(self.headers.get("Content-Length", "0"))
+        length = int(self.headers.get("Content-Length", "0") or "0")
         if length <= 0:
             return {}
+        if length > 15 * 1024 * 1024:
+            raise ApiError("Request body exceeds 15MB limit", status=413)
         raw = self.rfile.read(length).decode("utf-8", errors="replace")
-        return json.loads(raw) if raw.strip() else {}
+        if not raw.strip():
+            return {}
+        try:
+            parsed = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise ApiError(f"Malformed JSON request body: {exc.msg}", status=400) from exc
+        if not isinstance(parsed, dict):
+            raise ApiError("JSON request root must be an object", status=400)
+        return parsed
 
     def do_OPTIONS(self) -> None:
         self.send_response(204)
@@ -285,10 +344,15 @@ class CalculatorRequestHandler(BaseHTTPRequestHandler):
             return
 
         if path == "/api/presets":
-            ok, port, status = CRAWLER.daemon_client.ensure_daemon_running()
+            if hasattr(CRAWLER.daemon_client, "get_cached_status"):
+                ok, port, status = CRAWLER.daemon_client.get_cached_status()
+            else:
+                ok, port, status = CRAWLER.daemon_client.ensure_daemon_running()
             cdp_info = CRAWLER.daemon_client.get_cdp_bridge_info()
             self._send_json({
                 "success": True,
+                "edition": EDITION,
+                "has_private_core": HAS_PRIVATE_CORE,
                 "marvis_status": {
                     "default_crawler": "Marvis (agent-browser TCP Daemon & marvis-browser-host CDP)",
                     "daemon_ready": ok,
@@ -518,44 +582,63 @@ class CalculatorRequestHandler(BaseHTTPRequestHandler):
                 detail = MONITOR.add_watch_target(
                     account_url=payload.get("account_url") or "https://www.xiaohongshu.com/user/profile/64a8b91c000000001203d9f1",
                     product_name=payload.get("product_name") or "科复佳医用透明质酸钠修复贴",
-                    selling_price_rmb=float(payload.get("selling_price_rmb") or 118.0),
-                    campaign_budget_rmb=float(payload.get("campaign_budget_rmb") or 18500.0),
-                    interval_seconds=int(payload.get("interval_seconds") or 3600),
+                    selling_price_rmb=_coerce_like(118.0, payload.get("selling_price_rmb"), "selling_price_rmb"),
+                    campaign_budget_rmb=_coerce_like(18500.0, payload.get("campaign_budget_rmb"), "campaign_budget_rmb"),
+                    interval_seconds=_coerce_like(3600, payload.get("interval_seconds"), "interval_seconds"),
                     use_marvis_live=bool(payload.get("use_marvis_live", True)),
                 )
                 self._send_json({"success": True, "detail": detail, "monitoring": MONITOR.list_all_targets()})
                 return
 
             if path == "/api/monitor/poll":
-                target_id = payload.get("target_id")
+                target_id = str(payload.get("target_id") or "").strip()
+                if not target_id:
+                    raise ApiError("Missing required field 'target_id'", status=400)
                 detail = MONITOR.poll_target_now(
                     target_id=target_id,
                     use_marvis_live=bool(payload.get("use_marvis_live", True)),
                 )
+                if isinstance(detail, dict) and detail.get("error"):
+                    raise ApiError(str(detail["error"]), status=404)
                 self._send_json({"success": True, "detail": detail, "monitoring": MONITOR.list_all_targets()})
                 return
 
             if path == "/api/monitor/simulate24h":
-                target_id = payload.get("target_id")
-                hours = int(payload.get("hours") or 12)
+                target_id = str(payload.get("target_id") or "").strip()
+                if not target_id:
+                    raise ApiError("Missing required field 'target_id'", status=400)
+                hours = _coerce_like(12, payload.get("hours"), "hours")
                 scenario = payload.get("scenario") or "viral_breakout"
                 detail = MONITOR.simulate_hourly_trajectory(target_id=target_id, hours=hours, scenario=scenario)
+                if isinstance(detail, dict) and detail.get("error"):
+                    raise ApiError(str(detail["error"]), status=404)
                 self._send_json({"success": True, "detail": detail, "monitoring": MONITOR.list_all_targets()})
                 return
 
             if path == "/api/monitor/remove":
-                target_id = payload.get("target_id")
+                target_id = str(payload.get("target_id") or "").strip()
+                if not target_id:
+                    raise ApiError("Missing required field 'target_id'", status=400)
                 mon = MONITOR.remove_target(target_id=target_id)
                 self._send_json({"success": True, "monitoring": mon})
                 return
 
             self._send_json({"error": f"Unknown POST endpoint: {path}"}, status=404)
+        except ApiError as api_err:
+            self._send_json({
+                "success": False,
+                "error": str(api_err),
+            }, status=api_err.status)
+        except (ValueError, TypeError) as val_err:
+            self._send_json({
+                "success": False,
+                "error": f"Invalid parameter value: {val_err}",
+            }, status=400)
         except Exception as exc:
             traceback.print_exc()
             self._send_json({
                 "success": False,
-                "error": str(exc),
-                "traceback": traceback.format_exc(),
+                "error": f"Internal server error: {exc}",
             }, status=500)
 
 

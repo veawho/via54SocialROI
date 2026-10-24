@@ -157,6 +157,25 @@ class TestVia54SocialROIOpenCoreDemo(unittest.TestCase):
         plugin_meta = json.loads((REPO_ROOT / "plugin.json").read_text(encoding="utf-8"))
         self.assertIn("mcpServers", plugin_meta)
 
+    def test_07_v26_input_sanitization_and_booking_feasibility(self) -> None:
+        prof = self.crawler.fetch_account_profile("xhs_medical_skincare_kol")
+        prod_bad = ProductInput(
+            product_name="无品牌测试单品",
+            brand_name="",
+            selling_price_rmb=-25.0,
+            campaign_budget_rmb=1.0,
+        )
+        smart = generate_smart_stage2_from_product(prof, prod_bad)
+        s2_in = Stage2ContentInput(
+            topics_hashtags=smart["topics"],
+            campaign_theme=smart["campaign_theme"],
+            script_content=smart["script_content"],
+        )
+        s2 = self.engine.compute_stage2_enhanced(prof, prod_bad, s2_in)
+        self.assertGreater(s2["roi_and_unit_economics"]["omni_channel_gmv_attribution"]["omni_total_gmv_rmb"], 0)
+        self.assertLess(s2["roi_and_unit_economics"]["roi_and_profitability"]["omni_channel_roas"], 50.0)
+        self.assertTrue(s2["model_diagnostics"]["input_warnings"])
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

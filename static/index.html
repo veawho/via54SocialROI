@@ -397,13 +397,36 @@
       padding: 10px;
       text-align: center;
     }
+    /* v2.6: global busy bar, toast, lockable buttons, data-confidence badges, model warnings */
+    #globalBusyBar {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 9999;
+      background: linear-gradient(90deg, #14b8a6, #8b5cf6, #f59e0b);
+      transition: width 0.25s ease, opacity 0.3s ease; opacity: 0;
+    }
+    body.is-busy #globalBusyBar { width: 85%; opacity: 1; transition: width 6s cubic-bezier(.1,.7,.2,1), opacity .2s; }
+    body.is-busy .btn-lockable { pointer-events: none; opacity: 0.55; cursor: progress; }
+    body.is-busy .btn-lockable::after { content: " ⏳"; }
+    #toastHost { position: fixed; right: 18px; bottom: 18px; z-index: 10000; display: flex; flex-direction: column; gap: 8px; max-width: 420px; }
+    .toast { padding: 10px 14px; border-radius: 8px; font-size: 12.5px; line-height: 1.5; color: #f8fafc; box-shadow: 0 6px 24px rgba(0,0,0,.45); border: 1px solid; animation: toastIn .2s ease-out; }
+    .toast-error { background: rgba(127, 29, 29, 0.95); border-color: #ef4444; }
+    .toast-warn { background: rgba(120, 53, 15, 0.95); border-color: #f59e0b; }
+    .toast-ok { background: rgba(6, 78, 59, 0.95); border-color: #10b981; }
+    @keyframes toastIn { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .conf-badge { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 10px; font-size: 10.5px; font-weight: 700; vertical-align: middle; }
+    .conf-high, .conf-user_confirmed { background: rgba(16,185,129,.18); color: #6ee7b7; border: 1px solid #10b981; }
+    .conf-medium { background: rgba(59,130,246,.18); color: #93c5fd; border: 1px solid #3b82f6; }
+    .conf-low { background: rgba(245,158,11,.2); color: #fcd34d; border: 1px solid #f59e0b; }
+    .input-invalid { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239,68,68,.35) !important; }
+    #modelWarningsBox { display: none; margin-bottom: 10px; padding: 8px 12px; border-radius: 8px; background: rgba(120,53,15,.35); border: 1px solid rgba(245,158,11,.55); color: #fde68a; font-size: 12px; line-height: 1.6; }
   </style>
 </head>
 <body>
+<div id="globalBusyBar"></div>
+<div id="toastHost" aria-live="polite"></div>
 
 <header>
   <div class="brand-title">
-    <h1>全平台社媒推广效果、带货回搜与 ROI 傻瓜式智能测算台 v2.5</h1>
+    <h1>全平台社媒推广效果、带货回搜与 ROI 傻瓜式智能测算台 v2.6</h1>
     <p>三步极简操作：① 粘贴账号链接 → ② 上传产品PDF/填售价 → ③ 一键算清能赚多少钱 · <strong style="color:#fcd34d;">🏆 强烈推荐本机部署【腾讯 Marvis】（当前测试最好的社交媒体监测 Agent 客户端）</strong></p>
   </div>
   <div class="status-bar" id="agentHubStatusBar">
@@ -428,13 +451,13 @@
 <div class="stepper-bar" id="workflowStepperBar">
   <div class="step-item step-active" onclick="document.getElementById('accountUrl').focus()">
     <div class="step-num">第一步 · 选博主 (Step ①)</div>
-    <div class="step-main" id="step1Main">小红书 · 代码人生的突围记录</div>
-    <div class="step-sub" id="step1Sub">粉丝 1,250 | 实爬笔记 10 篇 | Marvis 在线</div>
+    <div class="step-main" id="step1Main">小红书 · 林医生聊皮肤屏障修护</div>
+    <div class="step-sub" id="step1Sub">粉丝 186,000 | 实爬笔记 5 篇 | Tier 3</div>
   </div>
   <div class="step-item step-active" onclick="document.getElementById('productName').focus()">
     <div class="step-num">第二步 · 传产品 (Step ②)</div>
     <div class="step-main" id="step2Main">科复佳医用透明质酸钠修复贴</div>
-    <div class="step-sub" id="step2Sub">成交价 ¥118 | 预算 ¥18,500 | 卖点 3 条</div>
+    <div class="step-sub" id="step2Sub">成交价 ¥118 | 预算 ¥18,500 | 卖点 4 条</div>
   </div>
   <div class="step-item step-active" onclick="runStage2Calculation()">
     <div class="step-num">第三步 · 看赚多少钱 (Step ③)</div>
@@ -471,8 +494,8 @@
       <!-- Auto-Recognized Account Summary Pill Card -->
       <div class="account-mini-card" id="accountQuickSummaryBox">
         <div>
-          <div style="font-size:13px;font-weight:700;color:#6ee7b7;" id="quickAcctTitle">✅ 已识别：[小红书] 代码人生的突围记录</div>
-          <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px;" id="quickAcctMetrics">👥 粉丝 1,250 · 👁️ 均阅 3,044 · ❤️ 均赞 96 · ⭐ 均藏 84 · 📑 实爬 10 篇笔记</div>
+          <div style="font-size:13px;font-weight:700;color:#6ee7b7;" id="quickAcctTitle">✅ 已识别：[小红书] 林医生聊皮肤屏障修护 (Dr. Lin Derma & Barrier Care)</div>
+          <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px;" id="quickAcctMetrics">👥 粉丝 186,000 · 👁️ 均阅 42,500 · ❤️ 均赞 2,150 · ⭐ 均藏 1,890 · 📑 实爬 5 篇笔记</div>
         </div>
         <span class="stage-badge" style="font-size:10px;">自动同步</span>
       </div>
@@ -492,38 +515,38 @@
           </div>
           <div>
             <label>账号名称 / Account Name</label>
-            <input type="text" id="accountName" value="代码人生的突围记录" />
+            <input type="text" id="accountName" value="林医生聊皮肤屏障修护 (Dr. Lin Derma & Barrier Care)" />
           </div>
           <div>
             <label>粉丝数 / Followers</label>
-            <input type="number" id="followers" value="1250" />
+            <input type="number" id="followers" value="186000" />
           </div>
           <div>
             <label>历史平均 / 中位曝光 (Avg / Median Views)</label>
             <div style="display:flex;gap:4px;">
-              <input type="number" id="avgViews" value="3044" />
-              <input type="number" id="medianViews" value="1887" />
+              <input type="number" id="avgViews" value="42500" />
+              <input type="number" id="medianViews" value="31000" />
             </div>
           </div>
           <div>
             <label>平均点赞 / 收藏 (Likes / Collects)</label>
             <div style="display:flex;gap:4px;">
-              <input type="number" id="avgLikes" value="96" />
-              <input type="number" id="avgCollects" value="84" />
+              <input type="number" id="avgLikes" value="2150" />
+              <input type="number" id="avgCollects" value="1890" />
             </div>
           </div>
           <div>
             <label>平均评论 / 分享 (Comments / Shares)</label>
             <div style="display:flex;gap:4px;">
-              <input type="number" id="avgComments" value="17" />
-              <input type="number" id="avgShares" value="14" />
+              <input type="number" id="avgComments" value="340" />
+              <input type="number" id="avgShares" value="420" />
             </div>
           </div>
           <div>
             <label>前3秒留存 / 完播率 (3s / Completion)</label>
             <div style="display:flex;gap:4px;">
-              <input type="number" step="0.01" id="avg3sRet" value="0.68" />
-              <input type="number" step="0.01" id="avgCompletion" value="0.49" />
+              <input type="number" step="0.01" id="avg3sRet" value="0.71" />
+              <input type="number" step="0.01" id="avgCompletion" value="0.54" />
             </div>
           </div>
           <div>
@@ -728,7 +751,7 @@
         <button class="btn btn-teal" style="padding:7px 10px;text-align:left;" onclick="openMatrixTabAndRun()">
           🌟 <strong>多账号PK比价看板</strong><br/><span style="font-size:10px;opacity:0.85;">对比多个博主谁更划算</span>
         </button>
-        <button class="btn btn-purple" style="padding:7px 10px;text-align:left;" onclick="switchTab('tab-agents', document.getElementById('btnTabAgents'))">
+        <button class="btn btn-purple" style="padding:7px 10px;text-align:left;" onclick="switchTab('tab-agents', document.getElementById('btnTabAgents')); const el=document.getElementById('tab-agents'); if(el) el.scrollIntoView({behavior:'smooth', block:'start'});">
           🤖 <strong>AI 四核诊号与改稿</strong><br/><span style="font-size:10px;opacity:0.85;">看专家团建议怎么改脚本</span>
         </button>
       </div>
@@ -942,6 +965,107 @@ channels_family_wellness_kol</textarea>
   </div>
 </div>
 
+<script>
+  // ==========================================================================
+  // v2.6 Global request layer: busy bar, duplicate-click lock, readable error toasts
+  // v2.6 全局请求层：顶部进度条 + 防重复点击 + 中文错误提示
+  // ==========================================================================
+  const _nativeFetch = window.fetch.bind(window);
+  let INFLIGHT_API = 0;
+  let ACCOUNT_METRICS_EDITED = false;
+
+  function showToast(message, kind = "error", ms = 6000) {
+    const host = document.getElementById("toastHost");
+    if (!host) return;
+    const el = document.createElement("div");
+    el.className = `toast toast-${kind}`;
+    el.textContent = message;
+    host.appendChild(el);
+    setTimeout(() => el.remove(), ms);
+  }
+
+  function setBusy(on) {
+    document.body.classList.toggle("is-busy", !!on);
+  }
+
+  window.fetch = async function (url, opts) {
+    const isApi = typeof url === "string" && url.startsWith("/api/");
+    if (!isApi) return _nativeFetch(url, opts);
+    INFLIGHT_API++;
+    setBusy(true);
+    try {
+      const resp = await _nativeFetch(url, opts);
+      if (!resp.ok) {
+        let msg = `请求失败 (HTTP ${resp.status})`;
+        try { const j = await resp.clone().json(); if (j && j.error) msg = j.error; } catch (e) { /* non-JSON */ }
+        showToast(`❌ ${msg}`, "error");
+      } else if ((opts && opts.method === "POST")) {
+        try {
+          const j = await resp.clone().json();
+          if (j && j.success === false && j.error) showToast(`⚠️ ${j.error}`, "warn");
+        } catch (e) { /* ignore */ }
+      }
+      return resp;
+    } catch (err) {
+      showToast("❌ 无法连接本地测算服务 (127.0.0.1:8765)，请确认 server.py 正在运行 / Local server unreachable", "error", 9000);
+      throw err;
+    } finally {
+      INFLIGHT_API = Math.max(0, INFLIGHT_API - 1);
+      if (!INFLIGHT_API) setBusy(false);
+    }
+  };
+
+  function markLockableButtons() {
+    document.querySelectorAll(
+      'button[onclick*="runStage2Calculation"], button[onclick*="runStage1Calculation"], button[onclick*="crawlAccountViaMarvis"], ' +
+      'button[onclick*="runMultiAccountMatrixAnalysis"], button[onclick*="openMatrixTabAndRun"], button[onclick*="smartGenerateStage2"], ' +
+      'button[onclick*="triggerLiveAgentCouncil"], .hero-calc-btn'
+    ).forEach(b => b.classList.add("btn-lockable"));
+  }
+
+  async function withActionLock(_key, fn) {
+    return await fn();
+  }
+
+  function validateCoreInputs() {
+    const checks = [
+      ["sellingPriceRmb", v => v > 0, "售价必须大于 0 / Selling price must be > 0"],
+      ["campaignBudgetRmb", v => v >= 0, "预算不能为负数 / Budget cannot be negative"],
+    ];
+    let ok = true;
+    for (const [id, rule, msg] of checks) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      const v = parseFloat(el.value);
+      const valid = !isNaN(v) && rule(v);
+      el.classList.toggle("input-invalid", !valid);
+      if (!valid) { ok = false; showToast(`⚠️ ${msg}`, "warn"); }
+    }
+    return ok;
+  }
+
+  function renderModelWarnings(res) {
+    let box = document.getElementById("modelWarningsBox");
+    const anchor = document.getElementById("topKpiGrid");
+    if (!box && anchor && anchor.parentNode) {
+      box = document.createElement("div");
+      box.id = "modelWarningsBox";
+      anchor.parentNode.insertBefore(box, anchor);
+    }
+    if (!box) return;
+    const diag = (res && res.model_diagnostics) || (res && res.stage1_baseline && res.stage1_baseline.model_diagnostics) || {};
+    const warns = diag.input_warnings || [];
+    if (!warns.length) { box.style.display = "none"; box.innerHTML = ""; return; }
+    box.style.display = "block";
+    box.innerHTML = `<strong>⚠️ 测算提示（${warns.length}）：</strong><br/>` + warns.map(w => `• ${String(w).replace(/</g, "&lt;")}`).join("<br/>");
+  }
+
+  function confidenceBadge(meta) {
+    const c = (meta && meta.data_confidence) || "medium";
+    const label = { high: "实爬数据", medium: "基准/部分实爬", low: "⚠️ 估算数据", user_confirmed: "已人工核对" }[c] || c;
+    return `<span class="conf-badge conf-${c}">${label}</span>`;
+  }
+</script>
 <script>
   let PRESETS_CACHE = {};
   let LAST_RESULT = null;
@@ -1206,6 +1330,15 @@ channels_family_wellness_kol</textarea>
   });
 
   async function initWorkbench() {
+    markLockableButtons();
+    ["followers", "avgViews", "medianViews", "avgLikes", "avgCollects", "avgComments", "avgShares", "accountName"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("input", () => { ACCOUNT_METRICS_EDITED = true; });
+    });
+    ["sellingPriceRmb", "campaignBudgetRmb"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("input", () => el.classList.remove("input-invalid"));
+    });
     try {
       const resp = await fetch("/api/presets");
       const data = await resp.json();
@@ -1322,8 +1455,11 @@ channels_family_wellness_kol</textarea>
     const qMetrics = document.getElementById("quickAcctMetrics");
     if (qTitle && qMetrics) {
       const pCount = (prof.recent_posts || []).length;
-      qTitle.textContent = `✅ 已识别：[${prof.platform_cn || '小红书'}] ${prof.account_name || ''}`;
-      qMetrics.textContent = `👥 粉丝 ${fmtNum(prof.followers)} · 👁️ 均阅 ${fmtNum(prof.avg_views)} · ❤️ 均赞 ${fmtNum(prof.avg_likes)} · ⭐ 均藏 ${fmtNum(prof.avg_collects)} · 📑 实爬 ${pCount} 篇笔记`;
+      const meta = prof.crawl_metadata || {};
+      const safeName = String(prof.account_name || "").replace(/</g, "&lt;");
+      qTitle.innerHTML = `✅ 已识别：[${prof.platform_cn || '小红书'}] ${safeName}${confidenceBadge(meta)}`;
+      qMetrics.textContent = `👥 粉丝 ${fmtNum(prof.followers)} · 👁️ 均阅 ${fmtNum(prof.avg_views)} · ❤️ 均赞 ${fmtNum(prof.avg_likes)} · ⭐ 均藏 ${fmtNum(prof.avg_collects)} · 📑 实爬 ${pCount} 篇笔记` +
+        (meta.metrics_estimated ? " · ⚠️ 粉丝/阅读为估算，请展开专业参数核对" : "");
     }
   }
 
@@ -1339,6 +1475,7 @@ channels_family_wellness_kol</textarea>
       });
       const data = await resp.json();
       if (data.success && data.account_profile) {
+        ACCOUNT_METRICS_EDITED = false;
         populateAccountForm(data.account_profile, url, false);
         LAST_CRAWLED_URL = url;
         if (data.visual_metrics && data.visual_metrics.valid_image) {
@@ -1347,16 +1484,27 @@ channels_family_wellness_kol</textarea>
         }
         const meta = data.account_profile.crawl_metadata || {};
         const pCount = (data.account_profile.recent_posts || []).length;
-        showMultimodalFeedback(
-          `✅ Marvis 实爬成功 (${meta.elapsed_ms || 15}ms) | 账号: <strong>${data.account_profile.account_name}</strong> ` +
-          `| 粉丝: <strong>${fmtNum(data.account_profile.followers)}</strong> | 实爬笔记: <strong>${pCount}篇</strong> | 层级: ${meta.data_source_tier || 'Tier 1'}`
-        );
+        const safeName = String(data.account_profile.account_name || "").replace(/</g, "&lt;");
+        if (meta.metrics_estimated) {
+          showMultimodalFeedback(
+            `⚠️ <strong>只抓到部分信息</strong>（${meta.elapsed_ms ? Math.round(meta.elapsed_ms) + 'ms' : ''}）：账号 <strong>${safeName}</strong> ${confidenceBadge(meta)}<br/>` +
+            `粉丝 / 阅读 / 互动为<strong>平台模板估算值</strong>（页面需要登录或有反爬限制）。请点击顶部「展开专业参数」填入真实粉丝与均阅，测算会自动标记为“已人工核对”。` +
+            `<br/><span style="color:#94a3b8;font-size:11px;">${meta.data_source_tier || ''}</span>`
+          );
+          showToast("⚠️ 账号数据为估算值，建议手动核对粉丝与均阅后再决策", "warn", 7000);
+        } else {
+          showMultimodalFeedback(
+            `✅ Marvis 实爬成功 (${Math.round(meta.elapsed_ms || 15)}ms) | 账号: <strong>${safeName}</strong> ${confidenceBadge(meta)}` +
+            `| 粉丝: <strong>${fmtNum(data.account_profile.followers)}</strong> | 实爬笔记: <strong>${pCount}篇</strong>` +
+            `<br/><span style="color:#94a3b8;font-size:11px;">${meta.data_source_tier || ''}</span>`
+          );
+        }
         if (autoRunCalc) {
           await runStage2Calculation();
         }
       }
     } catch (e) {
-      showMultimodalFeedback("⚠️ Marvis 抓取返回异常，已自动切换至本地实爬校准基准库。");
+      showMultimodalFeedback("⚠️ 抓取失败：无法连接本地服务或目标页面超时。可直接在下方手动填写粉丝与均阅后测算。");
     }
   }
 
@@ -1387,7 +1535,8 @@ channels_family_wellness_kol</textarea>
         avg_comments: parseInt(document.getElementById("avgComments").value || "150", 10),
         avg_shares: parseInt(document.getElementById("avgShares").value || "200", 10),
         avg_3s_retention: parseFloat(document.getElementById("avg3sRet").value || "0.65"),
-        avg_completion_rate: parseFloat(document.getElementById("avgCompletion").value || "0.45")
+        avg_completion_rate: parseFloat(document.getElementById("avgCompletion").value || "0.45"),
+        metrics_user_confirmed: ACCOUNT_METRICS_EDITED
       },
       product: {
         product_name: document.getElementById("productName").value.trim(),
@@ -1418,55 +1567,65 @@ channels_family_wellness_kol</textarea>
   }
 
   async function runStage1Calculation() {
-    const currentUrl = document.getElementById("accountUrl").value.trim();
-    if (currentUrl && currentUrl !== LAST_CRAWLED_URL && currentUrl.startsWith("http")) {
-      await crawlAccountViaMarvis(false);
-    }
-    const payload = collectFormPayload();
-    const resp = await fetch("/api/calculate/stage1", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+    if (!validateCoreInputs()) return;
+    return withActionLock("stage1Calc", async () => {
+      const currentUrl = document.getElementById("accountUrl").value.trim();
+      if (currentUrl && currentUrl !== LAST_CRAWLED_URL && currentUrl.startsWith("http")) {
+        await crawlAccountViaMarvis(false);
+      }
+      const payload = collectFormPayload();
+      const resp = await fetch("/api/calculate/stage1", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+      if (data.success) {
+        LAST_RESULT = data.result;
+        LAST_MARKDOWN = data.markdown_report;
+        renderDashboard(data.result, false);
+        document.getElementById("markdownReportPreview").textContent = data.markdown_report;
+      } else {
+        showToast(data.error || "Stage 1 测算失败", "error");
+      }
     });
-    const data = await resp.json();
-    if (data.success) {
-      LAST_RESULT = data.result;
-      LAST_MARKDOWN = data.markdown_report;
-      renderDashboard(data.result, false);
-      document.getElementById("markdownReportPreview").textContent = data.markdown_report;
-    }
   }
 
   async function runStage2Calculation() {
-    const currentUrl = document.getElementById("accountUrl").value.trim();
-    if (currentUrl && currentUrl !== LAST_CRAWLED_URL && currentUrl.startsWith("http")) {
-      await crawlAccountViaMarvis(false);
-    }
-    // Check if the product name was manually changed while Stage 2 script still references an older preset product
-    const currentProdName = document.getElementById("productName").value.trim();
-    const currentScript = document.getElementById("scriptContent").value || "";
-    const shortNewProd = currentProdName.split(/[\s(（®]/)[0];
-    if (
-      currentProdName &&
-      currentProdName !== LAST_SYNCED_PRODUCT_NAME &&
-      shortNewProd.length >= 2 &&
-      !currentScript.includes(shortNewProd)
-    ) {
-      await smartGenerateStage2FromCurrentForm(true);
-    }
-    const payload = collectFormPayload();
-    const resp = await fetch("/api/calculate/stage2", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+    if (!validateCoreInputs()) return;
+    return withActionLock("stage2Calc", async () => {
+      const currentUrl = document.getElementById("accountUrl").value.trim();
+      if (currentUrl && currentUrl !== LAST_CRAWLED_URL && currentUrl.startsWith("http")) {
+        await crawlAccountViaMarvis(false);
+      }
+      // Check if the product name was manually changed while Stage 2 script still references an older preset product
+      const currentProdName = document.getElementById("productName").value.trim();
+      const currentScript = document.getElementById("scriptContent").value || "";
+      const shortNewProd = currentProdName.split(/[\s(（®]/)[0];
+      if (
+        currentProdName &&
+        currentProdName !== LAST_SYNCED_PRODUCT_NAME &&
+        shortNewProd.length >= 2 &&
+        !currentScript.includes(shortNewProd)
+      ) {
+        await smartGenerateStage2FromCurrentForm(true);
+      }
+      const payload = collectFormPayload();
+      const resp = await fetch("/api/calculate/stage2", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+      if (data.success) {
+        LAST_RESULT = data.result;
+        LAST_MARKDOWN = data.markdown_report;
+        renderDashboard(data.result, true);
+        document.getElementById("markdownReportPreview").textContent = data.markdown_report;
+      } else {
+        showToast(data.error || "Stage 2 测算失败", "error");
+      }
     });
-    const data = await resp.json();
-    if (data.success) {
-      LAST_RESULT = data.result;
-      LAST_MARKDOWN = data.markdown_report;
-      renderDashboard(data.result, true);
-      document.getElementById("markdownReportPreview").textContent = data.markdown_report;
-    }
   }
 
   function updateWorkflowStepperAndBanner(res, isStage2) {
@@ -1476,6 +1635,7 @@ channels_family_wellness_kol</textarea>
     const fit = s1.account_product_fit || {};
     const s1Inf = s1.influence_effect || {};
     const s1Ecom = s1.ecommerce_search_lift_effect || {};
+    const diag = res.model_diagnostics || s1.model_diagnostics || {};
 
     // Step 1
     const step1Main = document.getElementById("step1Main");
@@ -1533,12 +1693,14 @@ channels_family_wellness_kol</textarea>
       if (vGrade && vHead && vBody) {
         const roas = Number(roi2.omni_channel_roas || 0);
         const netProfit = Number(roi2.net_profit_after_ad_spend_rmb || 0);
+        const maxAcceptableQuote = Number(roi2.max_acceptable_quote_rmb || Math.round((attr2.omni_total_gmv_rmb || 0) * 0.45));
         const fitShort = fit.fit_grade ? fit.fit_grade.split(" ")[0] : "A级";
-        if (roas >= 1.5 || netProfit > 0) {
+        const isEstimated = Boolean(diag.metrics_estimated || (acct.crawl_metadata && acct.crawl_metadata.metrics_estimated));
+        if (netProfit > 0 && roas >= 1.5) {
           vGrade.textContent = "🟢 强烈推荐投放";
           vGrade.style.color = "#34d399";
           if (vBox) vBox.style.borderColor = "rgba(16, 185, 129, 0.65)";
-        } else if (roas >= 0.85) {
+        } else if (netProfit >= 0 || roas >= 0.85) {
           vGrade.textContent = "🟡 建议优化脚本投";
           vGrade.style.color = "#fcd34d";
           if (vBox) vBox.style.borderColor = "rgba(245, 158, 11, 0.65)";
@@ -1547,16 +1709,19 @@ channels_family_wellness_kol</textarea>
           vGrade.style.color = "#fda4af";
           if (vBox) vBox.style.borderColor = "rgba(244, 63, 94, 0.65)";
         }
-        vSub.textContent = `人货契合 ${fitShort} · 回报率 ${roas}倍`;
+        vSub.textContent = `人货契合 ${fitShort} · 回报率 ${roas}倍${isEstimated ? ' · ⚠️含估算指标' : ''}`;
         vHead.innerHTML =
           `💡 一句话算清账：花 <span style="color:#fcd34d;">¥${fmtNum(prod.campaign_budget_rmb)}</span> 找【${acct.account_name}】推广【${prod.product_name}】，预计全网总卖货 <span class="delta-up">¥${fmtNum(attr2.omni_total_gmv_rmb)}</span>（共 ${fmtNum(attr2.omni_total_orders)} 单）！`;
         const profitPhrase = netProfit >= 0
           ? `扣掉货品成本和推广费后<strong>净赚 <span class="delta-up">¥${fmtNum(netProfit)}</span></strong>`
-          : `建议将该博主报价砍至 <strong>¥${fmtNum(Math.round(attr2.omni_total_gmv_rmb * 0.45))}</strong> 以内或点击右侧【多账号PK比价看板】挑选更高性价比腰部达人`;
+          : `建议将该博主报价砍至保本上限 <strong>¥${fmtNum(Math.round(maxAcceptableQuote))}</strong> 以内或点击右侧【多账号PK比价看板】挑选更高性价比腰部达人`;
+        const estNotice = isEstimated
+          ? `<br/>④ <span style="color:#fbbf24;">⚠️ 数据可信度提示：当前博主互动/粉丝含公开面数推算值，投放前请在左侧高级微调抽屉核对真实中位阅读量。</span>`
+          : "";
         vBody.innerHTML =
           `① <strong>能看多少人：</strong>预计获得 <strong>${fmtNum(inf2.expected_views)}</strong> 次曝光，产生 <strong>${fmtNum(inf2.total_interactions)}</strong> 次点赞收藏评论；<br/>` +
           `② <strong>能带多少货：</strong>带动 <strong>${fmtNum(ecom2.total_cross_platform_search_uv)} 人</strong>去京东/淘宝/美团搜索该产品，进店 <strong>${fmtNum(ecom2.total_store_visit_uv)} 人</strong>，${profitPhrase}；<br/>` +
-          `③ <strong>加种草脚本的好处：</strong>使用左侧 AI 生成的 4 段式种草脚本后，比不加脚本直接发普通日常笔记多赚 <strong class="delta-up">+${attr2.gmv_lift_vs_stage1_pct}%</strong> 销售额！`;
+          `③ <strong>加种草脚本的好处：</strong>使用左侧 AI 生成的 4 段式种草脚本后，比不加脚本直接发普通日常笔记多赚 <strong class="delta-up">+${attr2.gmv_lift_vs_stage1_pct}%</strong> 销售额！${estNotice}`;
       }
     } else {
       if (step3Main && step3Sub) {
@@ -1587,6 +1752,7 @@ channels_family_wellness_kol</textarea>
   }
 
   function renderDashboard(res, isStage2) {
+    renderModelWarnings(res);
     const s1 = isStage2 ? res.stage1_baseline : res;
     const acct = s1.account_summary;
     if (acct && acct.account_name) {
@@ -2200,6 +2366,8 @@ channels_family_wellness_kol</textarea>
     if (!LAST_MATRIX_RESULT) {
       runMultiAccountMatrixAnalysis();
     }
+    const matEl = document.getElementById("tab-matrix");
+    if (matEl) matEl.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function addCurrentFormAccountToMatrixList() {
@@ -2224,6 +2392,8 @@ channels_family_wellness_kol</textarea>
     addCurrentFormAccountToMatrixList();
     switchTab("tab-matrix", document.getElementById("btnTabMatrix"));
     await runMultiAccountMatrixAnalysis();
+    const matEl = document.getElementById("tab-matrix");
+    if (matEl) matEl.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function resetDefaultMatrixPool() {
@@ -2302,14 +2472,18 @@ channels_family_wellness_kol</textarea>
 
     // 1. Portfolio Summary KPIs + Plain-Language Matrix Verdict
     const topWinner = rows[0] || {};
-    const topAlloc = (opt.allocation_plan && opt.allocation_plan[0]) || {};
+    const fundedPlans = (opt.allocation_plan || []).filter(a => Number(a.recommended_posts || 0) > 0);
+    const topAlloc = fundedPlans[0] || (opt.allocation_plan && opt.allocation_plan[0]) || {};
+    const allocSummaryPhrase = fundedPlans.length > 0
+      ? `建议优先给 <strong>${topAlloc.account_name || topWinner.account_name || ''}</strong> 分配 <strong>¥${fmtNum(topAlloc.allocated_budget_rmb || 0)}（投 ${topAlloc.recommended_posts} 篇）</strong>，共组合投放 <strong>${fundedPlans.length} 个高优账号</strong>，预计总卖货 <strong class="delta-up">¥${fmtNum(opt.optimized_portfolio_gmv_rmb)}</strong>（比平均分钱多卖 <strong class="delta-up">+${opt.gmv_lift_vs_equal_split_pct || 0}%</strong>）！`
+      : `当前总预算 ¥${fmtNum(opt.target_total_budget_rmb)} 低于单篇最低报价，建议上调预算或议价后再分配。`;
     document.getElementById("matrixPortfolioSummaryContainer").innerHTML = `
       <div style="margin-top:8px;margin-bottom:10px;padding:11px 14px;background:linear-gradient(90deg, rgba(16,185,129,0.16) 0%, rgba(15,23,42,0.95) 100%);border:1px solid rgba(16,185,129,0.5);border-radius:8px;font-size:12.5px;color:#e2e8f0;line-height:1.6;">
         <strong style="color:#34d399;font-size:13.5px;">🏆 多账号傻瓜式选号结论：</strong>
         在当前检测的 <strong>${ps.account_count || rows.length} 个账号</strong>中，综合性价比第 1 名是
         <strong style="color:#fcd34d;">[${topWinner.platform_cn || ''}] ${topWinner.account_name || ''}</strong>
         （综合效能 <strong>${topWinner.efficiency_score_100 || 0}分</strong>，单号投产比 ROAS <strong>${topWinner.omni_roas || 0}倍</strong>，评级：${topWinner.allocation_tier || ''}）。<br/>
-        💡 <strong>总预算 ¥${fmtNum(opt.target_total_budget_rmb)} 最优分钱方案：</strong>建议优先给第 1 名分配 <strong>¥${fmtNum(topAlloc.allocated_budget_rmb || 0)}（投 ${topAlloc.recommended_posts || 1} 篇）</strong>，按下方 AI 方案组合投放预计总卖货 <strong class="delta-up">¥${fmtNum(opt.optimized_portfolio_gmv_rmb)}</strong>（比平均分钱多卖 <strong class="delta-up">+${opt.gmv_lift_vs_equal_split_pct || 0}%</strong>）！
+        💡 <strong>总预算 ¥${fmtNum(opt.target_total_budget_rmb)} 最优分钱方案：</strong>${allocSummaryPhrase}
       </div>
       <div class="kpi-grid" style="margin-top:8px;">
         <div class="kpi-box">

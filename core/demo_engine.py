@@ -260,16 +260,29 @@ def generate_smart_stage2_from_product(
     account: SocialAccountProfile | Dict[str, Any],
     product: ProductInput | Dict[str, Any],
 ) -> Dict[str, Any]:
-    acct_name = account.account_name if isinstance(account, SocialAccountProfile) else account.get("account_name", "示范达人")
-    p_name = product.product_name if isinstance(product, ProductInput) else product.get("product_name", "示范产品")
-    b_name = product.brand_name if isinstance(product, ProductInput) else product.get("brand_name", "示范品牌")
+    acct_name = (
+        account.account_name
+        if isinstance(account, SocialAccountProfile)
+        else (account.get("account_name") or "示范达人")
+    )
+    p_name = (
+        product.product_name
+        if isinstance(product, ProductInput)
+        else (product.get("product_name") or "示范产品")
+    ) or "示范产品"
+    b_name = (
+        product.brand_name
+        if isinstance(product, ProductInput)
+        else (product.get("brand_name") or "示范品牌")
+    ) or "示范品牌"
     points = (
         product.core_selling_points
         if isinstance(product, ProductInput)
         else product.get("core_selling_points", ["核心功效卖点1", "核心功效卖点2"])
     )
-    short_prod = p_name.split("(")[0].strip()
-    topics = [f"#{short_prod}", f"#{b_name.split('(')[0].strip()}", "#科学评测", "#避坑指南", "#好物推荐"]
+    short_prod = (p_name.split("(")[0].strip() or "核心单品")
+    short_brand = (b_name.split("(")[0].strip() or "官方旗舰")
+    topics = [f"#{short_prod}", f"#{short_brand}", "#科学评测", "#避坑指南", "#好物推荐"]
     theme = f"{short_prod}深度实测：认准核心参数与科学用法，告别盲目跟风"
     pts_text = "；".join(points[:3]) if points else "具备权威标准背书与高依从性体验"
     script = (
@@ -294,29 +307,65 @@ class DemoPromotionEngine(BasePromotionEngine):
     Provides simplified reference calculations for testing the UI, CLI, and MCP Server.
     """
 
+    @staticmethod
+    def _sanitize_product(product: ProductInput) -> tuple[ProductInput, List[str]]:
+        warnings: List[str] = []
+        price = float(product.selling_price_rmb or 0.0)
+        if price <= 0.0:
+            warnings.append("成交价需大于 0，已自动回退至 ¥99 基准价。")
+            price = 99.0
+        msrp = float(product.msrp_rmb or 0.0)
+        if msrp < price:
+            msrp = round(price * 1.25, 2)
+        budget = max(100.0, float(product.campaign_budget_rmb or 0.0))
+        if float(product.campaign_budget_rmb or 0.0) < 100.0:
+            warnings.append("投放预算低于 ¥100，已按最低有效门槛与商务可行性折算。")
+        cogs = min(0.92, max(0.01, float(product.cogs_rate or 0.22)))
+        comm = min(0.35, max(0.0, float(product.platform_commission_rate or 0.05)))
+        sanitized = ProductInput(
+            **{
+                **product.to_dict(),
+                "selling_price_rmb": price,
+                "msrp_rmb": msrp,
+                "campaign_budget_rmb": budget,
+                "cogs_rate": cogs,
+                "gross_margin_rate": round(1.0 - cogs, 4),
+                "platform_commission_rate": comm,
+            }
+        )
+        return sanitized, warnings
+
     def compute_stage1(
         self,
         account: SocialAccountProfile,
         product: ProductInput,
         post_count_matrix: int = 1,
     ) -> Dict[str, Any]:
+        product, input_warnings = self._sanitize_product(product)
         fit_score = 0.86
         fit_mult = 1.15
-        views = int(account.avg_views * fit_mult * max(1, post_count_matrix))
-        likes = int(account.avg_likes * fit_mult * max(1, post_count_matrix))
-        collects = int(account.avg_collects * fit_mult * max(1, post_count_matrix))
-        comments = int(account.avg_comments * fit_mult * max(1, post_count_matrix))
-        shares = int(account.avg_shares * fit_mult * max(1, post_count_matrix))
-        follows = int(account.avg_follows_gained * fit_mult * max(1, post_count_matrix))
+        quote = max(500.0, float(account.commercial_quote_rmb or 10000.0)) * max(1, post_count_matrix)
+        budget_ratio = float(product.campaign_budget_rmb) / max(1.0, quote * 0.8)
+        booking_feasibility = min(1.0, max(0.02, budget_ratio ** 1.15)) if budget_ratio < 1.0 else 1.0
+        paid_boost = 1.0 + min(0.85, max(0.0, (float(product.campaign_budget_rmb) - quote) / max(1.0, quote)) * 0.35)
+        scale = fit_mult * max(1, post_count_matrix) * booking_feasibility * paid_boost
+
+        views = max(50, int(account.avg_views * scale))
+        likes = min(int(views * 0.28), int(account.avg_likes * scale))
+        collects = min(int(views * 0.28), int(account.avg_collects * scale))
+        comments = min(int(views * 0.06), int(account.avg_comments * scale))
+        shares = min(int(views * 0.08), int(account.avg_shares * scale))
+        follows = int(account.avg_follows_gained * scale)
         total_inter = likes + collects + comments + shares
         ces = likes * 1 + collects * 1 + comments * 4 + shares * 4 + follows * 8
 
-        search_uv = int(views * 0.022)
+        price_elasticity = min(1.25, max(0.25, (118.0 / max(10.0, product.selling_price_rmb)) ** 0.35))
+        search_uv = max(1, int(views * 0.022))
         jd_uv = int(search_uv * 0.36)
         tmall_uv = int(search_uv * 0.42)
         mt_uv = search_uv - jd_uv - tmall_uv
-        store_uv = int(search_uv * 0.58)
-        orders = max(1, int(store_uv * 0.14))
+        store_uv = max(1, int(search_uv * 0.58))
+        orders = max(0, int(round(store_uv * 0.14 * price_elasticity)))
         gmv = round(orders * product.selling_price_rmb, 2)
 
         daily_curve = [
@@ -332,6 +381,13 @@ class DemoPromotionEngine(BasePromotionEngine):
 
         return {
             "stage": "Stage 1 Baseline (Open-Core Demo Sandbox)",
+            "model_diagnostics": {
+                "data_confidence": "high",
+                "metrics_estimated": False,
+                "booking_feasibility": round(booking_feasibility, 3),
+                "price_elasticity_multiplier": round(price_elasticity, 3),
+                "input_warnings": input_warnings,
+            },
             "account_summary": account.to_dict(),
             "product_summary": product.to_dict(),
             "account_product_fit": {
@@ -471,28 +527,34 @@ class DemoPromotionEngine(BasePromotionEngine):
         product: ProductInput,
         stage2_input: Stage2ContentInput,
     ) -> Dict[str, Any]:
+        product, input_warnings = self._sanitize_product(product)
         s1 = self.compute_stage1(account, product, post_count_matrix=stage2_input.post_count_matrix)
         s1_inf = s1["influence_effect"]
         s1_ecom = s1["ecommerce_search_lift_effect"]
+        diag = dict(s1.get("model_diagnostics", {}))
+        diag["input_warnings"] = list(dict.fromkeys(input_warnings + list(diag.get("input_warnings", []))))
+        s1["model_diagnostics"] = diag
 
         content_mult = 1.48
         views2 = int(s1_inf["expected_views"] * content_mult)
         inter2 = int(s1_inf["total_interactions"] * 1.56)
         bd1 = s1_inf["breakdown"]
 
-        search2 = int(s1_ecom["total_cross_platform_search_uv"] * 1.72)
-        store2 = int(search2 * 0.62)
-        orders2 = max(2, int(store2 * 0.16))
+        price_elasticity = float(diag.get("price_elasticity_multiplier", 1.0))
+        search2 = max(1, int(s1_ecom["total_cross_platform_search_uv"] * 1.72))
+        store2 = max(1, int(search2 * 0.62))
+        orders2 = max(0, int(round(store2 * 0.16 * price_elasticity)))
         search_gmv2 = round(orders2 * product.selling_price_rmb, 2)
-        direct_orders = max(1, int(orders2 * 0.35))
-        geo_orders = max(1, int(orders2 * 0.22))
+        direct_orders = max(0, int(round(orders2 * 0.35)))
+        geo_orders = max(0, int(round(orders2 * 0.22)))
         omni_orders = orders2 + direct_orders + geo_orders
         omni_gmv = round(omni_orders * product.selling_price_rmb, 2)
         s1_gmv = max(1.0, float(s1_ecom["total_attributed_search_gmv_rmb"]))
-        spend = max(1.0, float(product.campaign_budget_rmb))
+        spend = max(100.0, float(product.campaign_budget_rmb))
         roas = round(omni_gmv / spend, 2)
         unit_net_margin = round(product.selling_price_rmb * (1.0 - product.cogs_rate - product.platform_commission_rate - 0.06), 2)
         net_profit = round(omni_orders * unit_net_margin - spend, 2)
+        max_acceptable_quote = round(max(0.0, omni_orders * unit_net_margin), 2)
 
         channels2 = {}
         for k, ch in s1_ecom["channels"].items():
@@ -522,6 +584,7 @@ class DemoPromotionEngine(BasePromotionEngine):
 
         return {
             "stage": "Stage 2 Full Enhanced (Open-Core Demo Sandbox)",
+            "model_diagnostics": diag,
             "stage1_baseline": s1,
             "script_nlp_and_compliance_analysis": {
                 "hook_score": 88.5,
@@ -609,6 +672,7 @@ class DemoPromotionEngine(BasePromotionEngine):
                     "net_profit_after_ad_spend_rmb": net_profit,
                     "net_contribution_roi": round(net_profit / spend, 3),
                     "break_even_orders": max(1, int(spend / max(1.0, unit_net_margin))),
+                    "max_acceptable_quote_rmb": max_acceptable_quote,
                     "ltv_to_cac_ratio": round(roas * 1.45, 2),
                     "estimated_payback_period_months": 1.2,
                 },
