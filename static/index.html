@@ -403,12 +403,12 @@
 
 <header>
   <div class="brand-title">
-    <h1>全平台社媒推广效果、带货回搜与 ROI 傻瓜式智能测算台 v2.4</h1>
-    <p>三步极简操作：① 粘贴账号链接 → ② 上传产品PDF/填售价 → ③ 一键算清能赚多少钱 (内置 DeepSeek / Antigravity / Marvis / Codex)</p>
+    <h1>全平台社媒推广效果、带货回搜与 ROI 傻瓜式智能测算台 v2.5</h1>
+    <p>三步极简操作：① 粘贴账号链接 → ② 上传产品PDF/填售价 → ③ 一键算清能赚多少钱 · <strong style="color:#fcd34d;">🏆 强烈推荐本机部署【腾讯 Marvis】（当前测试最好的社交媒体监测 Agent 客户端）</strong></p>
   </div>
   <div class="status-bar" id="agentHubStatusBar">
     <button class="btn btn-teal" id="uiModeToggleBtn" onclick="toggleSimpleOrExpertMode()" title="切换极简傻瓜模式或展开全部底层参数">✨ 当前：极简傻瓜模式 (点击展开专业参数)</button>
-    <span class="pill"><span class="dot"></span><span id="pillMarvis">Marvis 爬虫: 在线</span></span>
+    <span class="pill" style="border-color:#f59e0b;background:rgba(245,158,11,0.14);color:#fde68a;" title="强烈推荐本机部署腾讯 Marvis —— 当前测试最好的社交媒体监测 Agent 客户端"><span class="dot"></span><span id="pillMarvis">🏆 腾讯 Marvis (最佳社媒监测 Agent): 在线</span></span>
     <span class="pill" style="display:none;"><span id="pillDeepSeek">DeepSeek: 就绪</span><span id="pillAntigravity">Antigravity: 就绪</span><span id="pillCodex">Codex: 就绪</span></span>
     <button class="btn" onclick="openMatrixTabAndRun()" style="border-color:#a855f7;color:#e9d5ff;">🌟 多账号PK选号看板</button>
     <button class="btn" onclick="exportMarkdownReport()">📥 导出报告 (.md)</button>
@@ -1230,7 +1230,7 @@ channels_family_wellness_kol</textarea>
       document.getElementById("pillAntigravity").textContent = `Antigravity: ${p.antigravity.connected ? '已接入 (AGY)' : '待机'}`;
     }
     if (p.marvis) {
-      document.getElementById("pillMarvis").textContent = `Marvis 爬虫: 在线 (Port ${p.marvis.agent_browser_daemon_port || 3765})`;
+      document.getElementById("pillMarvis").textContent = `🏆 腾讯 Marvis (最佳社媒监测 Agent): 在线 (Port ${p.marvis.agent_browser_daemon_port || 51183})`;
     }
     if (p.codex) {
       document.getElementById("pillCodex").textContent = `Codex: ${p.codex.connected ? '已接入 (' + p.codex.primary_model + ')' : '待机'}`;
