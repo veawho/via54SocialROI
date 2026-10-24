@@ -1,0 +1,36 @@
+# =============================================================================
+# via54SocialROI - Core IP & Security Guard (.gitignore)
+# =============================================================================
+# CRITICAL: Never commit or upload the proprietary algorithm core or live data!
+private_core/
+*_pro.py
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Private Documents, Brochures, & Local Caches
+*.pdf
+*.docx
+*.xlsx
+runtime_cache/
+uploads/
+logs/
+tmp/
+
+# Python / Node / OS artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+env/
+dist/
+build/
+*.egg-info/
+.env
+.env.local
+.DS_Store
+Thumbs.db

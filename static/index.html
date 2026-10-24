@@ -1,0 +1,2606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>全平台社媒推广影响力、电商回搜、GEO与ROI算法支撑系统 v2.0 | Multi-Modal & 4-Agent Hub</title>
+  <style>
+    :root {
+      --bg-dark: #0b1120;
+      --bg-card: #111827;
+      --bg-panel: #1e293b;
+      --border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-teal: #14b8a6;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-purple: #8b5cf6;
+      --accent-emerald: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.5;
+      font-size: 13px;
+    }
+    header {
+      background: linear-gradient(90deg, #0f172a 0%, #1e1b4b 55%, #0f172a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 22px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-title h1 { font-size: 17px; font-weight: 700; color: #fff; }
+    .brand-title p { font-size: 11.5px; color: var(--text-muted); }
+    .status-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #6ee7b7;
+    }
+    .pill .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+    }
+    .preset-bar {
+      background: #0f172a;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .preset-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .btn {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg-panel);
+      color: var(--text-main);
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+    .btn:hover { border-color: var(--primary); background: rgba(59, 130, 246, 0.18); }
+    .btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-teal { background: #0d9488; border-color: #14b8a6; color: #fff; }
+    .btn-teal:hover { background: #0f766e; }
+    .btn-purple { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-color: #8b5cf6; color: #fff; }
+    .workspace {
+      display: grid;
+      grid-template-columns: 445px 1fr;
+      gap: 14px;
+      padding: 14px 22px;
+      max-width: 1920px;
+      margin: 0 auto;
+    }
+    @media (max-width: 1240px) { .workspace { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 15px;
+      margin-bottom: 12px;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.65);
+    }
+    .card-header h2 { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+    .stage-badge {
+      font-size: 10.5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+    .stage2-badge {
+      background: rgba(139, 92, 246, 0.2);
+      color: #c4b5fd;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 9px; }
+    .form-full { grid-column: 1 / -1; }
+    label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 2px; font-weight: 500; }
+    input, select, textarea {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 5px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-family: inherit;
+    }
+    textarea { resize: vertical; min-height: 60px; }
+    .url-bar { display: flex; gap: 6px; }
+    .modality-tabs { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
+    .mod-btn {
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: #0f172a;
+      color: var(--text-muted);
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+    .mod-btn.active { background: #0d9488; border-color: #14b8a6; color: #fff; }
+    .mod-pane { display: none; }
+    .mod-pane.active { display: block; }
+    .dropzone {
+      border: 1.5px dashed #475569;
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: 7px;
+      padding: 12px;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .dropzone:hover { border-color: #14b8a6; color: #5eead4; }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .kpi-box {
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 13px;
+    }
+    .kpi-title { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
+    .kpi-val { font-size: 20px; font-weight: 800; color: #fff; }
+    .kpi-sub { font-size: 11px; margin-top: 3px; color: #38bdf8; }
+    .delta-up { color: #34d399; font-weight: 700; }
+    .tabs {
+      display: flex;
+      gap: 5px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      cursor: pointer;
+      padding: 6px 11px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #0f172a;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .tab-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+    th, td { border: 1px solid var(--border); padding: 6px 9px; text-align: left; }
+    th { background: #1e293b; color: #cbd5e1; font-weight: 600; }
+    tr:nth-child(even) { background: rgba(30, 41, 59, 0.35); }
+    .bar-row { display: flex; align-items: center; gap: 10px; margin: 5px 0; }
+    .bar-label { width: 185px; font-size: 11.5px; color: #cbd5e1; flex-shrink: 0; }
+    .bar-track { flex: 1; height: 15px; background: #0f172a; border-radius: 4px; overflow: hidden; border: 1px solid #1e293b; }
+    .bar-fill { height: 100%; border-radius: 3px; }
+    .bar-val { width: 130px; text-align: right; font-size: 11.5px; font-weight: 600; flex-shrink: 0; }
+    .report-pre {
+      background: #090d16;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: "JetBrains Mono", Consolas, monospace;
+      font-size: 11.5px;
+      white-space: pre-wrap;
+      max-height: 600px;
+      overflow-y: auto;
+      color: #e2e8f0;
+    }
+    .agent-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-left: 4px solid #3b82f6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-bottom: 9px;
+    }
+    .alert-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .alert-VIRAL_SURGE { background: rgba(244, 63, 94, 0.2); color: #fda4af; border: 1px solid #f43f5e; }
+    .alert-POOL_JUMP { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid #f59e0b; }
+    .alert-THROTTLING_WARNING { background: rgba(239, 68, 68, 0.25); color: #fca5a5; border: 1px solid #ef4444; }
+    .alert-NORMAL_STEADY { background: rgba(16, 185, 129, 0.18); color: #6ee7b7; border: 1px solid #10b981; }
+    .stepper-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 10px 22px;
+      background: rgba(15, 23, 42, 0.92);
+      border-bottom: 1px solid var(--border);
+    }
+    .step-item {
+      background: rgba(30, 41, 59, 0.65);
+      border: 1px solid #334155;
+      border-left: 3px solid #3b82f6;
+      border-radius: 7px;
+      padding: 7px 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .step-item:hover { border-color: #60a5fa; background: rgba(30, 41, 59, 0.95); }
+    .step-item.step-active { border-left-color: #10b981; background: rgba(16, 185, 129, 0.1); }
+    .step-num { font-size: 10.5px; font-weight: 700; color: #93c5fd; text-transform: uppercase; letter-spacing: 0.3px; }
+    .step-main { font-size: 12.5px; font-weight: 700; color: #f8fafc; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .step-sub { font-size: 11px; color: #94a3b8; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .stage-compare-banner {
+      background: linear-gradient(90deg, rgba(30, 41, 59, 0.92) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid #334155;
+      border-left: 4px solid #8b5cf6;
+      border-radius: 8px;
+      padding: 9px 14px;
+      margin-bottom: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .hint-tag {
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(59, 130, 246, 0.18);
+      color: #93c5fd;
+      margin-left: 4px;
+      font-weight: 600;
+    }
+    .step-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6 0%, #14b8a6 100%);
+      color: #fff;
+      font-weight: 800;
+      font-size: 12.5px;
+      margin-right: 7px;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.45);
+    }
+    .account-mini-card {
+      margin-top: 9px;
+      padding: 9px 11px;
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.12) 0%, rgba(15, 23, 42, 0.85) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .quick-upload-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .quick-upload-btn {
+      cursor: pointer;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1.5px dashed #38bdf8;
+      border-radius: 7px;
+      padding: 7px 6px;
+      text-align: center;
+      color: #e0f2fe;
+      font-size: 11.5px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .quick-upload-btn:hover {
+      background: rgba(20, 184, 166, 0.18);
+      border-color: #14b8a6;
+      color: #5eead4;
+    }
+    details.adv-drawer {
+      margin-top: 8px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px dashed #334155;
+      border-radius: 7px;
+      padding: 6px 10px;
+    }
+    details.adv-drawer summary {
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #94a3b8;
+      user-select: none;
+      list-style: none;
+    }
+    details.adv-drawer summary:hover { color: #cbd5e1; }
+    details.adv-drawer[open] summary {
+      margin-bottom: 8px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+      color: #60a5fa;
+    }
+    .hero-calc-btn {
+      width: 100%;
+      cursor: pointer;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #a855f7;
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 55%, #0d9488 100%);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.38);
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .hero-calc-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.55);
+    }
+    .foolproof-verdict-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(30, 41, 59, 0.95) 45%, rgba(15, 23, 42, 0.98) 100%);
+      border: 1.5px solid rgba(16, 185, 129, 0.5);
+      border-radius: 10px;
+      padding: 13px 16px;
+      margin-bottom: 11px;
+      display: grid;
+      grid-template-columns: 195px 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+    @media (max-width: 1100px) {
+      .foolproof-verdict-card { grid-template-columns: 1fr; }
+    }
+    .verdict-badge-box {
+      background: rgba(6, 78, 59, 0.45);
+      border: 1px solid rgba(16, 185, 129, 0.55);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand-title">
+    <h1>全平台社媒推广效果、带货回搜与 ROI 傻瓜式智能测算台 v2.4</h1>
+    <p>三步极简操作：① 粘贴账号链接 → ② 上传产品PDF/填售价 → ③ 一键算清能赚多少钱 (内置 DeepSeek / Antigravity / Marvis / Codex)</p>
+  </div>
+  <div class="status-bar" id="agentHubStatusBar">
+    <button class="btn btn-teal" id="uiModeToggleBtn" onclick="toggleSimpleOrExpertMode()" title="切换极简傻瓜模式或展开全部底层参数">✨ 当前：极简傻瓜模式 (点击展开专业参数)</button>
+    <span class="pill"><span class="dot"></span><span id="pillMarvis">Marvis 爬虫: 在线</span></span>
+    <span class="pill" style="display:none;"><span id="pillDeepSeek">DeepSeek: 就绪</span><span id="pillAntigravity">Antigravity: 就绪</span><span id="pillCodex">Codex: 就绪</span></span>
+    <button class="btn" onclick="openMatrixTabAndRun()" style="border-color:#a855f7;color:#e9d5ff;">🌟 多账号PK选号看板</button>
+    <button class="btn" onclick="exportMarkdownReport()">📥 导出报告 (.md)</button>
+    <button class="btn" onclick="exportJsonResult()">JSON</button>
+  </div>
+</header>
+
+<div class="preset-bar">
+  <span class="preset-label">💡 零门槛体验（点击即刻演示真实行业案例）：</span>
+  <button class="btn" onclick="loadPreset('xhs_kefujia_medical')">① 小红书 × 医美修复敷料</button>
+  <button class="btn" onclick="loadPreset('douyin_aosi_eyecare_o2o')">② 抖音 × 滴眼液 (美团买药闪送)</button>
+  <button class="btn" onclick="loadPreset('bili_hardcore_device_review')">③ B站 × 科技测评 (京东自营)</button>
+  <button class="btn" onclick="loadPreset('channels_pharmacist_family')">④ 视频号 × 家庭常备健康品</button>
+</div>
+
+<!-- 4-STEP INTERACTIVE GUIDED WORKFLOW BAR -->
+<div class="stepper-bar" id="workflowStepperBar">
+  <div class="step-item step-active" onclick="document.getElementById('accountUrl').focus()">
+    <div class="step-num">第一步 · 选博主 (Step ①)</div>
+    <div class="step-main" id="step1Main">小红书 · 代码人生的突围记录</div>
+    <div class="step-sub" id="step1Sub">粉丝 1,250 | 实爬笔记 10 篇 | Marvis 在线</div>
+  </div>
+  <div class="step-item step-active" onclick="document.getElementById('productName').focus()">
+    <div class="step-num">第二步 · 传产品 (Step ②)</div>
+    <div class="step-main" id="step2Main">科复佳医用透明质酸钠修复贴</div>
+    <div class="step-sub" id="step2Sub">成交价 ¥118 | 预算 ¥18,500 | 卖点 3 条</div>
+  </div>
+  <div class="step-item step-active" onclick="runStage2Calculation()">
+    <div class="step-num">第三步 · 看赚多少钱 (Step ③)</div>
+    <div class="step-main" id="step3Main">Stage 2 全维增强测算已激活</div>
+    <div class="step-sub" id="step3Sub">叠加话题+主题+脚本 → 解锁 GEO & 全域 ROI</div>
+  </div>
+  <div class="step-item" onclick="openMatrixTabAndRun()">
+    <div class="step-num">第四步 · 多号PK与盯盘 (Step ④)</div>
+    <div class="step-main" id="step4Main">多账号比价看板 · 每小时盯盘</div>
+    <div class="step-sub" id="step4Sub">点击对比多个博主性价比或开启投后监控</div>
+  </div>
+</div>
+
+<div class="workspace">
+  <!-- LEFT COLUMN: FOOLPROOF 3-STEP WIZARD -->
+  <div>
+    <!-- STEP 1 CARD: CHOOSE ACCOUNT -->
+    <div class="card" style="border-left: 4px solid #14b8a6;">
+      <div class="card-header">
+        <h2><span class="step-circle">1</span>第一步：找哪个博主投？（粘贴主页链接自动抓取）</h2>
+        <span class="stage-badge" style="background:rgba(20,184,166,0.2);color:#5eead4;border-color:#14b8a6;">Marvis 自动识号</span>
+      </div>
+
+      <!-- URL Bar -->
+      <div id="mod-url" class="mod-pane active">
+        <label style="color:#cbd5e1;font-size:12px;margin-bottom:4px;">粘贴小红书 / 抖音 / B站 / 视频号主页或作品链接：</label>
+        <div class="url-bar">
+          <input type="text" id="accountUrl" placeholder="在此粘贴博主主页或笔记链接..." value="https://www.xiaohongshu.com/user/profile/64a8b91c000000001203d9f1" onkeydown="if(event.key==='Enter'){event.preventDefault();crawlAccountViaMarvis(true);}" />
+          <button class="btn btn-teal" onclick="crawlAccountViaMarvis(true)" style="white-space:nowrap;padding:6px 12px;">🔍 一键抓取账号</button>
+          <button class="btn btn-purple" onclick="addCurrentAccountToMatrixAndOpen()" style="white-space:nowrap;padding:6px 10px;" title="把该博主加入右侧多账号PK表对比性价比">➕ 加入多号PK</button>
+        </div>
+      </div>
+
+      <!-- Auto-Recognized Account Summary Pill Card -->
+      <div class="account-mini-card" id="accountQuickSummaryBox">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#6ee7b7;" id="quickAcctTitle">✅ 已识别：[小红书] 代码人生的突围记录</div>
+          <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px;" id="quickAcctMetrics">👥 粉丝 1,250 · 👁️ 均阅 3,044 · ❤️ 均赞 96 · ⭐ 均藏 84 · 📑 实爬 10 篇笔记</div>
+        </div>
+        <span class="stage-badge" style="font-size:10px;">自动同步</span>
+      </div>
+
+      <!-- Collapsible Advanced Account Metrics -->
+      <details class="adv-drawer">
+        <summary>⚙️ 手动修改或微调博主底层数据（已自动抓取，一般无需展开）</summary>
+        <div class="form-grid" style="margin-top:6px;">
+          <div>
+            <label>社媒平台 / Platform</label>
+            <select id="platformSelect">
+              <option value="xiaohongshu">小红书 (Xiaohongshu)</option>
+              <option value="douyin">抖音 (Douyin)</option>
+              <option value="bilibili">B站 (Bilibili)</option>
+              <option value="wechat_channels">微信视频号 (WeChat Channels)</option>
+            </select>
+          </div>
+          <div>
+            <label>账号名称 / Account Name</label>
+            <input type="text" id="accountName" value="代码人生的突围记录" />
+          </div>
+          <div>
+            <label>粉丝数 / Followers</label>
+            <input type="number" id="followers" value="1250" />
+          </div>
+          <div>
+            <label>历史平均 / 中位曝光 (Avg / Median Views)</label>
+            <div style="display:flex;gap:4px;">
+              <input type="number" id="avgViews" value="3044" />
+              <input type="number" id="medianViews" value="1887" />
+            </div>
+          </div>
+          <div>
+            <label>平均点赞 / 收藏 (Likes / Collects)</label>
+            <div style="display:flex;gap:4px;">
+              <input type="number" id="avgLikes" value="96" />
+              <input type="number" id="avgCollects" value="84" />
+            </div>
+          </div>
+          <div>
+            <label>平均评论 / 分享 (Comments / Shares)</label>
+            <div style="display:flex;gap:4px;">
+              <input type="number" id="avgComments" value="17" />
+              <input type="number" id="avgShares" value="14" />
+            </div>
+          </div>
+          <div>
+            <label>前3秒留存 / 完播率 (3s / Completion)</label>
+            <div style="display:flex;gap:4px;">
+              <input type="number" step="0.01" id="avg3sRet" value="0.68" />
+              <input type="number" step="0.01" id="avgCompletion" value="0.49" />
+            </div>
+          </div>
+          <div>
+            <label>封面视觉CTR乘数 / 美学分 (Visual CTR)</label>
+            <div style="display:flex;gap:4px;">
+              <input type="number" step="0.01" id="visualCtrMult" value="1.00" title="Visual CTR Multiplier" />
+              <input type="number" step="1" id="visualScore100" value="82" title="Visual Aesthetics Score (0-100)" />
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- STEP 2 CARD: PRODUCT INFO & ONE-CLICK FILE/IMAGE UPLOAD -->
+    <div class="card" style="border-left: 4px solid #3b82f6;">
+      <div class="card-header">
+        <h2><span class="step-circle">2</span>第二步：推广什么产品？（可传PDF/图片自动填，或直接填4项）</h2>
+        <span class="stage-badge">智能提取卖点</span>
+      </div>
+
+      <!-- Foolproof 3-Button Quick Ingest Bar -->
+      <div class="quick-upload-bar">
+        <div class="quick-upload-btn" onclick="document.getElementById('fileUploadInput').click()">
+          📄 <strong>上传产品PDF/文档</strong><br/><span style="font-size:10px;color:#94a3b8;">自动提取名称/卖点/价格</span>
+        </div>
+        <div class="quick-upload-btn" onclick="document.getElementById('imageUploadInput').click()">
+          🖼️ <strong>上传图片 / Ctrl+V截图</strong><br/><span style="font-size:10px;color:#94a3b8;">OCR识字+封面视觉打分</span>
+        </div>
+        <div class="quick-upload-btn" onclick="const box=document.getElementById('quickTextPasteDrawer'); box.style.display = box.style.display==='none' ? 'block' : 'none';">
+          📝 <strong>粘贴一段文字简介</strong><br/><span style="font-size:10px;color:#94a3b8;">自动拆解产品与卖点</span>
+        </div>
+      </div>
+
+      <!-- Hidden File / Image / Screenshot Inputs Kept for Full Compatibility -->
+      <div style="display:none;">
+        <div id="mod-file"><input type="file" id="fileUploadInput" accept=".xlsx,.csv,.pdf,.docx,.json,.md,.txt" onchange="handleFileUpload(this)" /></div>
+        <div id="mod-image"><input type="file" id="imageUploadInput" accept="image/*" onchange="handleImageUpload(this)" /></div>
+        <div id="mod-shot"><div id="screenshotDropzone" tabindex="0"></div></div>
+      </div>
+
+      <!-- Optional Collapsible Text Paste Box -->
+      <div id="quickTextPasteDrawer" style="display:none;margin-bottom:9px;padding:8px;background:#0f172a;border:1px solid #334155;border-radius:6px;">
+        <div id="mod-text">
+          <label>粘贴任意产品介绍、达人简介或brief文字，点击下方按钮自动填入表单：</label>
+          <textarea id="rawTextInput" rows="2" placeholder="例如：推广产品：科复佳医用修复贴 售价：118元 预算：18500元 核心卖点：国家二类医疗器械认证、光电术后72小时褪红修护"></textarea>
+          <button class="btn btn-teal" style="width:100%;margin-top:4px;" onclick="ingestRawText()">✨ 自动识别文字并填入下方产品框</button>
+        </div>
+      </div>
+
+      <div id="multimodalFeedbackBox" style="margin-bottom:8px;padding:7px 9px;background:rgba(13,148,136,0.12);border:1px solid rgba(20,184,166,0.35);border-radius:6px;font-size:11.5px;color:#5eead4;display:none;"></div>
+
+      <!-- Only 4 Essential Product Fields Visible by Default -->
+      <div class="form-grid">
+        <div class="form-full">
+          <label style="color:#e2e8f0;font-weight:700;">① 推广产品名称 / Product Name</label>
+          <input type="text" id="productName" value="科复佳医用透明质酸钠修复贴 (Kefujia Class-II Medical Dressing)" />
+        </div>
+        <div>
+          <label style="color:#e2e8f0;font-weight:700;">② 产品实际售价 (¥)<span class="hint-tag" id="priceSourceHint">当前设定</span></label>
+          <input type="number" id="sellingPriceRmb" value="118" oninput="document.getElementById('priceSourceHint').textContent='手动输入'" />
+        </div>
+        <div>
+          <label style="color:#e2e8f0;font-weight:700;">③ 本次投放预算/报价 (¥)<span class="hint-tag" id="budgetSourceHint">刊例参考</span></label>
+          <input type="number" id="campaignBudgetRmb" value="18500" oninput="USER_LOCKED_BUDGET = true; document.getElementById('budgetSourceHint').textContent='用户锁定';" />
+        </div>
+        <div class="form-full">
+          <label style="color:#e2e8f0;font-weight:700;">④ 产品核心功效与卖点（每行一条，上传PDF可自动提取）</label>
+          <textarea id="sellingPoints" rows="3">国家二类医疗器械认证 (国械注准)
+高纯度医用透明质酸钠+重组胶原蛋白协同修护
+光电项目术后/换季屏障受损72小时褪红修护</textarea>
+        </div>
+      </div>
+
+      <!-- Collapsible Advanced Product & Unit Economics Fields -->
+      <details class="adv-drawer">
+        <summary>⚙️ 更多品牌/品类/成本率/复购率设置（已按行业标准配好，一般无需改）</summary>
+        <div class="form-grid" style="margin-top:6px;">
+          <div>
+            <label>品牌名称 / Brand Name</label>
+            <input type="text" id="brandName" value="科复佳 (Kefujia)" />
+          </div>
+          <div>
+            <label>所属品类 / Category</label>
+            <input type="text" id="productCategory" value="医疗器械/医用敷料/敏肌修护" />
+          </div>
+          <div>
+            <label>吊牌原价 MSRP (¥)</label>
+            <input type="number" id="msrpRmb" value="148" oninput="document.getElementById('priceSourceHint').textContent='手动输入'" />
+          </div>
+          <div>
+            <label>生产成本率 COGS / 平台扣点率</label>
+            <div style="display:flex;gap:4px;">
+              <input type="number" step="0.01" id="cogsRate" value="0.22" />
+              <input type="number" step="0.01" id="commissionRate" value="0.05" />
+            </div>
+          </div>
+          <div>
+            <label>年复购率 / 年复购频次 (LTV)</label>
+            <div style="display:flex;gap:4px;">
+              <input type="number" step="0.01" id="repeatRate" value="0.36" />
+              <input type="number" step="0.1" id="repeatOrders" value="2.5" />
+            </div>
+          </div>
+          <div>
+            <label>目标受众画像 / Target Audience</label>
+            <input type="text" id="targetAudience" value="22-38岁医美术后修护、敏感肌泛红干痒、痘印疤痕护理人群" />
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- STEP 3 CARD: ONE-CLICK AI SCRIPT & CALCULATION -->
+    <div class="card" style="border-left: 4px solid #8b5cf6;">
+      <div class="card-header">
+        <h2><span class="step-circle">3</span>第三步：一键算效果 & AI生成种草脚本</h2>
+        <span class="stage-badge stage2-badge">自动写稿 + 算清ROI</span>
+      </div>
+
+      <!-- Giant Hero Action Button -->
+      <button class="hero-calc-btn" onclick="smartGenerateStage2FromCurrentForm(false)">
+        🚀 一键智能生成种草脚本 & 测算全网带货ROI
+      </button>
+
+      <div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;">
+        <button class="btn" style="flex:1;padding:6px;" onclick="runStage1Calculation()" title="不加任何种草脚本，仅按博主历史自然数据测算基础效果">
+          📊 仅测算无脚本基础效果 (Stage 1)
+        </button>
+        <button class="btn btn-purple" style="flex:1;padding:6px;" onclick="runStage2Calculation()" title="使用下方当前脚本直接重新计算">
+          🔄 按下方脚本直接重算 (Stage 2)
+        </button>
+        <button class="btn btn-teal" style="padding:6px 10px;" onclick="addCurrentToHourlyMonitor()" title="把当前账号加入每小时自动盯盘">
+          ⏱️ 盯盘监控
+        </button>
+      </div>
+
+      <!-- Clean Script & Hashtags Preview (Editable) -->
+      <div class="form-grid" style="margin-top:9px;">
+        <div class="form-full">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <label style="color:#cbd5e1;font-weight:600;">🏷️ 推广话题标签（AI 可自动生成，也可手动改）</label>
+            <button class="btn btn-teal" style="padding:1px 6px;font-size:10.5px;" onclick="smartGenerateStage2FromCurrentForm(false)">🪄 AI重新写稿</button>
+          </div>
+          <input type="text" id="topicsInput" value="#医用敷料怎么选 #光电术后修护 #二类械字号 #敏感肌自救指南 #科复佳修复贴" />
+        </div>
+        <div class="form-full">
+          <label style="color:#cbd5e1;font-weight:600;">📝 推广种草脚本（含前3秒钩子 + 权威背书 + 京东/淘宝/美团搜词引导）</label>
+          <textarea id="scriptContent" rows="4">【黄金前3秒钩子】做完光子嫩肤或换季烂脸，千万别乱敷普通妆字号面膜！十个敷错九个反黑敏感！
+【痛点与权威背书】《中国皮肤屏障修护临床专家共识》明确指出：医美术后角质层微通道开放，必须使用无菌级国家二类医疗器械敷料。
+【核心数据与参数对比】我们实测对比了市面5款热门敷料（见01:20对比表）：科复佳医用透明质酸钠修复贴（注册证号：国械注准2023214XXXX）采用大小分子透明质酸复配，临床观察显示连续敷用72小时，泛红面积下降42.6%，经皮水分流失率（TEWL）降低35.8%，且0香精0酒精0防腐剂。
+【多渠道搜词与转化锚点】日常囤货直接去【京东自营大药房】或【天猫官方旗舰店】搜“科复佳医用修复贴”，认准盒身蓝白二类械字号标识；如果刚做完项目急用，直接打开【美团买药】搜“科复佳”，附近药房30分钟闪送到家！评论区置顶已放正品核验蓝链与术后护理FAQ清单。</textarea>
+        </div>
+      </div>
+
+      <!-- Collapsible Advanced Stage 2 Options -->
+      <details class="adv-drawer">
+        <summary>⚙️ 更多推广主题 / 矩阵连发条数 / 报备合规选项</summary>
+        <div class="form-grid" style="margin-top:6px;">
+          <div class="form-full">
+            <label>推广主题 / Campaign Theme</label>
+            <input type="text" id="campaignTheme" value="光子/水光术后黄金72小时科学修护：认准国械注准二类械字号，告别盲目敷面膜反黑烂脸" />
+          </div>
+          <div>
+            <label>投放作品矩阵条数 / Matrix Posts</label>
+            <input type="number" id="postCountMatrix" value="1" min="1" max="200" />
+          </div>
+          <div>
+            <label>合规风控轨道 / Moderation Track</label>
+            <select id="complianceTrack">
+              <option value="official_compliant">水上官方报备合规 (Official)</option>
+              <option value="koc_intercept">水下KOC痛点截流 (KOC Intercept)</option>
+            </select>
+          </div>
+          <div class="form-full">
+            <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="checkbox" id="pinnedLinkCheck" checked style="width:auto;" />
+              配置评论区置顶蓝链 / 搜索词跳转组件 (Include Pinned Blue-Link)
+            </label>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: FOOLPROOF DECISION VERDICT + CLEAR DASHBOARD -->
+  <div>
+    <!-- FOOLPROOF PLAIN-LANGUAGE DECISION VERDICT CARD -->
+    <div class="foolproof-verdict-card" id="foolproofVerdictCard">
+      <div class="verdict-badge-box" id="verdictBadgeBox">
+        <div style="font-size:11px;color:#a7f3d0;font-weight:700;">AI 投前决策总评</div>
+        <div style="font-size:18px;font-weight:800;color:#34d399;margin:4px 0;" id="verdictGradeTitle">🟢 推荐投放</div>
+        <div style="font-size:11.5px;color:#e2e8f0;" id="verdictSubScore">人货契合度 S级</div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:5px;" id="verdictHeadlineText">
+          正在为您用大白话算清这笔投放账...
+        </div>
+        <div style="font-size:12.5px;color:#cbd5e1;line-height:1.6;" id="verdictPlainSummary">
+          只需在左侧粘贴账号链接并确认产品售价，系统将自动算出预计曝光、京东/淘宝/美团搜索进店人数、总成交单量及扣成本后的净赚金额。
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:170px;">
+        <button class="btn btn-teal" style="padding:7px 10px;text-align:left;" onclick="openMatrixTabAndRun()">
+          🌟 <strong>多账号PK比价看板</strong><br/><span style="font-size:10px;opacity:0.85;">对比多个博主谁更划算</span>
+        </button>
+        <button class="btn btn-purple" style="padding:7px 10px;text-align:left;" onclick="switchTab('tab-agents', document.getElementById('btnTabAgents'))">
+          🤖 <strong>AI 四核诊号与改稿</strong><br/><span style="font-size:10px;opacity:0.85;">看专家团建议怎么改脚本</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STAGE 1 vs STAGE 2 LIFT COMPARISON BANNER -->
+    <div class="stage-compare-banner" id="stageComparisonBanner">
+      <div>
+        <span class="stage-badge stage2-badge" id="activeStageModeBadge">Stage 2 全维增强视图</span>
+        <span id="stageComparisonText" style="margin-left:8px;font-size:12px;color:#e2e8f0;">正在加载第一阶段基线与第二阶段增强对比...</span>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn" style="padding:4px 9px;font-size:11px;" onclick="runStage1Calculation()">看无脚本基础效果 (Stage 1)</button>
+        <button class="btn btn-purple" style="padding:4px 9px;font-size:11px;" onclick="runStage2Calculation()">看加脚本增强效果 (Stage 2)</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid" id="topKpiGrid"></div>
+
+    <!-- SIMPLIFIED PLAIN-LANGUAGE TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-influence', this)">📊 1. 曝光与互动详情</button>
+      <button class="tab-btn" onclick="switchTab('tab-ecommerce', this)">🛒 2. 京东/淘宝/美团带货</button>
+      <button class="tab-btn" onclick="switchTab('tab-roi', this)">💰 3. 算账与回本ROI</button>
+      <button class="tab-btn" id="btnTabMatrix" onclick="openMatrixTabAndRun()" style="border-color:#14b8a6;color:#5eead4;">🌟 4. 多账号PK选号看板</button>
+      <button class="tab-btn" id="btnTabAgents" onclick="switchTab('tab-agents', this)">🤖 5. AI四核诊号与改稿</button>
+      <button class="tab-btn" id="btnTabMonitor" onclick="switchTab('tab-monitor', this)">⏱️ 6. 投后每小时盯盘</button>
+      <button class="tab-btn" onclick="switchTab('tab-geo', this)">🔍 7. AI搜索推荐率(GEO)</button>
+      <button class="tab-btn" onclick="switchTab('tab-index', this)">📈 8. 30天搜索热度曲线</button>
+      <button class="tab-btn" onclick="switchTab('tab-report', this)">📄 9. 完整双语报告</button>
+    </div>
+
+    <!-- TAB 1: INFLUENCE -->
+    <div class="tab-pane active" id="tab-influence">
+      <div class="card">
+        <div class="card-header">
+          <h2>账号人货契合度与第一/第二阶段影响力对比 (Influence Cascade Comparison)</h2>
+          <span class="stage-badge" id="fitGradeBadge">S级契合</span>
+        </div>
+        <div id="influenceComparisonContent"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2>平台三级内容审核风控与 Marvis 历史作品抽样 (3-Tier Moderation & Historical Posts)</h2>
+        </div>
+        <div id="complianceAndPostsContent"></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: INDEX LIFT -->
+    <div class="tab-pane" id="tab-index">
+      <div class="card">
+        <div class="card-header">
+          <h2>四大平台搜索指数提升测算 (百度指数 / 微信指数 / 巨量算数 / 小红书搜索指数)</h2>
+          <span class="stage-badge" id="adstockModelBadge">Weibull PDF Adstock + Hill Saturation</span>
+        </div>
+        <div id="indexLiftTableContainer"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2>30天搜索指数脉冲与长尾衰减时序图 (30-Day Adstock Carryover Curve)</h2>
+        </div>
+        <div id="indexCurveSvgContainer" style="width:100%;overflow-x:auto;"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: E-COMMERCE -->
+    <div class="tab-pane" id="tab-ecommerce">
+      <div class="card">
+        <div class="card-header">
+          <h2>跨平台电商搜索外溢漏斗与货架转化 (京东 JD / 淘天 Taobao-Tmall / 美团闪购·买药 Meituan)</h2>
+        </div>
+        <div id="ecommerceBarsContainer" style="margin-bottom:14px;"></div>
+        <div id="ecommerceTableContainer"></div>
+      </div>
+    </div>
+
+    <!-- TAB 4: GEO -->
+    <div class="tab-pane" id="tab-geo">
+      <div class="card">
+        <div class="card-header">
+          <h2>GEO 生成式引擎优化效果 (KDD 2024 PAWC & 8大AI引擎模型声量份额 SoM)</h2>
+          <span class="stage-badge stage2-badge">KDD 2024 GEO Framework</span>
+        </div>
+        <div id="geoContentContainer"></div>
+      </div>
+    </div>
+
+    <!-- TAB 5: ROI -->
+    <div class="tab-pane" id="tab-roi">
+      <div class="card">
+        <div class="card-header">
+          <h2>全链路 ROI、麦肯锡口袋价格瀑布与 Monte Carlo 风险模拟 (Unit Economics & Sensitivity)</h2>
+        </div>
+        <div id="roiContentContainer"></div>
+      </div>
+    </div>
+
+    <!-- TAB 6: 4-AGENT COLLABORATIVE HUB (DeepSeek + Antigravity + Marvis + Codex) -->
+    <div class="tab-pane" id="tab-agents">
+      <div class="card">
+        <div class="card-header">
+          <h2>四核大模型与智能体协同会诊中心 (DeepSeek + Antigravity + Marvis + Codex Hub)</h2>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-teal" onclick="triggerLiveAgentCouncil()">⚡ 触发四核实时深度推理会诊</button>
+            <button class="btn btn-purple" onclick="applyRecommendedScript()">✨ 一键采用AI优化高GEO脚本并重算</button>
+          </div>
+        </div>
+        <div id="agentCouncilContainer"></div>
+      </div>
+    </div>
+
+    <!-- TAB 7: HOURLY RECURRING ACCOUNT MONITORING -->
+    <div class="tab-pane" id="tab-monitor">
+      <div class="card">
+        <div class="card-header">
+          <h2>已发布账号与作品每小时循环实时监控系统 (Hourly Recurring Marvis Monitor & Hawkes Velocity Tracker)</h2>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <select id="monitorScenarioSelect" style="width:auto;padding:5px 8px;font-size:11.5px;">
+              <option value="viral_breakout">模拟态势：🔥 爆款破圈 (Viral Breakout)</option>
+              <option value="normal_decay">模拟态势：📊 平稳长尾 (Normal Decay)</option>
+              <option value="throttled">模拟态势：⚠️ 异常限流预警 (Throttled)</option>
+            </select>
+            <button class="btn btn-teal" onclick="addCurrentToHourlyMonitor()">➕ 将当前账号加入每小时监控</button>
+            <button class="btn btn-primary" onclick="refreshMonitorList()">🔄 刷新监控面板</button>
+          </div>
+        </div>
+        <div id="hourlyMonitorContainer"></div>
+      </div>
+    </div>
+
+    <!-- TAB 8: MULTI-ACCOUNT DETECTION & MATRIX PORTFOLIO ANALYSIS BOARD -->
+    <div class="tab-pane" id="tab-matrix">
+      <div class="card">
+        <div class="card-header">
+          <h2>多账号批量检测与跨平台矩阵组合寻优中心 (Multi-Account Detection & Matrix Portfolio Console)</h2>
+          <span class="stage-badge" style="background:rgba(20,184,166,0.2);color:#5eead4;border-color:#14b8a6;">Sainsbury 去重 + 跨平台共振 + 边际ROAS预算规划</span>
+        </div>
+        <div class="form-grid" style="margin-bottom:10px;">
+          <div class="form-full">
+            <label>批量输入候选社媒账号主页链接或内置账号代号（每行一个，支持小红书/抖音/B站/视频号混排实时检测）</label>
+            <textarea id="matrixAccountsInput" rows="4" placeholder="每行输入一个社媒账号链接或代号...">https://www.xiaohongshu.com/user/profile/64a8b91c000000001203d9f1
+xhs_medical_skincare_kol
+douyin_health_otc_kol
+bili_hardcore_tech_review
+channels_family_wellness_kol</textarea>
+          </div>
+          <div>
+            <label>矩阵战役规划总预算 / Matrix Total Budget (¥)</label>
+            <input type="number" id="matrixTotalBudgetInput" value="95000" step="1000" />
+          </div>
+          <div>
+            <label>排行榜默认排序维度 / Sort Ranking By</label>
+            <select id="matrixSortSelect" onchange="if(LAST_MATRIX_RESULT) renderMultiAccountMatrix(LAST_MATRIX_RESULT);">
+              <option value="efficiency">综合效能得分 (Composite Efficiency Score)</option>
+              <option value="roas">全域前端 ROAS (Omni ROAS)</option>
+              <option value="fit">人货契合度得分 (Account-Product Fit)</option>
+              <option value="views">预计总曝光量 (Stage 2 Expected Views)</option>
+              <option value="search_uv">三大电商回搜 UV (JD/Tmall/Meituan UV)</option>
+            </select>
+          </div>
+          <div class="form-full" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:2px;">
+            <button class="btn btn-teal" style="flex:2;padding:8px;" onclick="runMultiAccountMatrixAnalysis()">
+              ⚡ 一键运行多账号批量检测与跨平台矩阵组合精算 (Run Multi-Account Matrix Analysis)
+            </button>
+            <button class="btn btn-purple" style="flex:1;padding:8px;" onclick="addCurrentFormAccountToMatrixList()">
+              ➕ 将左侧当前账号追加至矩阵池
+            </button>
+            <button class="btn" style="padding:8px;" onclick="resetDefaultMatrixPool()">
+              🔄 恢复跨平台5账号示范池
+            </button>
+          </div>
+        </div>
+        <div id="matrixPortfolioSummaryContainer"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>多账号效能象限气泡矩阵图 (人货契合度 × 全域ROAS × 曝光量 Bubble Matrix) & 电商渠道回搜结构对比</h2>
+        </div>
+        <div id="matrixVisualChartContainer"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>多账号全维横向检测 PK 排行榜 (Side-by-Side KOL Detection & Efficiency Ranking Table)</h2>
+          <span class="stage-badge stage2-badge" id="matrixCountBadge">5 个账号已检测</span>
+        </div>
+        <div id="matrixRankingTableContainer" style="overflow-x:auto;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>AI 边际收益递减 (Hill Saturation) 矩阵总预算最优分配规划器 (Optimal Budget Allocator)</h2>
+          <span class="stage-badge" style="background:rgba(16,185,129,0.2);color:#6ee7b7;border-color:#10b981;" id="matrixOptLiftBadge">较均分预算提升 +0%</span>
+        </div>
+        <div id="matrixBudgetOptimizerContainer" style="overflow-x:auto;"></div>
+      </div>
+    </div>
+
+    <!-- TAB 9: REPORT -->
+    <div class="tab-pane" id="tab-report">
+      <div class="card">
+        <div class="card-header">
+          <h2>MBB 旗舰版中英双语测算报告预览 (Bilingual Markdown Report Preview)</h2>
+          <button class="btn btn-primary" onclick="exportMarkdownReport()">下载 .md 报告文件</button>
+        </div>
+        <pre class="report-pre" id="markdownReportPreview">正在加载测算引擎...</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let PRESETS_CACHE = {};
+  let LAST_RESULT = null;
+  let LAST_MARKDOWN = "";
+  let RECOMMENDED_SCRIPT_CACHE = "";
+  let LAST_CRAWLED_URL = "https://www.xiaohongshu.com/user/profile/64a8b91c000000001203d9f1";
+  let USER_LOCKED_BUDGET = false;
+  let LAST_SYNCED_PRODUCT_NAME = "科复佳医用透明质酸钠修复贴 (Kefujia Class-II Medical Dressing)";
+
+  function fmtNum(n) {
+    if (n === undefined || n === null || isNaN(n)) return "0";
+    return Number(n).toLocaleString("en-US");
+  }
+
+  function flashElement(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.borderColor = "#10b981";
+    el.style.boxShadow = "0 0 0 2px rgba(16, 185, 129, 0.35)";
+    setTimeout(() => {
+      el.style.borderColor = "";
+      el.style.boxShadow = "";
+    }, 4500);
+  }
+
+  function switchTab(tabId, btnEl) {
+    document.querySelectorAll(".tab-pane").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+    document.getElementById(tabId).classList.add("active");
+    if (btnEl) btnEl.classList.add("active");
+  }
+
+  function switchModality(paneId, btnEl) {
+    document.querySelectorAll(".mod-pane").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".mod-btn").forEach(el => el.classList.remove("active"));
+    document.getElementById(paneId).classList.add("active");
+    if (btnEl) btnEl.classList.add("active");
+  }
+
+  function showMultimodalFeedback(html) {
+    const box = document.getElementById("multimodalFeedbackBox");
+    box.style.display = "block";
+    box.innerHTML = html;
+  }
+
+  function applyStructuredExtraction(structured, visualMetrics) {
+    if (visualMetrics && visualMetrics.valid_image) {
+      document.getElementById("visualCtrMult").value = visualMetrics.visual_ctr_multiplier || 1.0;
+      document.getElementById("visualScore100").value = visualMetrics.visual_aesthetics_score_100 || 82;
+    }
+    if (!structured) return;
+    // Only overwrite accountUrl if the extracted URL is a social profile link
+    if (structured.account_url && /(xiaohongshu\.com|xhslink\.com|douyin\.com|bilibili\.com|weixin\.qq\.com)/i.test(structured.account_url)) {
+      document.getElementById("accountUrl").value = structured.account_url;
+      if (structured.platform) document.getElementById("platformSelect").value = structured.platform;
+    }
+
+    const ao = structured.account_overrides || {};
+    if (ao.account_name) document.getElementById("accountName").value = ao.account_name;
+    if (ao.followers) document.getElementById("followers").value = ao.followers;
+    if (ao.avg_views) {
+      document.getElementById("avgViews").value = ao.avg_views;
+      document.getElementById("medianViews").value = Math.round(ao.avg_views * 0.82);
+    }
+    if (ao.avg_likes) document.getElementById("avgLikes").value = ao.avg_likes;
+    if (ao.avg_collects) document.getElementById("avgCollects").value = ao.avg_collects;
+    if (ao.avg_comments) document.getElementById("avgComments").value = ao.avg_comments;
+    if (ao.avg_shares) document.getElementById("avgShares").value = ao.avg_shares;
+
+    const po = structured.product_overrides || {};
+    if (po.product_name) {
+      document.getElementById("productName").value = po.product_name;
+      LAST_SYNCED_PRODUCT_NAME = po.product_name;
+      flashElement("productName");
+    }
+    if (po.brand_name) { document.getElementById("brandName").value = po.brand_name; flashElement("brandName"); }
+    if (po.category) { document.getElementById("productCategory").value = po.category; flashElement("productCategory"); }
+    if (po.selling_price_rmb) {
+      document.getElementById("sellingPriceRmb").value = po.selling_price_rmb;
+      flashElement("sellingPriceRmb");
+      const priceHint = document.getElementById("priceSourceHint");
+      if (priceHint) {
+        priceHint.textContent = po.price_is_benchmark_estimate ? "品类基准估算价" : "文档提取价";
+      }
+    }
+    if (po.msrp_rmb) { document.getElementById("msrpRmb").value = po.msrp_rmb; flashElement("msrpRmb"); }
+    if (po.campaign_budget_rmb) {
+      document.getElementById("campaignBudgetRmb").value = po.campaign_budget_rmb;
+      USER_LOCKED_BUDGET = true;
+      const budgetHint = document.getElementById("budgetSourceHint");
+      if (budgetHint) budgetHint.textContent = "方案提取预算";
+      flashElement("campaignBudgetRmb");
+    }
+    if (po.core_selling_points && po.core_selling_points.length) {
+      document.getElementById("sellingPoints").value = po.core_selling_points.map((s, idx) => `${idx + 1}. ${s}`).join("\n");
+      flashElement("sellingPoints");
+    }
+    if (po.target_audience) {
+      document.getElementById("targetAudience").value = po.target_audience;
+      flashElement("targetAudience");
+    }
+
+    const s2 = structured.stage2_overrides || {};
+    if (s2.topics_hashtags && s2.topics_hashtags.length) {
+      document.getElementById("topicsInput").value = s2.topics_hashtags.join(" ");
+      flashElement("topicsInput");
+    }
+    if (s2.campaign_theme) { document.getElementById("campaignTheme").value = s2.campaign_theme; flashElement("campaignTheme"); }
+    if (s2.script_content_candidate) { document.getElementById("scriptContent").value = s2.script_content_candidate; flashElement("scriptContent"); }
+  }
+
+  async function smartGenerateStage2FromCurrentForm(silent = false) {
+    const payload = collectFormPayload();
+    try {
+      const resp = await fetch("/api/generate/stage2_script", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          account: payload.account_overrides,
+          product: payload.product
+        })
+      });
+      const data = await resp.json();
+      if (data.success && data.stage2_generated) {
+        const g = data.stage2_generated;
+        if (g.topics && g.topics.length) {
+          document.getElementById("topicsInput").value = g.topics.join(" ");
+          flashElement("topicsInput");
+        }
+        if (g.campaign_theme) {
+          document.getElementById("campaignTheme").value = g.campaign_theme;
+          flashElement("campaignTheme");
+        }
+        if (g.script_content) {
+          document.getElementById("scriptContent").value = g.script_content;
+          flashElement("scriptContent");
+        }
+        LAST_SYNCED_PRODUCT_NAME = payload.product.product_name;
+        if (!silent) {
+          showMultimodalFeedback(
+            `🪄 已根据当前账号【<strong>${g.generated_for_account}</strong>】与产品【<strong>${g.generated_for_product}</strong>】智能生成专属推广话题、核心主题与4段式高GEO脚本，正在执行第二阶段全维精算...`
+          );
+          await runStage2Calculation();
+        }
+      }
+    } catch (e) {
+      console.error("Smart generate stage2 error:", e);
+    }
+  }
+
+  async function ingestRawText() {
+    const txt = document.getElementById("rawTextInput").value.trim();
+    if (!txt) return;
+    const resp = await fetch("/api/ingest/multimodal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ modality: "text", text: txt })
+    });
+    const data = await resp.json();
+    if (data.success) {
+      applyStructuredExtraction(data.structured_fields, null);
+      showMultimodalFeedback(`✅ 文本智能解析完成 (${data.text_length} 字)，已自动回填识别到的账号/产品/卖点/脚本字段并重算！`);
+      await runStage2Calculation();
+    }
+  }
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleFileUpload(inputEl) {
+    const file = inputEl.files && inputEl.files[0];
+    if (!file) return;
+    showMultimodalFeedback(`⏳ 正在深度解析上传文件: <strong>${file.name}</strong> (${(file.size/1024).toFixed(1)} KB) ...`);
+    try {
+      const b64 = await fileToBase64(file);
+      const resp = await fetch("/api/ingest/multimodal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modality: "file", filename: file.name, data_base64: b64 })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        applyStructuredExtraction(data.structured_fields, null);
+        const sf = data.structured_fields || {};
+        const po = sf.product_overrides || {};
+        const s2 = sf.stage2_overrides || {};
+        const sps = po.core_selling_points || [];
+        const spHtml = sps.length
+          ? `<div style="margin-top:5px; padding:6px 8px; background:rgba(6,78,59,0.35); border:1px solid rgba(16,185,129,0.4); border-radius:4px; color:#d1fae5; font-size:11.5px;">` +
+            `<strong>✨ 提取到的核心功效与卖点 (${sps.length} 条，已同步填入左侧【核心功效与卖点】框)：</strong><br/>` +
+            sps.map((item, i) => `${i + 1}. ${item}`).join("<br/>") +
+            `</div>`
+          : "";
+        const previewSnippet = (data.extracted_text_preview || "").slice(0, 320).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        const charCount = data.extracted_char_count || (data.extracted_text_preview ? data.extracted_text_preview.length : 0);
+        showMultimodalFeedback(
+          `<div>✅ <strong>${file.name}</strong> 解析成功！引擎: <code>${data.file_type}</code> | 提取正文: <strong>${charCount.toLocaleString()} 字</strong></div>` +
+          `<div style="margin-top:4px; color:#a7f3d0;">📌 已自动映射回填：` +
+          `产品【<strong>${po.product_name || "已保留"}</strong>】 | ` +
+          `品牌【<strong>${po.brand_name || "已保留"}</strong>】 | ` +
+          `卖点【<strong>${sps.length} 条</strong>】 | ` +
+          `话题【<strong>${(s2.topics_hashtags || []).length} 个</strong>】 | 推广脚本已生成并重算！</div>` +
+          spHtml +
+          (previewSnippet ? `<div style="margin-top:5px; padding:6px 8px; background:rgba(15,23,42,0.75); border-radius:4px; color:#94a3b8; font-size:11px; max-height:68px; overflow-y:auto; white-space:pre-wrap;">📄 原文提取预览：${previewSnippet}...</div>` : "")
+        );
+        await runStage2Calculation();
+      } else {
+        showMultimodalFeedback(`❌ 文件解析失败: ${data.error || "未知错误"}`);
+      }
+    } catch (err) {
+      showMultimodalFeedback(`❌ 文件上传或解析异常: ${err}`);
+    } finally {
+      inputEl.value = "";
+    }
+  }
+
+  async function handleImageUpload(inputEl, isScreenshot = false, customBlob = null) {
+    const file = customBlob || (inputEl && inputEl.files && inputEl.files[0]);
+    if (!file) return;
+    const fname = file.name || (isScreenshot ? "clipboard_screenshot.png" : "uploaded_image.png");
+    showMultimodalFeedback(`⏳ 正在调用 Windows WinRT 中文OCR + Pillow 视觉算法分析图像: ${fname} ...`);
+    const b64 = await fileToBase64(file);
+    const resp = await fetch("/api/ingest/multimodal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        modality: isScreenshot ? "screenshot" : "image",
+        filename: fname,
+        platform: document.getElementById("platformSelect").value,
+        data_base64: b64
+      })
+    });
+    const data = await resp.json();
+    if (data.success) {
+      const vm = data.visual_metrics || {};
+      const ocr = data.ocr_result || {};
+      applyStructuredExtraction(data.structured_fields, vm);
+      showMultimodalFeedback(
+        `✅ 图像解析完成！分辨率 ${vm.width}×${vm.height} | 视觉美学分: <strong>${vm.visual_aesthetics_score_100}分</strong> ` +
+        `(封面CTR乘数 <strong>${vm.visual_ctr_multiplier}x</strong>) | WinRT OCR 识别 ${ocr.line_count || 0} 行文字 (${ocr.elapsed_ms || 0}ms)`
+      );
+      await runStage2Calculation();
+    }
+  }
+
+  // Global & dropzone paste listener for Screenshot Paste (Ctrl+V)
+  window.addEventListener("paste", (e) => {
+    const items = (e.clipboardData && e.clipboardData.items) || [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") !== -1) {
+        const blob = items[i].getAsFile();
+        handleImageUpload(null, true, blob);
+        break;
+      }
+    }
+  });
+
+  async function initWorkbench() {
+    try {
+      const resp = await fetch("/api/presets");
+      const data = await resp.json();
+      if (data.success) {
+        PRESETS_CACHE = data.presets || {};
+        updateAgentStatusPills(data.agents_hub_status);
+      }
+      await crawlAccountViaMarvis(true);
+      await refreshMonitorList();
+    } catch (e) {
+      console.error("Init error:", e);
+    }
+  }
+
+  function updateAgentStatusPills(hubStatus) {
+    if (!hubStatus || !hubStatus.providers) return;
+    const p = hubStatus.providers;
+    if (p.deepseek) {
+      document.getElementById("pillDeepSeek").textContent = `DeepSeek: ${p.deepseek.connected ? '已接入 (V3/R1)' : '待机'}`;
+    }
+    if (p.antigravity) {
+      document.getElementById("pillAntigravity").textContent = `Antigravity: ${p.antigravity.connected ? '已接入 (AGY)' : '待机'}`;
+    }
+    if (p.marvis) {
+      document.getElementById("pillMarvis").textContent = `Marvis 爬虫: 在线 (Port ${p.marvis.agent_browser_daemon_port || 3765})`;
+    }
+    if (p.codex) {
+      document.getElementById("pillCodex").textContent = `Codex: ${p.codex.connected ? '已接入 (' + p.codex.primary_model + ')' : '待机'}`;
+    }
+  }
+
+  function loadPreset(presetId) {
+    const p = PRESETS_CACHE[presetId];
+    if (!p) return;
+    USER_LOCKED_BUDGET = false;
+    document.getElementById("accountUrl").value = p.account_url || "";
+    LAST_CRAWLED_URL = (p.account_url || "").trim();
+    fetch("/api/crawl", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ account_url: p.account_key, use_marvis_live: false })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success && data.account_profile) {
+        populateAccountForm(data.account_profile, p.account_url, false);
+      }
+      const prod = p.product || {};
+      document.getElementById("productName").value = prod.product_name || "";
+      LAST_SYNCED_PRODUCT_NAME = prod.product_name || "";
+      document.getElementById("brandName").value = prod.brand_name || "";
+      document.getElementById("productCategory").value = prod.category || "";
+      document.getElementById("msrpRmb").value = prod.msrp_rmb ?? 148;
+      document.getElementById("sellingPriceRmb").value = prod.selling_price_rmb ?? 118;
+      document.getElementById("campaignBudgetRmb").value = prod.campaign_budget_rmb ?? 18500;
+      const priceHint = document.getElementById("priceSourceHint");
+      if (priceHint) priceHint.textContent = "基准案例价";
+      const budgetHint = document.getElementById("budgetSourceHint");
+      if (budgetHint) budgetHint.textContent = "基准案例预算";
+      document.getElementById("cogsRate").value = prod.cogs_rate ?? 0.22;
+      document.getElementById("commissionRate").value = prod.platform_commission_rate ?? 0.05;
+      document.getElementById("repeatRate").value = prod.repeat_purchase_rate_annual ?? 0.35;
+      document.getElementById("repeatOrders").value = prod.Repeat_orders_per_buyer ?? 2.4;
+      document.getElementById("sellingPoints").value = (prod.core_selling_points || []).join("\n");
+      document.getElementById("targetAudience").value = prod.target_audience || "";
+
+      const s2 = p.stage2 || {};
+      document.getElementById("topicsInput").value = (s2.topics_hashtags || []).join(" ");
+      document.getElementById("campaignTheme").value = s2.campaign_theme || "";
+      document.getElementById("postCountMatrix").value = s2.post_count_matrix ?? 1;
+      document.getElementById("complianceTrack").value = s2.account_compliance_track || "official_compliant";
+      document.getElementById("scriptContent").value = s2.script_content || "";
+      document.getElementById("pinnedLinkCheck").checked = s2.include_pinned_comment_link !== false;
+
+      runStage2Calculation();
+    });
+  }
+
+  let EXPERT_MODE_OPEN = false;
+  function toggleSimpleOrExpertMode() {
+    EXPERT_MODE_OPEN = !EXPERT_MODE_OPEN;
+    document.querySelectorAll("details.adv-drawer").forEach(el => {
+      el.open = EXPERT_MODE_OPEN;
+    });
+    const btn = document.getElementById("uiModeToggleBtn");
+    if (btn) {
+      btn.textContent = EXPERT_MODE_OPEN
+        ? "🔬 当前：专家全参模式 (点击切回极简傻瓜模式)"
+        : "✨ 当前：极简傻瓜模式 (点击展开专业参数)";
+    }
+  }
+
+  function populateAccountForm(prof, urlOverride, preserveBudget = false) {
+    document.getElementById("platformSelect").value = prof.platform || "xiaohongshu";
+    const resolvedUrl = urlOverride || prof.account_url || "";
+    document.getElementById("accountUrl").value = resolvedUrl;
+    if (resolvedUrl) LAST_CRAWLED_URL = resolvedUrl.trim();
+    document.getElementById("accountName").value = prof.account_name || "";
+    document.getElementById("followers").value = prof.followers || 100000;
+    document.getElementById("avgViews").value = prof.avg_views || 30000;
+    document.getElementById("medianViews").value = prof.median_views || 25000;
+    document.getElementById("avgLikes").value = prof.avg_likes || 1000;
+    document.getElementById("avgCollects").value = prof.avg_collects || 800;
+    document.getElementById("avgComments").value = prof.avg_comments || 150;
+    document.getElementById("avgShares").value = prof.avg_shares || 200;
+    document.getElementById("avg3sRet").value = prof.avg_3s_retention || 0.65;
+    document.getElementById("avgCompletion").value = prof.avg_completion_rate || 0.45;
+    if (!preserveBudget && !USER_LOCKED_BUDGET && prof.commercial_quote_rmb) {
+      document.getElementById("campaignBudgetRmb").value = prof.commercial_quote_rmb;
+      const budgetHint = document.getElementById("budgetSourceHint");
+      if (budgetHint) budgetHint.textContent = "博主刊例参考";
+    }
+    const qTitle = document.getElementById("quickAcctTitle");
+    const qMetrics = document.getElementById("quickAcctMetrics");
+    if (qTitle && qMetrics) {
+      const pCount = (prof.recent_posts || []).length;
+      qTitle.textContent = `✅ 已识别：[${prof.platform_cn || '小红书'}] ${prof.account_name || ''}`;
+      qMetrics.textContent = `👥 粉丝 ${fmtNum(prof.followers)} · 👁️ 均阅 ${fmtNum(prof.avg_views)} · ❤️ 均赞 ${fmtNum(prof.avg_likes)} · ⭐ 均藏 ${fmtNum(prof.avg_collects)} · 📑 实爬 ${pCount} 篇笔记`;
+    }
+  }
+
+  async function crawlAccountViaMarvis(autoRunCalc = true) {
+    const url = document.getElementById("accountUrl").value.trim();
+    if (!url) return;
+    showMultimodalFeedback("⏳ Marvis Stealth SSR 正在实时打开目标网址、提取 __INITIAL_STATE__ 真实博主数据与近期笔记...");
+    try {
+      const resp = await fetch("/api/ingest/multimodal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modality: "url", url: url, capture_screenshot: true })
+      });
+      const data = await resp.json();
+      if (data.success && data.account_profile) {
+        populateAccountForm(data.account_profile, url, false);
+        LAST_CRAWLED_URL = url;
+        if (data.visual_metrics && data.visual_metrics.valid_image) {
+          document.getElementById("visualCtrMult").value = data.visual_metrics.visual_ctr_multiplier || 1.0;
+          document.getElementById("visualScore100").value = data.visual_metrics.visual_aesthetics_score_100 || 82;
+        }
+        const meta = data.account_profile.crawl_metadata || {};
+        const pCount = (data.account_profile.recent_posts || []).length;
+        showMultimodalFeedback(
+          `✅ Marvis 实爬成功 (${meta.elapsed_ms || 15}ms) | 账号: <strong>${data.account_profile.account_name}</strong> ` +
+          `| 粉丝: <strong>${fmtNum(data.account_profile.followers)}</strong> | 实爬笔记: <strong>${pCount}篇</strong> | 层级: ${meta.data_source_tier || 'Tier 1'}`
+        );
+        if (autoRunCalc) {
+          await runStage2Calculation();
+        }
+      }
+    } catch (e) {
+      showMultimodalFeedback("⚠️ Marvis 抓取返回异常，已自动切换至本地实爬校准基准库。");
+    }
+  }
+
+  function collectFormPayload() {
+    const rawTopics = document.getElementById("topicsInput").value.trim();
+    const topics = rawTopics ? rawTopics.split(/[\s,，]+/).filter(Boolean) : [];
+    const rawPoints = document.getElementById("sellingPoints").value.trim();
+    const sellingPoints = rawPoints
+      ? rawPoints
+          .split(/\n+/)
+          .map(s => s.replace(/^\d+[\.\、\)\s]+/, "").trim())
+          .filter(Boolean)
+      : [];
+
+    return {
+      account_url: document.getElementById("accountUrl").value.trim(),
+      platform_override: document.getElementById("platformSelect").value,
+      use_marvis_live: false,
+      post_count_matrix: parseInt(document.getElementById("postCountMatrix").value || "1", 10),
+      account_overrides: {
+        platform: document.getElementById("platformSelect").value,
+        account_name: document.getElementById("accountName").value.trim(),
+        followers: parseInt(document.getElementById("followers").value || "100000", 10),
+        avg_views: parseInt(document.getElementById("avgViews").value || "30000", 10),
+        median_views: parseInt(document.getElementById("medianViews").value || "25000", 10),
+        avg_likes: parseInt(document.getElementById("avgLikes").value || "1000", 10),
+        avg_collects: parseInt(document.getElementById("avgCollects").value || "800", 10),
+        avg_comments: parseInt(document.getElementById("avgComments").value || "150", 10),
+        avg_shares: parseInt(document.getElementById("avgShares").value || "200", 10),
+        avg_3s_retention: parseFloat(document.getElementById("avg3sRet").value || "0.65"),
+        avg_completion_rate: parseFloat(document.getElementById("avgCompletion").value || "0.45")
+      },
+      product: {
+        product_name: document.getElementById("productName").value.trim(),
+        brand_name: document.getElementById("brandName").value.trim(),
+        category: document.getElementById("productCategory").value.trim(),
+        msrp_rmb: parseFloat(document.getElementById("msrpRmb").value || "148"),
+        selling_price_rmb: parseFloat(document.getElementById("sellingPriceRmb").value || "118"),
+        campaign_budget_rmb: parseFloat(document.getElementById("campaignBudgetRmb").value || "18500"),
+        cogs_rate: parseFloat(document.getElementById("cogsRate").value || "0.22"),
+        gross_margin_rate: 1.0 - parseFloat(document.getElementById("cogsRate").value || "0.22"),
+        platform_commission_rate: parseFloat(document.getElementById("commissionRate").value || "0.05"),
+        repeat_purchase_rate_annual: parseFloat(document.getElementById("repeatRate").value || "0.35"),
+        Repeat_orders_per_buyer: parseFloat(document.getElementById("repeatOrders").value || "2.4"),
+        core_selling_points: sellingPoints,
+        target_audience: document.getElementById("targetAudience").value.trim()
+      },
+      stage2: {
+        topics_hashtags: topics,
+        campaign_theme: document.getElementById("campaignTheme").value.trim(),
+        post_count_matrix: parseInt(document.getElementById("postCountMatrix").value || "1", 10),
+        account_compliance_track: document.getElementById("complianceTrack").value,
+        script_content: document.getElementById("scriptContent").value,
+        include_pinned_comment_link: document.getElementById("pinnedLinkCheck").checked,
+        visual_ctr_multiplier: parseFloat(document.getElementById("visualCtrMult").value || "1.0"),
+        visual_aesthetics_score: parseFloat(document.getElementById("visualScore100").value || "82.0")
+      }
+    };
+  }
+
+  async function runStage1Calculation() {
+    const currentUrl = document.getElementById("accountUrl").value.trim();
+    if (currentUrl && currentUrl !== LAST_CRAWLED_URL && currentUrl.startsWith("http")) {
+      await crawlAccountViaMarvis(false);
+    }
+    const payload = collectFormPayload();
+    const resp = await fetch("/api/calculate/stage1", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await resp.json();
+    if (data.success) {
+      LAST_RESULT = data.result;
+      LAST_MARKDOWN = data.markdown_report;
+      renderDashboard(data.result, false);
+      document.getElementById("markdownReportPreview").textContent = data.markdown_report;
+    }
+  }
+
+  async function runStage2Calculation() {
+    const currentUrl = document.getElementById("accountUrl").value.trim();
+    if (currentUrl && currentUrl !== LAST_CRAWLED_URL && currentUrl.startsWith("http")) {
+      await crawlAccountViaMarvis(false);
+    }
+    // Check if the product name was manually changed while Stage 2 script still references an older preset product
+    const currentProdName = document.getElementById("productName").value.trim();
+    const currentScript = document.getElementById("scriptContent").value || "";
+    const shortNewProd = currentProdName.split(/[\s(（®]/)[0];
+    if (
+      currentProdName &&
+      currentProdName !== LAST_SYNCED_PRODUCT_NAME &&
+      shortNewProd.length >= 2 &&
+      !currentScript.includes(shortNewProd)
+    ) {
+      await smartGenerateStage2FromCurrentForm(true);
+    }
+    const payload = collectFormPayload();
+    const resp = await fetch("/api/calculate/stage2", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await resp.json();
+    if (data.success) {
+      LAST_RESULT = data.result;
+      LAST_MARKDOWN = data.markdown_report;
+      renderDashboard(data.result, true);
+      document.getElementById("markdownReportPreview").textContent = data.markdown_report;
+    }
+  }
+
+  function updateWorkflowStepperAndBanner(res, isStage2) {
+    const s1 = isStage2 ? res.stage1_baseline : res;
+    const acct = s1.account_summary || {};
+    const prod = s1.product_summary || {};
+    const fit = s1.account_product_fit || {};
+    const s1Inf = s1.influence_effect || {};
+    const s1Ecom = s1.ecommerce_search_lift_effect || {};
+
+    // Step 1
+    const step1Main = document.getElementById("step1Main");
+    const step1Sub = document.getElementById("step1Sub");
+    if (step1Main && step1Sub) {
+      const postCnt = (acct.recent_posts || []).length;
+      const tierStr = (acct.crawl_metadata && acct.crawl_metadata.data_source_tier) ? acct.crawl_metadata.data_source_tier.split(" ")[0] : "Marvis";
+      step1Main.textContent = `${acct.platform_cn || '小红书'} · ${acct.account_name || ''}`;
+      step1Sub.textContent = `粉丝 ${fmtNum(acct.followers)} | 实爬笔记 ${postCnt} 篇 | ${tierStr}`;
+    }
+
+    // Step 2
+    const step2Main = document.getElementById("step2Main");
+    const step2Sub = document.getElementById("step2Sub");
+    if (step2Main && step2Sub) {
+      const spCount = (prod.core_selling_points || []).length;
+      step2Main.textContent = `${prod.product_name || ''}`;
+      step2Sub.textContent = `成交价 ¥${fmtNum(prod.selling_price_rmb)} | 预算 ¥${fmtNum(prod.campaign_budget_rmb)} | 卖点 ${spCount} 条`;
+    }
+
+    // Step 3 & Stage Comparison Banner
+    const step3Main = document.getElementById("step3Main");
+    const step3Sub = document.getElementById("step3Sub");
+    const badgeEl = document.getElementById("activeStageModeBadge");
+    const bannerTxt = document.getElementById("stageComparisonText");
+
+    if (isStage2) {
+      const inf2 = res.enhanced_influence_effect || {};
+      const ecom2 = res.enhanced_ecommerce_search_lift_effect || {};
+      const roi2 = (res.roi_and_unit_economics && res.roi_and_unit_economics.roi_and_profitability) || {};
+      const attr2 = (res.roi_and_unit_economics && res.roi_and_unit_economics.omni_channel_gmv_attribution) || {};
+      if (step3Main && step3Sub) {
+        step3Main.textContent = `Stage 2 全维增强 · ${fit.fit_grade ? fit.fit_grade.split(' ')[0] : '高契合'}`;
+        step3Sub.textContent = `曝光 +${inf2.views_lift_vs_stage1_pct}% | GMV +${attr2.gmv_lift_vs_stage1_pct}% | ROAS ${roi2.omni_channel_roas}x`;
+      }
+      if (badgeEl && bannerTxt) {
+        badgeEl.textContent = "🚀 Stage 2 全维增强视图 (含话题+主题+脚本+GEO+ROI)";
+        badgeEl.style.background = "rgba(139, 92, 246, 0.25)";
+        badgeEl.style.color = "#c4b5fd";
+        const matchedKws = (fit.matched_historical_keywords || []).slice(0, 5).join("、") || "垂直领域受众协同";
+        bannerTxt.innerHTML =
+          `<strong>Stage 1 基线 → Stage 2 叠加跃升：</strong> ` +
+          `曝光 <strong>${fmtNum(s1Inf.expected_views)} → ${fmtNum(inf2.expected_views)}</strong> (<span class="delta-up">+${inf2.views_lift_vs_stage1_pct}%</span>) | ` +
+          `电商回搜 <strong>${fmtNum(s1Ecom.total_cross_platform_search_uv)} → ${fmtNum(ecom2.total_cross_platform_search_uv)} UV</strong> (<span class="delta-up">+${ecom2.search_uv_lift_vs_stage1_pct}%</span>) | ` +
+          `全域GMV <strong>¥${fmtNum(attr2.stage1_baseline_total_gmv_rmb)} → ¥${fmtNum(attr2.omni_total_gmv_rmb)}</strong> (<span class="delta-up">+${attr2.gmv_lift_vs_stage1_pct}%</span>) | ` +
+          `人货共现词: <code>${matchedKws}</code>`;
+      }
+
+      // Populate Foolproof Plain-Language Verdict Card (Stage 2)
+      const vGrade = document.getElementById("verdictGradeTitle");
+      const vSub = document.getElementById("verdictSubScore");
+      const vHead = document.getElementById("verdictHeadlineText");
+      const vBody = document.getElementById("verdictPlainSummary");
+      const vBox = document.getElementById("verdictBadgeBox");
+      if (vGrade && vHead && vBody) {
+        const roas = Number(roi2.omni_channel_roas || 0);
+        const netProfit = Number(roi2.net_profit_after_ad_spend_rmb || 0);
+        const fitShort = fit.fit_grade ? fit.fit_grade.split(" ")[0] : "A级";
+        if (roas >= 1.5 || netProfit > 0) {
+          vGrade.textContent = "🟢 强烈推荐投放";
+          vGrade.style.color = "#34d399";
+          if (vBox) vBox.style.borderColor = "rgba(16, 185, 129, 0.65)";
+        } else if (roas >= 0.85) {
+          vGrade.textContent = "🟡 建议优化脚本投";
+          vGrade.style.color = "#fcd34d";
+          if (vBox) vBox.style.borderColor = "rgba(245, 158, 11, 0.65)";
+        } else {
+          vGrade.textContent = "🟠 建议压价或换号";
+          vGrade.style.color = "#fda4af";
+          if (vBox) vBox.style.borderColor = "rgba(244, 63, 94, 0.65)";
+        }
+        vSub.textContent = `人货契合 ${fitShort} · 回报率 ${roas}倍`;
+        vHead.innerHTML =
+          `💡 一句话算清账：花 <span style="color:#fcd34d;">¥${fmtNum(prod.campaign_budget_rmb)}</span> 找【${acct.account_name}】推广【${prod.product_name}】，预计全网总卖货 <span class="delta-up">¥${fmtNum(attr2.omni_total_gmv_rmb)}</span>（共 ${fmtNum(attr2.omni_total_orders)} 单）！`;
+        const profitPhrase = netProfit >= 0
+          ? `扣掉货品成本和推广费后<strong>净赚 <span class="delta-up">¥${fmtNum(netProfit)}</span></strong>`
+          : `建议将该博主报价砍至 <strong>¥${fmtNum(Math.round(attr2.omni_total_gmv_rmb * 0.45))}</strong> 以内或点击右侧【多账号PK比价看板】挑选更高性价比腰部达人`;
+        vBody.innerHTML =
+          `① <strong>能看多少人：</strong>预计获得 <strong>${fmtNum(inf2.expected_views)}</strong> 次曝光，产生 <strong>${fmtNum(inf2.total_interactions)}</strong> 次点赞收藏评论；<br/>` +
+          `② <strong>能带多少货：</strong>带动 <strong>${fmtNum(ecom2.total_cross_platform_search_uv)} 人</strong>去京东/淘宝/美团搜索该产品，进店 <strong>${fmtNum(ecom2.total_store_visit_uv)} 人</strong>，${profitPhrase}；<br/>` +
+          `③ <strong>加种草脚本的好处：</strong>使用左侧 AI 生成的 4 段式种草脚本后，比不加脚本直接发普通日常笔记多赚 <strong class="delta-up">+${attr2.gmv_lift_vs_stage1_pct}%</strong> 销售额！`;
+      }
+    } else {
+      if (step3Main && step3Sub) {
+        step3Main.textContent = `Stage 1 纯基线视图 · ${fit.fit_grade ? fit.fit_grade.split(' ')[0] : '基线'}`;
+        step3Sub.textContent = `基线曝光 ${fmtNum(s1Inf.expected_views)} | 回搜 ${fmtNum(s1Ecom.total_cross_platform_search_uv)} UV`;
+      }
+      if (badgeEl && bannerTxt) {
+        badgeEl.textContent = "📊 Stage 1 第一阶段基线视图 (仅账号历史+产品)";
+        badgeEl.style.background = "rgba(59, 130, 246, 0.25)";
+        badgeEl.style.color = "#93c5fd";
+        const matchedKws = (fit.matched_historical_keywords || []).slice(0, 5).join("、") || "垂直领域受众协同";
+        bannerTxt.innerHTML =
+          `当前仅展示【账号历史 + 推广产品】第一阶段基线预测（人货共现词: <code>${matchedKws}</code>）。点击右侧 <strong>“看加脚本增强效果 (Stage 2)”</strong> 即可叠加话题、主题与脚本，解锁 8大AI引擎 GEO 与麦肯锡全域 ROI！`;
+      }
+      const vGrade = document.getElementById("verdictGradeTitle");
+      const vSub = document.getElementById("verdictSubScore");
+      const vHead = document.getElementById("verdictHeadlineText");
+      const vBody = document.getElementById("verdictPlainSummary");
+      if (vGrade && vHead && vBody) {
+        const fitShort = fit.fit_grade ? fit.fit_grade.split(" ")[0] : "A级";
+        vGrade.textContent = "📊 基础测算模式";
+        vGrade.style.color = "#93c5fd";
+        vSub.textContent = `人货契合 ${fitShort} (未加脚本)`;
+        vHead.innerHTML = `💡 当前为【不加定制脚本】的基础预测：预计曝光 ${fmtNum(s1Inf.expected_views)} 次，带动电商回搜卖货 ¥${fmtNum(s1Ecom.total_attributed_search_gmv_rmb)}。`;
+        vBody.innerHTML = `👉 点击左侧紫色大按钮 <strong>【🚀 一键智能生成种草脚本 & 测算全网带货ROI】</strong>，让 AI 自动补齐黄金前3秒钩子与京东/淘宝/美团搜词引导，立即查看销量翻倍后的完整算账结果！`;
+      }
+    }
+  }
+
+  function renderDashboard(res, isStage2) {
+    const s1 = isStage2 ? res.stage1_baseline : res;
+    const acct = s1.account_summary;
+    if (acct && acct.account_name) {
+      // Preserve user/PDF campaign budget when re-rendering calculation output
+      populateAccountForm(acct, acct.account_url, true);
+    }
+    updateWorkflowStepperAndBanner(res, isStage2);
+    const fit = s1.account_product_fit;
+    const inf = isStage2 ? res.enhanced_influence_effect : s1.influence_effect;
+    const idx = isStage2 ? res.enhanced_index_lift_effect : s1.index_lift_effect;
+    const ecom = isStage2 ? res.enhanced_ecommerce_search_lift_effect : s1.ecommerce_search_lift_effect;
+
+    document.getElementById("fitGradeBadge").textContent = `${fit.fit_grade} (M_fit=${fit.fit_multiplier})`;
+    document.getElementById("adstockModelBadge").textContent = idx.adstock_model;
+
+    // Top KPI Grid
+    const topKpis = document.getElementById("topKpiGrid");
+    if (isStage2) {
+      const geo = res.geo_effect;
+      const roi = res.roi_and_unit_economics;
+      const prof = roi.roi_and_profitability;
+      const attr = roi.omni_channel_gmv_attribution;
+      topKpis.innerHTML = `
+        <div class="kpi-box">
+          <div class="kpi-title">预计总曝光量 / Expected Views</div>
+          <div class="kpi-val">${fmtNum(inf.expected_views)}</div>
+          <div class="kpi-sub">较Stage 1 <span class="delta-up">+${inf.views_lift_vs_stage1_pct}%</span> | 互动 ${fmtNum(inf.total_interactions)}</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-title">三大电商新增回搜UV (京东/淘天/美团)</div>
+          <div class="kpi-val">${fmtNum(ecom.total_cross_platform_search_uv)}</div>
+          <div class="kpi-sub">进店 ${fmtNum(ecom.total_store_visit_uv)} UV (<span class="delta-up">+${ecom.search_uv_lift_vs_stage1_pct}%</span> vs S1)</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-title">8大AI引擎平均声量份额 (GEO SoM)</div>
+          <div class="kpi-val">${geo.share_of_model_summary.avg_post_campaign_som_pct}%</div>
+          <div class="kpi-sub">基线 ${geo.share_of_model_summary.avg_baseline_som_pct}% (<span class="delta-up">+${geo.share_of_model_summary.avg_som_lift_pts} pts</span>) | PAWC +${geo.pawc_visibility_score.pawc_lift_pct}%</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-title">全渠道总归因 GMV (Omni GMV)</div>
+          <div class="kpi-val">¥${fmtNum(attr.omni_total_gmv_rmb)}</div>
+          <div class="kpi-sub">共 ${fmtNum(attr.omni_total_orders)} 单 (<span class="delta-up">+${attr.gmv_lift_vs_stage1_pct}%</span> vs Stage 1)</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-title">全域 ROAS & 净贡献毛利 ROI</div>
+          <div class="kpi-val">${prof.omni_channel_roas}x</div>
+          <div class="kpi-sub">扣成本净利: <span class="delta-up">¥${fmtNum(prof.net_profit_after_ad_spend_rmb)}</span> | LTV/CAC: ${prof.ltv_to_cac_ratio}x</div>
+        </div>
+      `;
+    } else {
+      topKpis.innerHTML = `
+        <div class="kpi-box">
+          <div class="kpi-title">[Stage 1] 预计总曝光量 / Baseline Views</div>
+          <div class="kpi-val">${fmtNum(inf.expected_views)}</div>
+          <div class="kpi-sub">独立触达 ${fmtNum(inf.unique_reach_uv)} UV | 互动 ${fmtNum(inf.total_interactions)}</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-title">[Stage 1] 平台算法分 / Native Score</div>
+          <div class="kpi-val">${fmtNum(inf.platform_algorithm_score.score_value)}</div>
+          <div class="kpi-sub">等价小红书 CES: ${fmtNum(inf.platform_algorithm_score.xiaohongshu_ces_equivalent)}</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-title">[Stage 1] 电商新增回搜UV (京东/淘天/美团)</div>
+          <div class="kpi-val">${fmtNum(ecom.total_cross_platform_search_uv)}</div>
+          <div class="kpi-sub">进店 ${fmtNum(ecom.total_store_visit_uv)} UV | 预计 ${fmtNum(ecom.total_expected_search_orders)} 单</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-title">[Stage 1] 跨平台回搜归因 GMV</div>
+          <div class="kpi-val">¥${fmtNum(ecom.total_attributed_search_gmv_rmb)}</div>
+          <div class="kpi-sub">补充话题/主题/脚本可解锁 Stage 2 GEO & ROI</div>
+        </div>
+      `;
+    }
+
+    // Tab 1: Influence
+    const s1Inf = s1.influence_effect;
+    const bd1 = s1Inf.breakdown;
+    const bd2 = inf.breakdown;
+    document.getElementById("influenceComparisonContent").innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>核心影响力维度 / Influence Dimension</th>
+            <th>第一阶段基线 (仅账号+产品) / Stage 1 Baseline</th>
+            <th>${isStage2 ? '第二阶段增强 (+话题/主题/脚本/视觉) / Stage 2 Enhanced' : '置信区间与说明 / Notes'}</th>
+            <th>${isStage2 ? '第二阶段增量提升 / Stage 2 Lift Δ' : '算法机制权重 / Weighting'}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>预计曝光/播放量 (Expected Views)</strong></td>
+            <td>${fmtNum(s1Inf.expected_views)}</td>
+            <td><strong>${isStage2 ? fmtNum(inf.expected_views) : `P10-P90: ${fmtNum(s1Inf.views_ci_p10_p90[0])} ~ ${fmtNum(s1Inf.views_ci_p10_p90[1])}`}</strong></td>
+            <td class="delta-up">${isStage2 ? '+' + inf.views_lift_vs_stage1_pct + '%' : 'M_fit=' + fit.fit_multiplier}</td>
+          </tr>
+          <tr>
+            <td><strong>点赞 / 收藏 / 评论 / 转发 (L / Fav / Cmt / Share)</strong></td>
+            <td>${fmtNum(bd1.likes)} / ${fmtNum(bd1.collects)} / ${fmtNum(bd1.comments)} / ${fmtNum(bd1.shares)}</td>
+            <td><strong>${fmtNum(bd2.likes)} / ${fmtNum(bd2.collects)} / ${fmtNum(bd2.comments)} / ${fmtNum(bd2.shares)}</strong></td>
+            <td class="delta-up">${isStage2 ? '互动总量 +' + inf.interactions_lift_vs_stage1_pct + '%' : 'CES权重: 1 / 1 / 4 / 4'}</td>
+          </tr>
+          <tr>
+            <td><strong>小红书等价 CES 综合评分 (XHS CES Equivalent)</strong></td>
+            <td>${fmtNum(s1Inf.platform_algorithm_score.xiaohongshu_ces_equivalent)}</td>
+            <td><strong>${fmtNum(inf.platform_algorithm_score.xiaohongshu_ces_equivalent)}</strong></td>
+            <td>Likes×1 + Collects×1 + Comments×4 + Shares×4 + Follows×8</td>
+          </tr>
+          <tr>
+            <td><strong>自激励霍克斯级联分支比 (Hawkes Branching Ratio n*)</strong></td>
+            <td>${s1Inf.cascade_dynamics.hawkes_branching_ratio_n_star}</td>
+            <td><strong>${inf.cascade_dynamics.hawkes_branching_ratio_n_star}</strong></td>
+            <td>二传裂变放大倍数: ${s1Inf.cascade_dynamics.cascade_amplification_factor}x</td>
+          </tr>
+          <tr>
+            <td><strong>黄金前3秒留存率 / 完播率 (3s Retention / Finish)</strong></td>
+            <td>${(s1Inf.cascade_dynamics.expected_3s_retention*100).toFixed(1)}% / ${(s1Inf.cascade_dynamics.expected_completion_rate*100).toFixed(1)}%</td>
+            <td><strong>${(inf.cascade_dynamics.expected_3s_retention*100).toFixed(1)}% / ${(inf.cascade_dynamics.expected_completion_rate*100).toFixed(1)}%</strong></td>
+            <td>热门池爆文概率 (Viral Pool Prob): <strong>${(inf.cascade_dynamics.viral_post_probability*100).toFixed(1)}%</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+
+    let modHtml = "";
+    if (isStage2) {
+      const nlp = res.script_nlp_and_compliance_analysis;
+      const comp = nlp.compliance;
+      const viols = comp.detected_violations || [];
+      modHtml += `
+        <div style="margin-bottom:10px;padding:10px 12px;background:#0f172a;border-left:4px solid ${viols.length ? '#f59e0b' : '#10b981'};border-radius:4px;">
+          <div><strong>三级内容审核与广告法合规状态 (3-Tier Moderation Status):</strong> ${comp.status}</div>
+          <div style="font-size:11.5px;color:#94a3b8;margin-top:4px;">
+            黄金前3秒钩子分: <strong>${nlp.hook_score}</strong> | 话题动能分: <strong>${nlp.topic_score}</strong> | 电商搜词锚点分: <strong>${nlp.anchor_score}</strong> | 封面视觉CTR乘数: <strong>${nlp.visual_ctr_multiplier}x (${nlp.visual_aesthetics_score}分)</strong> | 风控流量系数: <strong>${comp.traffic_moderation_factor}</strong>
+          </div>
+          ${viols.map(v => `<div style="margin-top:5px;color:#fbbf24;font-size:11.5px;">⚠️ [${v.rule}] 命中词: <code>${v.matched_terms.join(', ')}</code> → ${v.compliant_rewrite}</div>`).join("")}
+        </div>
+      `;
+    }
+    const posts = acct.recent_posts || [];
+    modHtml += posts.map(p => `
+      <div style="background:#0f172a;border:1px solid #1e293b;border-radius:6px;padding:7px 10px;margin-bottom:5px;font-size:11.5px;">
+        <strong style="color:#93c5fd;">[${p.publish_date}] ${p.title}</strong> (${p.is_viral ? '🔥 历史爆文' : '常规作品'})<br/>
+        <span>播放/阅读: ${fmtNum(p.views)} | 点赞: ${fmtNum(p.likes)} | 收藏: ${fmtNum(p.collects)} | 评论: ${fmtNum(p.comments)} | 转发: ${fmtNum(p.shares)}</span>
+      </div>
+    `).join("");
+    document.getElementById("complianceAndPostsContent").innerHTML = modHtml;
+
+    // Tab 2: Index Lift
+    const idxPlatforms = Object.values(idx.platforms || {});
+    document.getElementById("indexLiftTableContainer").innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>搜索指数平台 / Search Index</th>
+            <th>日均基线 / Daily Baseline</th>
+            <th>${isStage2 ? 'Stage 1 峰值日增量' : '峰值日增量 / Peak Daily Δ'}</th>
+            <th>${isStage2 ? 'Stage 2 峰值日增量 (Enhanced)' : '峰值总指数 / Peak Total'}</th>
+            <th>峰值提升幅度 / Peak Lift %</th>
+            <th>30天日均提升 / 30d Avg Δ</th>
+            <th>30天累计搜索脉冲 / 30d Impulse</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${idxPlatforms.map(p => `
+            <tr>
+              <td><strong>${p.name_cn} (${p.name_en})</strong></td>
+              <td>${fmtNum(p.baseline_daily)}</td>
+              <td>+${fmtNum(isStage2 ? p.stage1_peak_daily_delta : p.peak_daily_delta)}</td>
+              <td class="delta-up"><strong>+${fmtNum(p.peak_daily_delta)}</strong></td>
+              <td class="delta-up"><strong>+${p.peak_lift_pct}%</strong></td>
+              <td>+${fmtNum(p.avg_30d_daily_delta)} (+${p.avg_30d_lift_pct}%)</td>
+              <td>${fmtNum(p.cumulative_30d_search_impulse)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+    renderIndexCurveSvg(idx.daily_30d_curve || []);
+
+    // Tab 3: E-Commerce Search Lift
+    const chList = Object.values(ecom.channels || {});
+    const maxSearchUv = Math.max(1, ...chList.map(c => c.incremental_search_uv));
+    document.getElementById("ecommerceBarsContainer").innerHTML = chList.map(c => {
+      const pct = Math.round((c.incremental_search_uv / maxSearchUv) * 100);
+      return `
+        <div class="bar-row">
+          <div class="bar-label"><strong>${c.name_cn.split(' ')[0]}</strong> 回搜UV → 进店UV</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#3b82f6,#14b8a6);"></div>
+          </div>
+          <div class="bar-val">${fmtNum(c.incremental_search_uv)} → ${fmtNum(c.store_visit_uv)} UV</div>
+        </div>
+      `;
+    }).join("");
+
+    document.getElementById("ecommerceTableContainer").innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>电商货架平台 / E-Commerce Shelf</th>
+            <th>${isStage2 ? 'Stage 1 回搜UV' : '基线进店CTR'}</th>
+            <th>新增搜索UV / Incremental Search UV</th>
+            <th>搜索词7日提升率</th>
+            <th>进店UV / Store Visit UV</th>
+            <th>加购收藏UV / Cart UV</th>
+            <th>预计成交单量 / Orders</th>
+            <th>归因回搜 GMV (¥)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${chList.map(c => `
+            <tr>
+              <td><strong>${c.name_cn}</strong></td>
+              <td>${isStage2 ? fmtNum(c.stage1_search_uv) : (c.store_entry_ctr*100).toFixed(1)+'%'}</td>
+              <td class="delta-up"><strong>${fmtNum(c.incremental_search_uv)}</strong> ${isStage2 ? '(+'+c.search_uv_lift_vs_stage1_pct+'%)' : ''}</td>
+              <td class="delta-up">+${c.search_keyword_lift_pct_7d}%</td>
+              <td>${fmtNum(c.store_visit_uv)}</td>
+              <td>${fmtNum(c.add_to_cart_uv)}</td>
+              <td><strong>${fmtNum(c.expected_orders)}</strong></td>
+              <td class="delta-up"><strong>¥${fmtNum(c.attributed_search_gmv_rmb)}</strong></td>
+            </tr>
+          `).join("")}
+          <tr style="background:rgba(59,130,246,0.15);font-weight:700;">
+            <td>三大电商平台合计 / Omni E-Commerce Total</td>
+            <td>${isStage2 ? fmtNum(ecom.stage1_total_search_uv) : '-'}</td>
+            <td class="delta-up">${fmtNum(ecom.total_cross_platform_search_uv)}</td>
+            <td>曝光回搜率 ${(ecom.overall_impression_to_search_rate*100).toFixed(2)}%</td>
+            <td>${fmtNum(ecom.total_store_visit_uv)}</td>
+            <td>${fmtNum(ecom.total_add_to_cart_uv)}</td>
+            <td>${fmtNum(ecom.total_expected_search_orders)}</td>
+            <td class="delta-up">¥${fmtNum(ecom.total_attributed_search_gmv_rmb)}</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+
+    // Tab 4: GEO Effect
+    const geoContainer = document.getElementById("geoContentContainer");
+    if (isStage2) {
+      const geo = res.geo_effect;
+      const kb = geo.kdd24_content_boosters;
+      const engs = geo.ai_engines_breakdown || [];
+      geoContainer.innerHTML = `
+        <div class="kpi-grid">
+          <div class="kpi-box">
+            <div class="kpi-title">KDD'24 PAWC 位置加权可见度得分</div>
+            <div class="kpi-val">${geo.pawc_visibility_score.post_campaign_pawc} <span style="font-size:13px;color:#34d399;">(+${geo.pawc_visibility_score.pawc_lift_pct}%)</span></div>
+            <div class="kpi-sub">投前基线 PAWC: ${geo.pawc_visibility_score.baseline_pawc} / 100</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">8大AI引擎平均声量份额 (Avg SoM)</div>
+            <div class="kpi-val">${geo.share_of_model_summary.avg_post_campaign_som_pct}%</div>
+            <div class="kpi-sub">较基线 ${geo.share_of_model_summary.avg_baseline_som_pct}% 净增 <span class="delta-up">+${geo.share_of_model_summary.avg_som_lift_pts} pct pts</span></div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">GEO 内容结构增益乘数 (KDD'24)</div>
+            <div class="kpi-val">${kb.geo_content_multiplier}x</div>
+            <div class="kpi-sub">引语 +${(kb.quotation_addition_boost*100).toFixed(0)}% | 统计 +${(kb.statistics_addition_boost*100).toFixed(0)}% | 信源 +${(kb.cite_sources_boost*100).toFixed(0)}%</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">90天 GEO 长尾高意向引流与GMV</div>
+            <div class="kpi-val">¥${fmtNum(geo.geo_90d_longtail_conversion.attributed_geo_longtail_gmv_rmb)}</div>
+            <div class="kpi-sub">AI引流 ${fmtNum(geo.geo_90d_longtail_conversion.incremental_geo_high_intent_uv_90d)} UV → ${fmtNum(geo.geo_90d_longtail_conversion.expected_geo_longtail_orders_90d)} 单</div>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>生成式 AI 搜索引擎 / Generative AI Engine</th>
+              <th>平台RAG信源亲和度</th>
+              <th>投前基线 SoM₀</th>
+              <th>投后预期 SoM₁</th>
+              <th>模型声量净提升 ΔSoM</th>
+              <th>Top-1 首选推荐率</th>
+              <th>权威引文采用率</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${engs.map(e => `
+              <tr>
+                <td><strong>${e.name_cn}</strong></td>
+                <td>${e.rag_source_affinity}</td>
+                <td>${e.baseline_som_pct}%</td>
+                <td class="delta-up"><strong>${e.post_campaign_som_pct}%</strong></td>
+                <td class="delta-up"><strong>+${e.som_lift_percentage_points}%</strong></td>
+                <td>${(e.top1_recommendation_rate*100).toFixed(1)}%</td>
+                <td>${(e.citation_adoption_rate*100).toFixed(1)}%</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    } else {
+      geoContainer.innerHTML = `
+        <div style="padding:18px;background:#0f172a;border:1px dashed #8b5cf6;border-radius:8px;text-align:center;">
+          <div style="font-size:14px;font-weight:700;color:#c4b5fd;margin-bottom:6px;">
+            📊 当前处于【Stage 1 第一阶段基线模式】（仅包含社媒账号历史 + 推广产品基础信息）
+          </div>
+          <div style="font-size:12px;color:#94a3b8;margin-bottom:12px;">
+            GEO 生成式引擎优化效果（KDD 2024 PAWC 位置加权可见度 & 豆包/元宝/DeepSeek/Kimi 等 8 大 AI 引擎模型声量份额 SoM）需结合第二阶段【推广话题 + 推广主题 + 推广脚本结构】综合精算。
+          </div>
+          <button class="btn btn-purple" onclick="runStage2Calculation()">
+            🚀 立即叠加第二阶段（话题+主题+脚本）解锁 8 大 AI 引擎 GEO 精算
+          </button>
+        </div>
+      `;
+    }
+
+    // Tab 5: ROI
+    const roiContainer = document.getElementById("roiContentContainer");
+    if (isStage2) {
+      const roi = res.roi_and_unit_economics;
+      const ppw = roi.mckinsey_pocket_price_waterfall_per_unit;
+      const prof = roi.roi_and_profitability;
+      const mc = roi.monte_carlo_1000_runs;
+      const eff = roi.media_efficiency_metrics;
+      const sm = roi.sensitivity_matrix_5x5 || [];
+
+      roiContainer.innerHTML = `
+        <div class="kpi-grid">
+          <div class="kpi-box">
+            <div class="kpi-title">千次曝光 CPM / 单次互动 CPE / CPUV</div>
+            <div class="kpi-val">¥${eff.cpm_rmb} / ¥${eff.cpe_cost_per_engagement_rmb}</div>
+            <div class="kpi-sub">单次电商进店搜索UV成本 CPUV: <strong>¥${eff.cpuv_cost_per_store_or_search_uv_rmb}</strong></div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">全域前端 ROAS (含直跳+回搜+GEO)</div>
+            <div class="kpi-val">${prof.omni_channel_roas}x</div>
+            <div class="kpi-sub">Stage 1 基线 ROAS: ${prof.stage1_baseline_roas}x (<span class="delta-up">+${prof.roas_lift_vs_stage1_pct}%</span>)</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">扣除货品成本与投流费后净利 (Net Profit)</div>
+            <div class="kpi-val" style="color:#34d399;">¥${fmtNum(prof.net_profit_after_ad_spend_rmb)}</div>
+            <div class="kpi-sub">净贡献毛利 ROI: <strong>${(prof.net_contribution_roi*100).toFixed(1)}%</strong> | 盈亏平衡: ${fmtNum(prof.break_even_orders)} 单</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">LTV / CAC & 预计回本周期</div>
+            <div class="kpi-val">${prof.ltv_to_cac_ratio}x (${prof.estimated_payback_period_months}月)</div>
+            <div class="kpi-sub">获客成本 CAC: ¥${eff.cac_customer_acquisition_cost_rmb} | 盈利胜率: ${mc.profitable_probability_pct}%</div>
+          </div>
+        </div>
+        <h3 style="font-size:13px;margin:10px 0 5px;color:#93c5fd;">麦肯锡单件口袋价格瀑布 (McKinsey Unit Pocket Price Waterfall)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>标牌价 MSRP</th>
+              <th>促销折让</th>
+              <th>实际成交价 AOV</th>
+              <th>电商平台扣点</th>
+              <th>履约与退货损耗</th>
+              <th>口袋净价 (Pocket Price)</th>
+              <th>生产成本 (COGS)</th>
+              <th>单件净贡献毛利</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>¥${ppw.msrp_rmb}</td>
+              <td>-¥${ppw.promotional_discount_rmb}</td>
+              <td><strong>¥${ppw.invoice_selling_price_rmb}</strong></td>
+              <td>-¥${ppw.platform_commission_rmb}</td>
+              <td>-¥${ppw.fulfillment_and_return_loss_rmb}</td>
+              <td><strong>¥${ppw.pocket_price_rmb}</strong></td>
+              <td>-¥${ppw.unit_cogs_rmb}</td>
+              <td class="delta-up"><strong>¥${ppw.unit_net_contribution_margin_rmb} (${ppw.unit_net_contribution_margin_pct}%)</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <h3 style="font-size:13px;margin:12px 0 5px;color:#93c5fd;">Monte Carlo 1,000次随机模拟与 5×5 敏感性矩阵</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>曝光/内容乘数 \\ 电商转化率乘数</th>
+              <th>CVR × 0.75</th>
+              <th>CVR × 0.90</th>
+              <th>CVR × 1.00 (基准)</th>
+              <th>CVR × 1.15</th>
+              <th>CVR × 1.35</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sm.map(row => `
+              <tr>
+                <td><strong>Reach × ${row.reach_multiplier.toFixed(2)}</strong></td>
+                ${row.scenarios.map(cell => `
+                  <td style="background:${cell.net_margin_roi >= 0 ? 'rgba(16,185,129,0.12)' : 'rgba(244,63,94,0.12)'};">
+                    <strong>${cell.omni_roas}x</strong> (¥${fmtNum(cell.gmv_rmb)})<br/>
+                    <span style="font-size:10.5px;color:#94a3b8;">净利ROI ${(cell.net_margin_roi*100).toFixed(0)}%</span>
+                  </td>
+                `).join("")}
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    } else {
+      const s1Prod = s1.product_summary || {};
+      const s1Gmv = ecom.total_attributed_search_gmv_rmb || 0;
+      const s1Spend = s1Prod.campaign_budget_rmb || 18500;
+      const s1Roas = (s1Gmv / Math.max(1, s1Spend)).toFixed(2);
+      roiContainer.innerHTML = `
+        <div style="padding:18px;background:#0f172a;border:1px dashed #3b82f6;border-radius:8px;text-align:center;">
+          <div style="font-size:14px;font-weight:700;color:#93c5fd;margin-bottom:6px;">
+            📊 Stage 1 基线跨平台回搜归因 GMV: ¥${fmtNum(s1Gmv)} | 当前投放预算: ¥${fmtNum(s1Spend)} (纯回搜基线 ROAS: ${s1Roas}x)
+          </div>
+          <div style="font-size:12px;color:#94a3b8;margin-bottom:12px;">
+            叠加第二阶段【话题 + 主题 + 推广脚本】后，将完整计入「组件直跳 GMV + 增强版三大电商回搜 GMV + 90天 GEO 长尾引流 GMV」，并生成麦肯锡单件口袋价格瀑布与 1,000 次 Monte Carlo 风险模拟矩阵。
+          </div>
+          <button class="btn btn-purple" onclick="runStage2Calculation()">
+            🚀 立即执行第二阶段全维测算解锁完整 ROI 与口袋价格瀑布
+          </button>
+        </div>
+      `;
+    }
+
+    // Tab 6: Render 4-Agent Collaborative Council
+    if (isStage2 && res.agent_council) {
+      renderAgentCouncil(res.agent_council);
+    }
+  }
+
+  function renderAgentCouncil(council) {
+    const container = document.getElementById("agentCouncilContainer");
+    const diags = council.council_diagnostics || {};
+    RECOMMENDED_SCRIPT_CACHE = council.recommended_optimized_script || "";
+
+    const colors = { marvis: "#14b8a6", deepseek: "#3b82f6", antigravity: "#8b5cf6", codex: "#10b981" };
+    container.innerHTML = Object.entries(diags).map(([k, d]) => `
+      <div class="agent-card" style="border-left-color:${colors[k] || '#3b82f6'};">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+          <strong style="color:#fff;font-size:13px;">${d.provider}</strong>
+          <span class="stage-badge">${d.status}</span>
+        </div>
+        <div style="color:#e2e8f0;font-size:12.5px;margin-bottom:4px;">${d.diagnosis_cn}</div>
+        <div style="color:#94a3b8;font-size:11.5px;">${d.diagnosis_en}</div>
+      </div>
+    `).join("") + `
+      <div style="margin-top:10px;background:#090d16;border:1px solid #334155;border-radius:6px;padding:10px;">
+        <div style="font-weight:700;color:#c4b5fd;margin-bottom:5px;">✨ 四核协同生成的 KDD'24 高GEO·高完播·三级审核合规推荐脚本 (Recommended Script):</div>
+        <pre style="white-space:pre-wrap;font-size:12px;color:#e2e8f0;">${RECOMMENDED_SCRIPT_CACHE}</pre>
+      </div>
+    `;
+  }
+
+  async function triggerLiveAgentCouncil() {
+    const payload = collectFormPayload();
+    payload.enable_live_llm = true;
+    const resp = await fetch("/api/agents/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await resp.json();
+    if (data.success) {
+      renderAgentCouncil(data);
+    }
+  }
+
+  async function applyRecommendedScript() {
+    if (!RECOMMENDED_SCRIPT_CACHE) return;
+    document.getElementById("scriptContent").value = RECOMMENDED_SCRIPT_CACHE;
+    await runStage2Calculation();
+  }
+
+  // Tab 7: Hourly Recurring Account Monitoring Functions
+  async function refreshMonitorList() {
+    const resp = await fetch("/api/monitor/list");
+    const data = await resp.json();
+    if (data.success && data.monitoring) {
+      renderHourlyMonitor(data.monitoring);
+    }
+  }
+
+  async function addCurrentToHourlyMonitor() {
+    const payload = collectFormPayload();
+    const resp = await fetch("/api/monitor/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        account_url: payload.account_url,
+        product_name: payload.product.product_name,
+        selling_price_rmb: payload.product.selling_price_rmb,
+        campaign_budget_rmb: payload.product.campaign_budget_rmb,
+        interval_seconds: 3600,
+        use_marvis_live: true
+      })
+    });
+    const data = await resp.json();
+    if (data.success) {
+      renderHourlyMonitor(data.monitoring);
+      switchTab("tab-monitor", document.getElementById("btnTabMonitor"));
+    }
+  }
+
+  async function pollMonitorTargetNow(targetId) {
+    const resp = await fetch("/api/monitor/poll", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target_id: targetId, use_marvis_live: true })
+    });
+    const data = await resp.json();
+    if (data.success) renderHourlyMonitor(data.monitoring);
+  }
+
+  async function simulateMonitor24h(targetId) {
+    const scenEl = document.getElementById("monitorScenarioSelect");
+    const scenario = scenEl ? scenEl.value : "viral_breakout";
+    const resp = await fetch("/api/monitor/simulate24h", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target_id: targetId, hours: 12, scenario: scenario })
+    });
+    const data = await resp.json();
+    if (data.success) renderHourlyMonitor(data.monitoring);
+  }
+
+  async function removeMonitorTarget(targetId) {
+    const resp = await fetch("/api/monitor/remove", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target_id: targetId })
+    });
+    const data = await resp.json();
+    if (data.success) renderHourlyMonitor(data.monitoring);
+  }
+
+  function renderHourlyMonitor(mon) {
+    const container = document.getElementById("hourlyMonitorContainer");
+    const targets = mon.targets || [];
+    const step4Main = document.getElementById("step4Main");
+    const step4Sub = document.getElementById("step4Sub");
+    if (step4Main && step4Sub) {
+      step4Main.textContent = `4-Agent 协同就绪 · 监控队列 ${targets.length} 个`;
+      step4Sub.textContent = `守护进程每 3600s 自动巡检 | 点击查看详情`;
+    }
+    if (!targets.length) {
+      container.innerHTML = `<p style="color:#94a3b8;">当前暂无监控账号，请点击上方“➕ 将当前账号加入每小时监控”。</p>`;
+      return;
+    }
+
+    container.innerHTML = targets.map(item => {
+      const t = item.target;
+      const latest = item.latest_snapshot || {};
+      const snaps = item.hourly_snapshots || [];
+      return `
+        <div style="border:1px solid #334155;border-radius:8px;padding:12px;margin-bottom:14px;background:#0f172a;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+            <div>
+              <strong style="font-size:14px;color:#fff;">[${t.platform_cn}] ${t.account_name}</strong>
+              <span style="font-size:11.5px;color:#94a3b8;margin-left:8px;">推广产品: ${t.product_name} | 巡检周期: 每 1 小时 (3600s) 自动调用 Marvis</span>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn btn-teal" onclick="pollMonitorTargetNow('${t.target_id}')">⚡ 立即调用 Marvis 爬取下一小时 (+1h Poll)</button>
+              <button class="btn btn-purple" onclick="simulateMonitor24h('${t.target_id}')">📈 按所选态势模拟 12h 霍克斯追踪</button>
+              <button class="btn" style="border-color:#ef4444;color:#fca5a5;" onclick="removeMonitorTarget('${t.target_id}')">🗑️ 移除</button>
+            </div>
+          </div>
+
+          <div style="margin-bottom:10px;padding:8px 10px;background:#111827;border-radius:6px;border:1px solid #1e293b;">
+            <span class="alert-badge alert-${latest.alert_level || 'NORMAL_STEADY'}">${latest.alert_level || 'ACTIVE'}</span>
+            <span style="margin-left:8px;font-size:12px;color:#e2e8f0;">${latest.alert_message_cn || ''}</span>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>监控小时 / Hour</th>
+                <th>采集时间 / Captured At</th>
+                <th>累计曝光 / Views</th>
+                <th>小时新增 / ΔViews</th>
+                <th>点赞 / 收藏 / 评论 / 转发</th>
+                <th>互动速度 v_k (/h)</th>
+                <th>加速度 a_k (/h²)</th>
+                <th>后验霍克斯分支比 n̂_k</th>
+                <th>动态终局曝光预测</th>
+                <th>动态全域GMV & ROAS</th>
+                <th>预警状态 / Alert</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${snaps.slice(-10).map(s => `
+                <tr>
+                  <td><strong>T+${s.hour_index}h</strong></td>
+                  <td style="font-size:11px;color:#94a3b8;">${s.captured_at.slice(11, 19)}</td>
+                  <td><strong>${fmtNum(s.views)}</strong></td>
+                  <td class="delta-up">+${fmtNum(s.delta_views)}</td>
+                  <td>${fmtNum(s.likes)} / ${fmtNum(s.collects)} / ${fmtNum(s.comments)} / ${fmtNum(s.shares)}</td>
+                  <td>${fmtNum(s.velocity_e_per_hr)}</td>
+                  <td style="color:${s.acceleration_e >= 0 ? '#34d399' : '#f87171'};">${s.acceleration_e >= 0 ? '+' : ''}${s.acceleration_e}</td>
+                  <td><strong>${s.posterior_hawkes_n}</strong></td>
+                  <td><strong>${fmtNum(s.projected_final_views)}</strong></td>
+                  <td class="delta-up"><strong>¥${fmtNum(s.projected_omni_gmv_rmb)} (${s.projected_omni_roas}x)</strong></td>
+                  <td><span class="alert-badge alert-${s.alert_level}">${s.alert_level}</span></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }).join("");
+  }
+
+  // ==========================================================================
+  // Tab 8: Multi-Account Detection & Matrix Portfolio Analysis Functions
+  // ==========================================================================
+  let LAST_MATRIX_RESULT = null;
+  let CUSTOM_MATRIX_OVERRIDES_MAP = {};
+
+  function openMatrixTabAndRun() {
+    switchTab("tab-matrix", document.getElementById("btnTabMatrix"));
+    if (!LAST_MATRIX_RESULT) {
+      runMultiAccountMatrixAnalysis();
+    }
+  }
+
+  function addCurrentFormAccountToMatrixList() {
+    const payload = collectFormPayload();
+    const curUrl = payload.account_url || payload.account_overrides.account_name || "custom_kol";
+    CUSTOM_MATRIX_OVERRIDES_MAP[curUrl] = {
+      account_url: curUrl,
+      platform_override: payload.platform_override,
+      custom_overrides: payload.account_overrides,
+      use_marvis_live: false
+    };
+    const box = document.getElementById("matrixAccountsInput");
+    const lines = box.value.split(/\n+/).map(s => s.trim()).filter(Boolean);
+    if (!lines.includes(curUrl)) {
+      lines.unshift(curUrl);
+      box.value = lines.join("\n");
+    }
+    flashElement("matrixAccountsInput");
+  }
+
+  async function addCurrentAccountToMatrixAndOpen() {
+    addCurrentFormAccountToMatrixList();
+    switchTab("tab-matrix", document.getElementById("btnTabMatrix"));
+    await runMultiAccountMatrixAnalysis();
+  }
+
+  function resetDefaultMatrixPool() {
+    document.getElementById("matrixAccountsInput").value = [
+      "https://www.xiaohongshu.com/user/profile/64a8b91c000000001203d9f1",
+      "xhs_medical_skincare_kol",
+      "douyin_health_otc_kol",
+      "bili_hardcore_tech_review",
+      "channels_family_wellness_kol"
+    ].join("\n");
+    runMultiAccountMatrixAnalysis();
+  }
+
+  async function runMultiAccountMatrixAnalysis() {
+    const payload = collectFormPayload();
+    const rawLines = (document.getElementById("matrixAccountsInput").value || "")
+      .split(/\n+/)
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const accountSpecs = rawLines.map(line => {
+      if (CUSTOM_MATRIX_OVERRIDES_MAP[line]) {
+        return CUSTOM_MATRIX_OVERRIDES_MAP[line];
+      }
+      if (line === payload.account_url) {
+        return {
+          account_url: line,
+          platform_override: payload.platform_override,
+          custom_overrides: payload.account_overrides,
+          use_marvis_live: line.startsWith("http")
+        };
+      }
+      return line;
+    });
+
+    const matrixBudget = parseFloat(document.getElementById("matrixTotalBudgetInput").value || "95000");
+
+    const resp = await fetch("/api/calculate/matrix", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        accounts: accountSpecs,
+        product: payload.product,
+        stage2: payload.stage2,
+        matrix_total_budget_rmb: matrixBudget,
+        use_marvis_live: true
+      })
+    });
+    const data = await resp.json();
+    if (data.success) {
+      LAST_MATRIX_RESULT = data;
+      renderMultiAccountMatrix(data);
+    }
+  }
+
+  function renderMultiAccountMatrix(data) {
+    const ps = data.portfolio_summary || {};
+    const opt = data.budget_optimization || {};
+    const rows = [...(data.account_ranking || [])];
+    const sortBy = (document.getElementById("matrixSortSelect") && document.getElementById("matrixSortSelect").value) || "efficiency";
+
+    if (sortBy === "roas") {
+      rows.sort((a, b) => b.omni_roas - a.omni_roas);
+    } else if (sortBy === "fit") {
+      rows.sort((a, b) => b.fit_score - a.fit_score);
+    } else if (sortBy === "views") {
+      rows.sort((a, b) => b.stage2_views - a.stage2_views);
+    } else if (sortBy === "search_uv") {
+      rows.sort((a, b) => b.total_search_uv - a.total_search_uv);
+    } else {
+      rows.sort((a, b) => b.efficiency_score_100 - a.efficiency_score_100);
+    }
+
+    document.getElementById("matrixCountBadge").textContent = `${ps.account_count || rows.length} 个账号 · 覆盖 ${ps.platform_count || 1} 大平台`;
+    document.getElementById("matrixOptLiftBadge").textContent = `算法预算寻优较均分提升 +${opt.gmv_lift_vs_equal_split_pct || 0}% GMV`;
+
+    // 1. Portfolio Summary KPIs + Plain-Language Matrix Verdict
+    const topWinner = rows[0] || {};
+    const topAlloc = (opt.allocation_plan && opt.allocation_plan[0]) || {};
+    document.getElementById("matrixPortfolioSummaryContainer").innerHTML = `
+      <div style="margin-top:8px;margin-bottom:10px;padding:11px 14px;background:linear-gradient(90deg, rgba(16,185,129,0.16) 0%, rgba(15,23,42,0.95) 100%);border:1px solid rgba(16,185,129,0.5);border-radius:8px;font-size:12.5px;color:#e2e8f0;line-height:1.6;">
+        <strong style="color:#34d399;font-size:13.5px;">🏆 多账号傻瓜式选号结论：</strong>
+        在当前检测的 <strong>${ps.account_count || rows.length} 个账号</strong>中，综合性价比第 1 名是
+        <strong style="color:#fcd34d;">[${topWinner.platform_cn || ''}] ${topWinner.account_name || ''}</strong>
+        （综合效能 <strong>${topWinner.efficiency_score_100 || 0}分</strong>，单号投产比 ROAS <strong>${topWinner.omni_roas || 0}倍</strong>，评级：${topWinner.allocation_tier || ''}）。<br/>
+        💡 <strong>总预算 ¥${fmtNum(opt.target_total_budget_rmb)} 最优分钱方案：</strong>建议优先给第 1 名分配 <strong>¥${fmtNum(topAlloc.allocated_budget_rmb || 0)}（投 ${topAlloc.recommended_posts || 1} 篇）</strong>，按下方 AI 方案组合投放预计总卖货 <strong class="delta-up">¥${fmtNum(opt.optimized_portfolio_gmv_rmb)}</strong>（比平均分钱多卖 <strong class="delta-up">+${opt.gmv_lift_vs_equal_split_pct || 0}%</strong>）！
+      </div>
+      <div class="kpi-grid" style="margin-top:8px;">
+        <div class="kpi-box">
+          <div class="kpi-title">矩阵总曝光 / Sainsbury去重净触达UV</div>
+          <div class="kpi-val">${fmtNum(ps.total_expected_views)} / ${fmtNum(ps.deduplicated_unique_reach_uv)}</div>
+          <div class="kpi-sub">跨账号重合率 ${ps.audience_overlap_rate_pct}% | 平均触达频次 ${ps.avg_touch_frequency}次</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-title">跨平台共振乘数 (Cross-Platform Synergy)</div>
+          <div class="kpi-val" style="color:#c4b5fd;">${ps.cross_platform_synergy_multiplier}x</div>
+          <div class="kpi-sub">覆盖 ${ps.platform_count} 大平台协同放大回搜与转化 | 总粉丝 ${fmtNum(ps.total_followers)}</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-title">矩阵协同三大电商总回搜UV</div>
+          <div class="kpi-val">${fmtNum(ps.synergized_total_search_uv)}</div>
+          <div class="kpi-sub">京东 ${fmtNum(ps.synergized_jd_search_uv)} | 淘天 ${fmtNum(ps.synergized_tmall_search_uv)} | 美团 ${fmtNum(ps.synergized_meituan_search_uv)}</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-title">矩阵联合 8大AI引擎平均声量 (GEO SoM)</div>
+          <div class="kpi-val">${ps.portfolio_combined_geo_som_pct}%</div>
+          <div class="kpi-sub">较投前基线 ${ps.avg_baseline_geo_som_pct}% 净提升 <span class="delta-up">+${ps.portfolio_geo_som_lift_pts} pct pts</span></div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-title">矩阵协同全域总 GMV & 综合 ROAS</div>
+          <div class="kpi-val" style="color:#34d399;">¥${fmtNum(ps.synergized_omni_gmv_rmb)} (${ps.portfolio_blended_roas}x)</div>
+          <div class="kpi-sub">含跨平台协同净增 GMV <span class="delta-up">+¥${fmtNum(ps.synergy_incremental_gmv_rmb)}</span> | 刊例总投入 ¥${fmtNum(ps.total_matrix_quote_spend_rmb)}</div>
+        </div>
+      </div>
+    `;
+
+    // 2. Visual Efficiency Bubble Matrix SVG + E-Commerce Channel Stack Bars
+    renderMatrixBubbleSvg(rows);
+
+    // 3. Multi-Account Side-by-Side Ranking Table
+    document.getElementById("matrixRankingTableContainer").innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>排名</th>
+            <th>[平台] 社媒账号 & 粉丝</th>
+            <th>人货契合度 & 共现词</th>
+            <th>单篇刊例价 / CPM</th>
+            <th>Stage 2 曝光 (较S1增幅)</th>
+            <th>4大搜索指数日增峰值</th>
+            <th>三大电商回搜UV (京/淘/美)</th>
+            <th>GEO PAWC / 平均SoM</th>
+            <th>单号全渠道GMV & ROAS</th>
+            <th>综合效能分 & AI投放建议评级</th>
+            <th>联动操作 / Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((r, idx) => `
+            <tr>
+              <td><strong>#${idx + 1}</strong></td>
+              <td>
+                <strong style="color:#fff;">[${r.platform_cn}] ${r.account_name}</strong><br/>
+                <span style="font-size:11px;color:#94a3b8;">粉丝: ${fmtNum(r.followers)} | 笔记: ${r.recent_posts_count}篇 | ${r.data_source_tier.split(' ')[0]}</span>
+              </td>
+              <td>
+                <span class="stage-badge" style="font-size:10.5px;">${r.fit_grade.split(' ')[0]} (${r.fit_score})</span><br/>
+                <span style="font-size:10.5px;color:#93c5fd;">${(r.matched_keywords || []).slice(0, 3).join('、') || '泛垂类协同'}</span>
+              </td>
+              <td>
+                <strong>¥${fmtNum(r.unit_quote_rmb)}</strong><br/>
+                <span style="font-size:10.5px;color:#94a3b8;">CPM ¥${r.cpm_rmb} | CPUV ¥${r.cpuv_rmb}</span>
+              </td>
+              <td>
+                <strong>${fmtNum(r.stage2_views)}</strong> <span class="delta-up">(+${r.views_lift_pct}%)</span><br/>
+                <span style="font-size:10.5px;color:#94a3b8;">互动率 ${r.engagement_rate_pct}% | 爆文率 ${r.viral_probability_pct}%</span>
+              </td>
+              <td class="delta-up"><strong>+${fmtNum(r.peak_search_index_delta_sum)}/日</strong></td>
+              <td>
+                <strong class="delta-up">${fmtNum(r.total_search_uv)} UV</strong><br/>
+                <span style="font-size:10.5px;color:#94a3b8;">京${fmtNum(r.jd_search_uv)} / 淘${fmtNum(r.tmall_search_uv)} / 美${fmtNum(r.meituan_search_uv)}</span>
+              </td>
+              <td>
+                <strong>PAWC ${r.pawc_score}</strong><br/>
+                <span class="delta-up" style="font-size:11px;">SoM ${r.avg_geo_som_pct}% (+${r.geo_som_lift_pts}pts)</span>
+              </td>
+              <td>
+                <strong class="delta-up">¥${fmtNum(r.omni_gmv_rmb)}</strong> (${r.omni_orders}单)<br/>
+                <span>ROAS: <strong>${r.omni_roas}x</strong> | 净利ROI ${r.net_margin_roi_pct}%</span>
+              </td>
+              <td>
+                <strong style="color:#fcd34d;font-size:13px;">${r.efficiency_score_100}分</strong> · <span>${r.allocation_tier}</span><br/>
+                <span style="font-size:10.5px;color:#94a3b8;">${r.allocation_advice_cn}</span>
+              </td>
+              <td style="white-space:nowrap;">
+                <button class="btn btn-primary" style="padding:3px 7px;font-size:11px;margin-bottom:3px;" onclick="loadMatrixRowIntoSingleView(${r.index - 1})">🔍 单号深潜</button><br/>
+                <button class="btn btn-teal" style="padding:3px 7px;font-size:11px;" onclick="addMatrixRowToMonitor(${r.index - 1})">⏱️ 监控</button>
+                <button class="btn" style="padding:3px 7px;font-size:11px;border-color:#ef4444;color:#fca5a5;" onclick="removeMatrixAccount('${r.account_url.replace(/'/g, "\\'")}')">🗑️</button>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+
+    // 4. Optimal Budget Allocator Table
+    const plan = opt.allocation_plan || [];
+    document.getElementById("matrixBudgetOptimizerContainer").innerHTML = `
+      <div style="margin-bottom:10px;padding:9px 12px;background:#0f172a;border-left:4px solid #10b981;border-radius:6px;font-size:12px;">
+        <strong>💡 边际收益递减 (Hill Saturation $G_i(m_i)=g_i \\cdot m_i^{0.82}$) 矩阵预算寻优结论：</strong>
+        在总预算 <strong>¥${fmtNum(opt.target_total_budget_rmb)}</strong> 约束下，采用「平均分配」预期产生 GMV <strong>¥${fmtNum(opt.equal_split_baseline_gmv_rmb)}</strong>；
+        采用下方<strong>「AI 边际 ROAS 动态寻优配比」</strong>预期产生 GMV <strong class="delta-up">¥${fmtNum(opt.optimized_portfolio_gmv_rmb)}</strong>
+        （净增幅 <strong class="delta-up">+${opt.gmv_lift_vs_equal_split_pct}%</strong>，组合综合 ROAS 达 <strong>${opt.optimized_blended_roas}x</strong>）。
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>优先级</th>
+            <th>社媒账号</th>
+            <th>单篇刊例价</th>
+            <th>推荐投放篇数 / 排期折算</th>
+            <th>最优分配预算 (¥)</th>
+            <th>预算配比权重 (%)</th>
+            <th>该账号贡献预期 GMV (¥)</th>
+            <th>边际折算 ROAS</th>
+            <th>投放执行策略建议</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${plan.map(p => `
+            <tr>
+              <td><strong>#${p.rank}</strong></td>
+              <td><strong>[${p.platform_cn}] ${p.account_name}</strong></td>
+              <td>¥${fmtNum(p.unit_quote_rmb)}</td>
+              <td><strong>${p.recommended_posts} 篇</strong> (折算 ${p.equivalent_post_units} 单元)</td>
+              <td class="delta-up"><strong>¥${fmtNum(p.allocated_budget_rmb)}</strong></td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="width:70px;height:10px;background:#090d16;border-radius:3px;overflow:hidden;">
+                    <div style="width:${Math.min(100, p.budget_share_pct)}%;height:100%;background:#10b981;"></div>
+                  </div>
+                  <strong>${p.budget_share_pct}%</strong>
+                </div>
+              </td>
+              <td class="delta-up"><strong>¥${fmtNum(p.projected_allocated_gmv_rmb)}</strong></td>
+              <td><strong>${p.projected_allocated_roas}x</strong></td>
+              <td style="font-size:11px;color:#cbd5e1;">${p.allocation_tier} — ${p.allocation_advice_cn}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function renderMatrixBubbleSvg(rows) {
+    const container = document.getElementById("matrixVisualChartContainer");
+    if (!rows || !rows.length) { container.innerHTML = ""; return; }
+    const w = 860, h = 235, padL = 65, padR = 40, padT = 28, padB = 36;
+    const plotW = w - padL - padR, plotH = h - padT - padB;
+    const maxRoas = Math.max(1.5, ...rows.map(r => r.omni_roas * 1.15));
+    const maxViews = Math.max(10000, ...rows.map(r => r.stage2_views));
+    const platColors = {
+      xiaohongshu: "#f43f5e",
+      douyin: "#3b82f6",
+      bilibili: "#06b6d4",
+      wechat_channels: "#10b981"
+    };
+
+    const circlesHtml = rows.map(r => {
+      const x = padL + Math.min(1, Math.max(0, (r.fit_score - 0.5) / 0.5)) * plotW;
+      const y = padT + plotH - Math.min(1, Math.max(0, r.omni_roas / maxRoas)) * plotH;
+      const radius = 10 + Math.sqrt(r.stage2_views / maxViews) * 20;
+      const col = platColors[r.platform] || "#8b5cf6";
+      const shortName = (r.account_name || "").split(" ")[0].slice(0, 10);
+      return `
+        <g>
+          <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${radius.toFixed(1)}" fill="${col}" fill-opacity="0.38" stroke="${col}" stroke-width="2" />
+          <text x="${x.toFixed(1)}" y="${(y - radius - 4).toFixed(1)}" fill="#e2e8f0" font-size="11" font-weight="600" text-anchor="middle">${shortName} (${r.omni_roas}x)</text>
+        </g>
+      `;
+    }).join("");
+
+    container.innerHTML = `
+      <svg viewBox="0 0 ${w} ${h}" style="width:100%;max-height:245px;background:#090d16;border-radius:8px;border:1px solid #1e293b;">
+        <line x1="${padL}" y1="${padT + plotH}" x2="${w - padR}" y2="${padT + plotH}" stroke="#334155" />
+        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}" stroke="#334155" />
+        <line x1="${padL + plotW * 0.6}" y1="${padT}" x2="${padL + plotW * 0.6}" y2="${padT + plotH}" stroke="#1e293b" stroke-dasharray="4,4" />
+        <line x1="${padL}" y1="${padT + plotH * 0.5}" x2="${w - padR}" y2="${padT + plotH * 0.5}" stroke="#1e293b" stroke-dasharray="4,4" />
+        <text x="${w - padR - 145}" y="${padT + 16}" fill="#34d399" font-size="11" font-weight="700">★ 右上黄金象限：高契合 + 高ROAS主力投</text>
+        <text x="${padL + 10}" y="${padT + 16}" fill="#94a3b8" font-size="11">纵轴: 全域ROAS (越高越优) | 横轴: 人货契合度 (0.50 → 1.00) | 气泡大小: 预计曝光量</text>
+        ${circlesHtml}
+        <text x="${padL}" y="${h - 9}" fill="#94a3b8" font-size="11">契合度 0.50</text>
+        <text x="${padL + plotW / 2 - 30}" y="${h - 9}" fill="#94a3b8" font-size="11">契合度 0.75 (A级线)</text>
+        <text x="${w - padR - 70}" y="${h - 9}" fill="#94a3b8" font-size="11">契合度 1.00 (S级)</text>
+      </svg>
+    `;
+  }
+
+  async function loadMatrixRowIntoSingleView(rowIndex) {
+    if (!LAST_MATRIX_RESULT || !LAST_MATRIX_RESULT.account_ranking) return;
+    const item = LAST_MATRIX_RESULT.account_ranking.find(r => r.index === rowIndex + 1) || LAST_MATRIX_RESULT.account_ranking[rowIndex];
+    if (!item || !item.account_profile_dict) return;
+    USER_LOCKED_BUDGET = false;
+    populateAccountForm(item.account_profile_dict, item.account_url, false);
+    switchTab("tab-influence", document.querySelector(".tabs .tab-btn"));
+    await runStage2Calculation();
+  }
+
+  async function addMatrixRowToMonitor(rowIndex) {
+    if (!LAST_MATRIX_RESULT || !LAST_MATRIX_RESULT.account_ranking) return;
+    const item = LAST_MATRIX_RESULT.account_ranking.find(r => r.index === rowIndex + 1) || LAST_MATRIX_RESULT.account_ranking[rowIndex];
+    if (!item) return;
+    const payload = collectFormPayload();
+    const resp = await fetch("/api/monitor/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        account_url: item.account_url,
+        product_name: payload.product.product_name,
+        selling_price_rmb: payload.product.selling_price_rmb,
+        campaign_budget_rmb: item.unit_quote_rmb,
+        interval_seconds: 3600,
+        use_marvis_live: true
+      })
+    });
+    const data = await resp.json();
+    if (data.success) {
+      renderHourlyMonitor(data.monitoring);
+      switchTab("tab-monitor", document.getElementById("btnTabMonitor"));
+    }
+  }
+
+  async function removeMatrixAccount(urlToRemove) {
+    const box = document.getElementById("matrixAccountsInput");
+    const lines = box.value.split(/\n+/).map(s => s.trim()).filter(Boolean);
+    const filtered = lines.filter(l => !l.includes(urlToRemove) && urlToRemove.indexOf(l) === -1);
+    if (filtered.length > 0) {
+      box.value = filtered.join("\n");
+      await runMultiAccountMatrixAnalysis();
+    }
+  }
+
+  function renderIndexCurveSvg(series) {
+    const container = document.getElementById("indexCurveSvgContainer");
+    if (!series || !series.length) { container.innerHTML = ""; return; }
+    const w = 860, h = 230, padL = 55, padR = 25, padT = 20, padB = 32;
+    const plotW = w - padL - padR, plotH = h - padT - padB;
+    const maxY = Math.max(100, ...series.map(d => Math.max(d.wechat_delta, d.douyin_delta, d.xiaohongshu_delta, d.baidu_delta)));
+    function buildPath(key) {
+      return series.map((d, i) => {
+        const x = padL + (i / (series.length - 1)) * plotW;
+        const y = padT + plotH - (d[key] / maxY) * plotH;
+        return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(" ");
+    }
+    container.innerHTML = `
+      <svg viewBox="0 0 ${w} ${h}" style="width:100%;max-height:250px;background:#090d16;border-radius:8px;border:1px solid #1e293b;">
+        <line x1="${padL}" y1="${padT + plotH}" x2="${w - padR}" y2="${padT + plotH}" stroke="#334155" />
+        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}" stroke="#334155" />
+        <path d="${buildPath('wechat_delta')}" fill="none" stroke="#10b981" stroke-width="2.2" />
+        <path d="${buildPath('douyin_delta')}" fill="none" stroke="#3b82f6" stroke-width="2.2" />
+        <path d="${buildPath('xiaohongshu_delta')}" fill="none" stroke="#f43f5e" stroke-width="2.2" />
+        <path d="${buildPath('baidu_delta')}" fill="none" stroke="#f59e0b" stroke-width="2.2" />
+        <text x="${padL + 10}" y="${padT + 15}" fill="#10b981" font-size="11">● 微信指数增量 (WeChat)</text>
+        <text x="${padL + 170}" y="${padT + 15}" fill="#3b82f6" font-size="11">● 巨量算数增量 (Douyin)</text>
+        <text x="${padL + 330}" y="${padT + 15}" fill="#f43f5e" font-size="11">● 小红书搜索增量 (XHS)</text>
+        <text x="${padL + 490}" y="${padT + 15}" fill="#f59e0b" font-size="11">● 百度指数增量 (Baidu)</text>
+        <text x="${padL}" y="${h - 8}" fill="#94a3b8" font-size="11">Day 1</text>
+        <text x="${padL + plotW / 2 - 20}" y="${h - 8}" fill="#94a3b8" font-size="11">Day 15</text>
+        <text x="${w - padR - 42}" y="${h - 8}" fill="#94a3b8" font-size="11">Day 30</text>
+      </svg>
+    `;
+  }
+
+  function exportMarkdownReport() {
+    if (!LAST_MARKDOWN) return;
+    const blob = new Blob([LAST_MARKDOWN], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Omni_Social_ROI_GEO_v2_Bilingual_Report.md";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportJsonResult() {
+    if (!LAST_RESULT) return;
+    const blob = new Blob([JSON.stringify(LAST_RESULT, null, 2)], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Omni_Social_ROI_GEO_v2_Result.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  window.addEventListener("DOMContentLoaded", initWorkbench);
+</script>
+</body>
+</html>

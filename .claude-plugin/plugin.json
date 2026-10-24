@@ -1,0 +1,35 @@
+{
+  "name": "via54-social-roi",
+  "version": "2.4.0",
+  "description": "Omni-Channel Social Media ROI, E-Commerce Search Spillover (JD/Tmall/Meituan), 8-LLM GEO & Multi-Account Matrix Calculator Skill + MCP Plugin (by veawho)",
+  "author": {
+    "name": "veawho (Devin Wei)",
+    "url": "https://github.com/veawho"
+  },
+  "repository": "https://github.com/veawho/via54SocialROI",
+  "license": "MIT",
+  "keywords": [
+    "social-media-roi",
+    "generative-engine-optimization",
+    "geo",
+    "xiaohongshu",
+    "douyin",
+    "bilibili",
+    "wechat-channels",
+    "kol-marketing",
+    "mcp-server",
+    "agent-skill",
+    "antigravity",
+    "claude-code"
+  ],
+  "skills": [
+    "./via54socialroi",
+    "./skills/via54socialroi"
+  ],
+  "mcpServers": {
+    "via54-social-roi": {
+      "command": "python",
+      "args": ["mcp_server.py"]
+    }
+  }
+}

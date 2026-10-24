@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+title: "via54SocialROI: Omni-Channel Social Media ROI, E-Commerce Search Spillover & 8-LLM GEO Framework"
+message: "If you use this software or architecture, please cite it as below."
+type: software
+authors:
+  - family-names: "Wei"
+    given-names: "Devin"
+    alias: "veawho"
+repository-code: "https://github.com/veawho/via54SocialROI"
+version: 2.4.0
+date-released: 2026-10-24
+license: MIT
