@@ -1,0 +1,33 @@
+{
+  "name": "@via54/plugin-social-roi",
+  "version": "2.5.0",
+  "description": "Omni-Channel Social Media ROI, Search Spillover & 8-LLM GEO Share-of-Model Architecture, Skill & Plugin (via54SocialROI)",
+  "main": "plugin/index.js",
+  "types": "plugin/index.d.ts",
+  "scripts": {
+    "test": "python tests/test_demo.py",
+    "mcp": "python mcp_server.py",
+    "cli": "python cli.py",
+    "server": "python server.py 8765"
+  },
+  "keywords": [
+    "via54",
+    "social-roi",
+    "geo",
+    "generative-engine-optimization",
+    "xiaohongshu",
+    "douyin",
+    "bilibili",
+    "mcp-server",
+    "agent-skill",
+    "claude-code-skill",
+    "antigravity-skill",
+    "cordis-plugin"
+  ],
+  "author": "Devin Wei <veawho@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veawho/via54SocialROI.git"
+  }
+}

@@ -125,6 +125,36 @@ class TestVia54SocialROIOpenCoreDemo(unittest.TestCase):
         )
         self.assertIn("OPEN_CORE_DEMO", proc.stdout)
 
+    def test_06_skill_and_plugin_morphology_and_no_proprietary_leak(self) -> None:
+        import json
+
+        # 1. Verify zero proprietary core files exist in public Trial repo
+        forbidden = [
+            "private_core",
+            "models_core.py",
+            "marvis_crawler.py",
+            "multimodal_ingest.py",
+            "agent_hub.py",
+            "hourly_monitor.py",
+            "report_generator.py",
+        ]
+        for fname in forbidden:
+            self.assertFalse(
+                (REPO_ROOT / fname).exists(),
+                f"Proprietary file/folder '{fname}' must not exist in public Trial repository",
+            )
+
+        # 2. Verify Skill & Plugin manifests exist and parse cleanly
+        self.assertTrue((REPO_ROOT / "via54socialroi" / "SKILL.md").exists())
+        self.assertTrue((REPO_ROOT / "plugin" / "index.js").exists())
+        self.assertTrue((REPO_ROOT / "plugin" / "index.d.ts").exists())
+
+        pkg = json.loads((REPO_ROOT / "package.json").read_text(encoding="utf-8"))
+        self.assertEqual(pkg["name"], "@via54/plugin-social-roi")
+
+        plugin_meta = json.loads((REPO_ROOT / "plugin.json").read_text(encoding="utf-8"))
+        self.assertIn("mcpServers", plugin_meta)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
