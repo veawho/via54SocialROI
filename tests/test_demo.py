@@ -120,10 +120,12 @@ class TestVia54SocialROIOpenCoreDemo(unittest.TestCase):
             [sys.executable, str(REPO_ROOT / "cli.py"), "--info"],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             env=env,
             check=True,
         )
         self.assertIn("OPEN_CORE_DEMO", proc.stdout)
+        self.assertIn("腾讯 Marvis", proc.stdout)
 
     def test_06_skill_and_plugin_morphology_and_no_proprietary_leak(self) -> None:
         import json
