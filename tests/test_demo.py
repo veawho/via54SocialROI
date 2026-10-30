@@ -176,6 +176,23 @@ class TestVia54SocialROIOpenCoreDemo(unittest.TestCase):
         self.assertLess(s2["roi_and_unit_economics"]["roi_and_profitability"]["omni_channel_roas"], 50.0)
         self.assertTrue(s2["model_diagnostics"]["input_warnings"])
 
+    def test_08_agent_era_5_assets_and_11day_half_life(self) -> None:
+        prof = self.crawler.fetch_account_profile("xhs_medical_skincare_kol")
+        prod = ProductInput(
+            product_name="科复佳医用透明质酸钠修复贴 (Demo)",
+            brand_name="科复佳",
+            category="医疗器械/医用敷料",
+            selling_price_rmb=118.0,
+            campaign_budget_rmb=18500.0,
+        )
+        s2_in = Stage2ContentInput(topics_hashtags=["#医用敷料"], campaign_theme="Demo", script_content="Demo")
+        s2 = self.engine.compute_stage2_enhanced(prof, prod, s2_in)
+        geo = s2["geo_effect"]
+        self.assertIn("agent_era_5_assets", geo)
+        self.assertIn("ai_citation_half_life_dynamics", geo)
+        self.assertEqual(geo["ai_citation_half_life_dynamics"]["median_half_life_days"], 11.0)
+        self.assertEqual(geo["agent_era_5_assets"]["composite_asset_score_100"], 85.0)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

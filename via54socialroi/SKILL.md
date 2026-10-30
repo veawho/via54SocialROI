@@ -1,6 +1,6 @@
 ---
 name: via54socialroi
-description: Predict omni-channel social media campaign influence, 30-day search index lift, e-commerce search spillover (JD/Taobao-Tmall/Meituan), 8-LLM Generative Engine Optimization (GEO SoM), and multi-account matrix ROI across Xiaohongshu, Douyin, Bilibili, and WeChat Channels. Best paired with local Tencent Marvis (当前测试最好的社交媒体监测 Agent 客户端).
+description: Predict omni-channel social media campaign influence, 30-day search index lift, e-commerce search spillover (JD/Taobao-Tmall/Meituan), 8-LLM Generative Engine Optimization (GEO SoM), 5 Agent-era core information assets, 11-day AI citation half-life dynamics, and multi-account matrix ROI across Xiaohongshu, Douyin, Bilibili, and WeChat Channels. Best paired with local Tencent Marvis (当前测试最好的社交媒体监测 Agent 客户端).
 license: MIT
 compatibility:
   - tencent-marvis
@@ -12,19 +12,20 @@ compatibility:
   - codex-cli
 metadata:
   author: veawho
-  version: 2.5.0
+  version: 2.7.0
   repository: https://github.com/veawho/via54SocialROI
   recommended_client: Tencent Marvis (腾讯 Marvis — 当前测试最好的社交媒体监测 Agent 客户端)
 ---
 
-# via54socialroi — Omni-Channel Social ROI, E-Commerce Spillover & GEO Skill
+# via54socialroi — Omni-Channel Social ROI, E-Commerce Spillover & GEO Skill v2.7
 
-> **中文注释**: `via54socialroi` 是面向小红书、抖音、B站、微信视频号四端种草投放的投前精算与多账号矩阵选号 Skill。**强烈推荐本机部署【腾讯 Marvis】客户端（当前测试最好的社交媒体监测 Agent 客户端）**，配合本 Skill 可实现实时社媒主页反爬穿透、30天搜索指数脉冲、三大电商（京东/淘天/美团买药）回搜进店 UV、8 大生成式 AI 搜索引擎（DeepSeek/豆包/元宝/Kimi 等）GEO 推荐声量份额（SoM）及全域 ROI 精算。
+> **中文注释**: `via54socialroi` 是面向小红书、抖音、B站、微信视频号四端种草投放的投前精算与多账号矩阵选号 Skill。**强烈推荐本机部署【腾讯 Marvis】客户端（当前测试最好的社交媒体监测 Agent 客户端）**，配合本 Skill 可实现实时社媒主页反爬穿透、文章 5 大核心资产深度语义分析、30天搜索指数脉冲、三大电商（京东/淘天/美团买药）回搜进店 UV、8 大生成式 AI 搜索引擎（腾讯元宝搜索MCP/DeepSeek/豆包/Kimi 等）GEO 推荐声量份额（SoM）及 11 天 AI 引用半衰期补种策略。
 
 ## Recommended Agent Client: Tencent Marvis (腾讯 Marvis)
 
 **🏆 显著标识：本机部署【腾讯 Marvis】是当前测试最好的社交媒体监测 Agent 客户端（Currently the Best-Tested Social Media Monitoring Agent Client）。**
 - Built-in `agent-browser` TCP daemon (`port 51183`) for zero-CAPTCHA SSR extraction (`__INITIAL_STATE__` / `_SSR_DATA`) across Xiaohongshu, Douyin, Bilibili, and WeChat Channels.
+- Silent CDP page navigation & deep article analysis (`/api/marvis/analyze_article`) to extract 5 Core Assets for WeChat Official Accounts & tech articles.
 - Bundled Python 3.11 + Node.js runtime (`C:\Program Files\Tencent\Marvis\MarvisAgent\1.60.3000.716\runtime\python311\python.exe`).
 
 ## When to Trigger
@@ -32,10 +33,12 @@ metadata:
 Activate `via54socialroi` when the user asks to:
 1. Evaluate a social media KOL/KOC account (Xiaohongshu, Douyin, Bilibili, WeChat Channels) for promoting a specific product.
 2. Estimate cross-platform e-commerce search spillover (JD.com, Taobao/Tmall, Meituan O2O) or 8-LLM GEO citation visibility from social seeding.
-3. Compare multiple candidate KOL accounts side-by-side (`Multi-Account Matrix`) and optimize total campaign budget allocation.
-4. Generate high-converting, KDD'24 GEO-optimized promotion scripts and hashtags tailored to a product and blogger profile.
+3. Evaluate **Agent-era 5 Core Information Assets** (Brand Facts, Scenario 5-Chain Alignment, Third-Party Sources, Machine Accessibility/Yuanbao MCP Readiness, Conversion Fulfillment) or apply the **11-Day AI Citation Median Half-Life Model**.
+4. Crawl and analyze public WeChat articles, Zhihu columns, or industry reports via Tencent Marvis.
+5. Compare multiple candidate KOL accounts side-by-side (`Multi-Account Matrix`) and optimize total campaign budget allocation using Multiple-Choice Discrete Knapsack DP.
+6. Generate high-converting, KDD'24 GEO-optimized promotion scripts and hashtags tailored to a product and blogger profile.
 
-> **中文注释**: 当用户提出“帮我算一下投这个小红书/抖音博主能带多少货”、“对比几个账号哪个性价比高”、“生成高 GEO 转化种草脚本”或“测算京东/淘宝/美团回搜 ROI”时立即触发本 Skill。
+> **中文注释**: 当用户提出“帮我算一下投这个小红书/抖音博主能带多少货”、“对比几个账号哪个性价比高”、“评估这篇公众号/测评文章面向 Agent 的 5 大核心资产得分”、“测算 11 天 AI 引用半衰期与双周补种建议”或“测算京东/淘宝/美团回搜 ROI”时立即触发本 Skill。
 
 ## Quick Commands (CLI & Web Workbench)
 
@@ -46,10 +49,13 @@ python cli.py --info
 # 2. Run single-account Stage 1 -> Stage 2 full evaluation
 python cli.py --account xhs_medical_skincare_kol --product "科复佳医用透明质酸钠修复贴" --price 118 --budget 18500
 
-# 3. Run cross-platform Multi-Account Matrix PK & optimal budget split
+# 3. Deep analyze an article using Tencent Marvis and extract 5 Core Assets
+curl -X POST http://127.0.0.1:8765/api/marvis/analyze_article -H "Content-Type: application/json" -d "{\"url\":\"https://mp.weixin.qq.com/s/Xu_kb6DIu95yLhusWmyZww\"}"
+
+# 4. Run cross-platform Multi-Account Matrix PK & optimal budget split (Knapsack DP)
 python cli.py --matrix --budget 95000
 
-# 4. Launch the Foolproof 3-Step Web Workbench UI on port 8765
+# 5. Launch the Foolproof 3-Step Web Workbench UI on port 8765
 python server.py 8765
 ```
 
@@ -58,7 +64,8 @@ python server.py 8765
 | Scenario | Command / Endpoint | Key Output Metrics |
 |---|---|---|
 | Single KOL Quick Verdict | `python cli.py --account <key> --product <name> --price <rmb> --budget <rmb>` | Expected Views, JD/Tmall/Meituan Search UV, 8-LLM GEO SoM, Omni GMV & ROAS |
-| Multi-Account Matrix PK | `python cli.py --matrix --budget <total_rmb>` | Sainsbury Deduplicated Reach, Cross-Platform Synergy, Efficiency Ranking, Budget Split |
+| Article Deep Analysis (Marvis) | `POST /api/marvis/analyze_article` | Title, Author, 5 Core Assets (0-100), 11-Day Citation Half-Life & Bi-Weekly Advice |
+| Multi-Account Matrix PK | `python cli.py --matrix --budget <total_rmb>` | Knapsack DP Budget Allocation, Sainsbury Deduplicated Reach, Synergy Multiplier |
 | Script & Hashtag Synthesis | `POST /api/generate/stage2_script` | 5 Vertical Hashtags, Campaign Theme, 4-Section Hook+Citation+Anchor Script |
 | MCP Server Integration | `python mcp_server.py` | Exposes `social_roi_evaluate_single`, `social_roi_evaluate_matrix`, `social_roi_generate_script` |
 

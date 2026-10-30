@@ -572,14 +572,14 @@ class DemoPromotionEngine(BasePromotionEngine):
             }
 
         ai_engines = [
-            ("DeepSeek (V3/R1 联网搜索)", "高权重中文长文与测评结构", 9.5, 22.4),
-            ("腾讯元宝 (微信公众号/视频号生态)", "微信生态与权威科普信源", 10.2, 23.8),
-            ("字节豆包 (抖音/头条百科全网检索)", "短视频口播字幕与高赞评论", 11.0, 24.5),
-            ("Kimi 智能助手 (长上下文深度检索)", "多维参数对比表与注册证号", 8.8, 20.6),
+            ("DeepSeek (V3/R1 · Search & Fetch API)", "标准化模块化检索与深度学术横评", 9.5, 22.4),
+            ("腾讯元宝 (元宝搜索 MCP / 微信搜一搜 Agent)", "微信生态与元宝搜索 MCP 开放检索枢纽", 10.2, 23.8),
+            ("字节豆包 (Doubao AI / 火山引擎企业 Agent)", "短视频口播字幕与座舱/客服 Agent 模块", 11.0, 24.5),
+            ("Kimi 智能助手 (长上下文深度检索)", "多维参数对比表与注册证号解析", 8.8, 20.6),
             ("百度文心一言 (百度百家/百科生态)", "结构化问答与专家共识引文", 9.0, 19.8),
             ("阿里通义千问 (淘天电商消费指南)", "真实买家测评与电商搜词锚点", 8.5, 19.2),
             ("Perplexity AI (全球学术与消费检索)", "统计百分比与临床文献引用", 6.5, 15.4),
-            ("ChatGPT Search (OpenAI 实时联网)", "清晰FAQ与权威品牌实体", 6.8, 16.1),
+            ("ChatGPT Search (OpenAI 对话购物收银台)", "清晰FAQ与对话式商品决策推荐", 6.8, 16.1),
         ]
 
         return {
@@ -639,6 +639,25 @@ class DemoPromotionEngine(BasePromotionEngine):
                     "quotation_addition_boost": 0.28,
                     "statistics_addition_boost": 0.32,
                     "cite_sources_boost": 0.26,
+                },
+                "agent_era_5_assets": {
+                    "composite_asset_score_100": 85.0,
+                    "asset_1_brand_facts_consistency": {"score": 0.95, "status": "PASS"},
+                    "asset_2_scenario_5chain_alignment": {"score": 0.88, "chain_completeness_ratio": "5/5", "is_complete_5chain": True},
+                    "asset_3_third_party_sources": {"score": 0.86, "has_clinical_tier": True, "has_lab_teardown_tier": True},
+                    "asset_4_agent_machine_accessibility": {"score": 0.82, "mcp_yuanbao_friendly": True},
+                    "asset_5_conversion_fulfillment": {"score": 0.84, "has_direct_shelf_routing": True},
+                },
+                "ai_citation_half_life_dynamics": {
+                    "median_half_life_days": 11.0,
+                    "decay_formula": "R(t) = 2^(-t / 11.0)",
+                    "retention_day_7_pct": 64.3,
+                    "retention_day_14_pct": 41.4,
+                    "retention_day_30_pct": 15.1,
+                    "recommended_pulse_refresh_cycle_days": 14,
+                    "pulse_refresh_gain_multiplier": 1.42,
+                    "strategic_takeaway_cn": "研究实证 AI 引用的中位半衰期仅约 11 天，单次投放不存在长期永久复利；强烈建议按 14 天（双周）周期进行矩阵补种，持续向腾讯元宝搜索 MCP、DeepSeek Fetch 及各大商业 Agent 提供高一致性、结构化事实与第三方实证信源。",
+                    "strategic_takeaway_en": "Empirical studies reveal AI citation has a median half-life of only ~11 days without permanent compounding. A 14-day bi-weekly matrix refresh pulse is strongly recommended to feed Tencent Yuanbao Search MCP, DeepSeek Fetch, and commercial agents with consistent brand facts and third-party evidence.",
                 },
                 "geo_90d_longtail_conversion": {
                     "incremental_geo_high_intent_uv_90d": int(search2 * 0.35),
