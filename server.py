@@ -216,6 +216,109 @@ PRESET_SCENARIOS: Dict[str, Dict[str, Any]] = {
             "include_pinned_comment_link": True,
             "account_compliance_track": "official_compliant"
         }
+    },
+    "tiktok_kefujia_global": {
+        "preset_id": "tiktok_kefujia_global",
+        "region": "global",
+        "title_cn": "案例5 (出海)：TikTok 美妆护肤创作者 × 科复佳 Cica 屏障修护精华 (Shopify DTC + TikTok Shop)",
+        "title_en": "Case 5 (Global): TikTok Creator × Kefujia Cica Barrier Repair (Shopify + TikTok Shop)",
+        "account_key": "tiktok_beauty_lifestyle_creator",
+        "account_url": "https://www.tiktok.com/@sarahglows",
+        "product": {
+            "product_name": "Kefujia Medical Cica Barrier Repair Serum (DTC Global)",
+            "brand_name": "Kefujia",
+            "category": "美妆个护/敏肌屏障修护/跨境独立站DTC (Beauty & Barrier Care DTC)",
+            "msrp_rmb": 275.5,
+            "selling_price_rmb": 203.0,
+            "msrp_usd": 38.0,
+            "selling_price_usd": 28.0,
+            "currency": "USD",
+            "target_region": "global",
+            "exchange_rate_to_rmb": 7.25,
+            "cogs_rate": 0.22,
+            "gross_margin_rate": 0.78,
+            "package_weight_grams": 250.0,
+            "stripe_fee_rate": 0.029,
+            "cross_border_shipping_usd": 6.50,
+            "global_ecommerce_destination": "shopify_dtc",
+            "repeat_purchase_rate_annual": 0.32,
+            "Repeat_orders_per_buyer": 2.2,
+            "core_selling_points": [
+                "Dermatologist formulated for post-procedure recovery",
+                "High-purity Centella Asiatica (Cica) + Micro-HA formula",
+                "Clinical trial: 42% reduction in redness within 72 hours",
+                "100% clean, fragrance-free, alcohol-free"
+            ],
+            "target_audience": "18-34 Gen Z & Millennials with sensitive skin & aesthetic procedure care",
+            "primary_ecommerce_focus": ["shopify_dtc", "amazon_global", "tiktok_shop_global"],
+            "campaign_budget_rmb": 20300.0
+        },
+        "stage2": {
+            "topics_hashtags": ["#skintok", "#barrierrepair", "#cicaserum", "#kbeauty", "#shopifyhaul"],
+            "campaign_theme": "Post-laser 72-hour clinical barrier recovery with medical grade Cica",
+            "cdj_stage": "Active Evaluation & TikTok Native Checkout (主动测评对比 + 闭环极速转化)",
+            "script_content": (
+                "【Hook】Post-microneedling or barrier damage? Never use harsh fragranced serum!\n"
+                "【Clinical Proof】According to dermatological consensus, post-procedure skin needs sterile soothing agents. "
+                "Kefujia Medical Cica Serum is formulated with dual-weight HA and medical-grade cica, reducing erythema by 42% in 72 hours.\n"
+                "【Third-Party Verification】Over 500 verified Reddit r/SkincareAddiction testimonials confirm zero stinging on barrier damage.\n"
+                "【FAQ & Conversion】Q: Safe for fungal acne? A: 100% non-comedogenic. Grab yours on our official Shopify store ($28.00) or TikTok Shop with free 3-day delivery."
+            ),
+            "post_count_matrix": 1,
+            "include_pinned_comment_link": True,
+            "account_compliance_track": "official_compliant"
+        }
+    },
+    "youtube_anker_global": {
+        "preset_id": "youtube_anker_global",
+        "region": "global",
+        "title_cn": "案例6 (出海)：YouTube 极客评测创作者 × Anker 200W GaN 旅行快充 (Shopify 独立站 + 亚马逊全球站)",
+        "title_en": "Case 6 (Global): YouTube Tech Reviewer × Anker Prime 200W GaN Charger (Shopify DTC + Amazon Global)",
+        "account_key": "youtube_tech_edc_reviewer",
+        "account_url": "https://www.youtube.com/@DavidTechReviews",
+        "product": {
+            "product_name": "Anker Prime 200W GaN Fast Charger & Power Bank",
+            "brand_name": "Anker",
+            "category": "3C数码/出海充电硬件/极客评测 (Consumer Tech & GaN Chargers)",
+            "msrp_rmb": 942.5,
+            "selling_price_rmb": 725.0,
+            "msrp_usd": 129.99,
+            "selling_price_usd": 99.99,
+            "currency": "USD",
+            "target_region": "global",
+            "exchange_rate_to_rmb": 7.25,
+            "cogs_rate": 0.25,
+            "gross_margin_rate": 0.75,
+            "package_weight_grams": 480.0,
+            "stripe_fee_rate": 0.029,
+            "cross_border_shipping_usd": 9.00,
+            "global_ecommerce_destination": "shopify_dtc",
+            "repeat_purchase_rate_annual": 0.22,
+            "Repeat_orders_per_buyer": 1.8,
+            "core_selling_points": [
+                "200W total output with dual 100W PD charging for laptops",
+                "Advanced GaNPrime semiconductor with ActiveShield 2.0 temperature monitoring",
+                "Smart digital display showing real-time wattage per port",
+                "FAA airline-approved 20,000mAh capacity for global travel"
+            ],
+            "target_audience": "22-45 Global tech enthusiasts, digital nomads & software engineers",
+            "primary_ecommerce_focus": ["shopify_dtc", "amazon_global"],
+            "campaign_budget_rmb": 32625.0
+        },
+        "stage2": {
+            "topics_hashtags": ["#anker", "#gancharger", "#techreview", "#edcgear", "#amazonfinds"],
+            "campaign_theme": "The Ultimate 200W GaN Travel Charger: Real Stress Tests & Teardown",
+            "cdj_stage": "Rational Evaluation & Multi-Device Comparison (极客性能评估 + 高客单购买转化)",
+            "script_content": (
+                "【Hook】Stop carrying 4 different power bricks when you travel! This one hub charges your MacBook Pro and phone simultaneously.\n"
+                "【Hardware Teardown】We opened the Anker Prime 200W in our hardware lab: custom GaN FETs with 94.2% power conversion efficiency and ripple voltage under 50mV.\n"
+                "【Community Validation】Ranked #1 in Reddit r/UsbCHardware and verified by over 1,200 tech forum members.\n"
+                "【FAQ & Links】Q: Does it overheat at 200W full load? A: ActiveShield 2.0 monitors temperature 3 million times per day. Get $30 off on Shopify official store ($99.99) or Amazon Prime."
+            ),
+            "post_count_matrix": 1,
+            "include_pinned_comment_link": True,
+            "account_compliance_track": "official_compliant"
+        }
     }
 }
 
@@ -327,6 +430,17 @@ def generate_csv_from_data(export_type: str, data: Dict[str, Any]) -> str:
         lines.append("策略名称,得分 (0-10),权重,命中特征数,改良建议")
         for st in bench9.get("strategies", []):
             lines.append(f"\"{st.get('name_cn', '')}\",{st.get('score', 0)},{st.get('weight', 0)},{st.get('hits', 0)},\"{st.get('recommendation_cn', '')}\"")
+        if "cross_border_dtc_waterfall" in res:
+            dtc = res["cross_border_dtc_waterfall"]
+            u = dtc.get("metrics_usd", {})
+            lines.append("")
+            lines.append("【跨境独立站与出海全链路财务 (Cross-Border DTC Waterfall in USD)】,,,")
+            lines.append(f"客单价 AOV (USD),${u.get('aov_usd', 0)},总投放预算 (USD),${u.get('ad_spend_usd', 0)}")
+            lines.append(f"独立站成交订单,{u.get('orders', 0)},成交毛 GMV (USD),${u.get('gross_gmv_usd', 0)}")
+            lines.append(f"Stripe/PayPal 手续费 (USD),${u.get('gateway_fees_usd', 0)},跨境 3PL 仓配运费 (USD),${u.get('fulfillment_3pl_usd', 0)}")
+            lines.append(f"退款准备金 (USD),${u.get('return_allowance_usd', 0)},商品总成本 COGS (USD),${u.get('cogs_total_usd', 0)}")
+            lines.append(f"出海净利润 Pocket Profit (USD),${u.get('net_profit_usd', 0)},出海 ROAS,{u.get('roas', 0)}")
+            lines.append(f"CAC 获客成本 (USD),${u.get('cac_usd', 0)},LTV 客户终身价值 (USD),${u.get('ltv_usd', 0)}")
     elif export_type == "matrix":
         mat = data.get("result") or data
         summary = mat.get("matrix_summary", {})

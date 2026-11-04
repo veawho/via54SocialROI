@@ -286,6 +286,59 @@ class TestVia54SocialROIOpenCoreDemo(unittest.TestCase):
         self.assertIn("via54SocialROI", csv_text)
         self.assertIn("麦肯锡口袋价格瀑布", csv_text)
 
+    def test_13_global_social_platforms_and_url_detectors(self) -> None:
+        from core.demo_engine import detect_platform_from_url, GLOBAL_PLATFORMS
+        self.assertEqual(detect_platform_from_url("https://www.tiktok.com/@sarahglows"), "tiktok")
+        self.assertEqual(detect_platform_from_url("https://www.youtube.com/@davetechedc"), "youtube")
+        self.assertEqual(detect_platform_from_url("https://www.instagram.com/drelena"), "instagram")
+        self.assertEqual(detect_platform_from_url("https://www.facebook.com/wellness_demo"), "facebook")
+        self.assertEqual(detect_platform_from_url("https://x.com/alexchen_tech"), "x_twitter")
+        self.assertEqual(detect_platform_from_url("https://twitter.com/alexchen_tech"), "x_twitter")
+        self.assertEqual(len(GLOBAL_PLATFORMS), 5)
+
+    def test_14_cross_border_dtc_waterfall_and_global_geo(self) -> None:
+        from core.demo_engine import (
+            calculate_3pl_shipping_usd,
+            compute_cross_border_dtc_waterfall,
+            compute_global_geo_and_schema_readiness,
+        )
+        self.assertEqual(calculate_3pl_shipping_usd(250.0), 6.50)
+        self.assertEqual(calculate_3pl_shipping_usd(500.0), 9.00)
+        self.assertEqual(calculate_3pl_shipping_usd(850.0), 13.20)
+
+        dtc = compute_cross_border_dtc_waterfall(orders=350, aov_usd=29.99, cogs_usd=5.40, ad_spend_usd=3500.0)
+        self.assertIn("metrics_usd", dtc)
+        self.assertIn("metrics_rmb_equivalent", dtc)
+        self.assertGreater(dtc["metrics_usd"]["gross_gmv_usd"], 10000.0)
+        self.assertGreater(dtc["metrics_usd"]["ltv_to_cac_ratio"], 1.0)
+
+        script = (
+            "Kefujia Cica Barrier Serum ($29.99) is FDA registered for post-procedure recovery. "
+            "How to use? Apply 3 drops daily. According to clinical consensus and Reddit community reviews, it reduces redness."
+        )
+        geo = compute_global_geo_and_schema_readiness(script, "Kefujia", "Cica Serum")
+        self.assertIn("schema_org_readiness", geo)
+        self.assertIn("global_4_ai_som_projection", geo)
+        self.assertGreater(geo["composite_global_geo_score"], 60.0)
+
+    def test_15_global_presets_and_matrix(self) -> None:
+        from server import PRESET_SCENARIOS
+        self.assertIn("tiktok_kefujia_global", PRESET_SCENARIOS)
+        self.assertIn("youtube_anker_global", PRESET_SCENARIOS)
+
+        tt_scenario = PRESET_SCENARIOS["tiktok_kefujia_global"]
+        prof = self.crawler.fetch_account_profile(tt_scenario["account_url"])
+        self.assertEqual(prof.platform, "tiktok")
+        prod = ProductInput(**tt_scenario["product"])
+        s1 = self.engine.compute_stage1_baseline(prof, prod)
+        self.assertIn("google_trends", s1["index_lift_effect"]["platforms"])
+        self.assertIn("shopify_dtc", s1["ecommerce_search_lift_effect"]["channels"])
+
+        s2_in = Stage2ContentInput(**tt_scenario["stage2"])
+        s2 = self.engine.compute_stage2_enhanced(prof, prod, s2_in)
+        self.assertIn("cross_border_dtc_waterfall", s2)
+        self.assertIn("global_geo_and_schema", s2)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

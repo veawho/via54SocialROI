@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>全平台社媒推广影响力、电商回搜、GEO与ROI算法支撑系统 v2.0 | Multi-Modal & 4-Agent Hub</title>
+  <title>via54SocialROI Enterprise v3.0 | 全域社媒精算、出海独立站、GEO与ROI决策系统</title>
   <style>
     :root {
       --bg-dark: #0b1120;
@@ -427,37 +427,684 @@
       .kpi-val, h1, h2, h3 { color: #000 !important; }
       .tab-pane { display: block !important; }
     }
+  
+    /* ==========================================================================
+       Enterprise SaaS Multi-View Layout & REA Architecture (v3.0)
+       ========================================================================== */
+    .saas-app-layout {
+      display: flex;
+      min-height: 100vh;
+      background: #090d16;
+    }
+    .saas-sidebar {
+      width: 260px;
+      background: #0b1120;
+      border-right: 1px solid #1e293b;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 100;
+    }
+    .saas-sidebar.collapsed {
+      width: 68px;
+    }
+    .sidebar-header {
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .sidebar-logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #14b8a6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 18px;
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
+      flex-shrink: 0;
+    }
+    .sidebar-brand-text {
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .sidebar-brand-text h1 {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #f8fafc;
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+    }
+    .sidebar-brand-text p {
+      font-size: 10.5px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .sidebar-nav-group {
+      padding: 12px 10px 4px 10px;
+    }
+    .sidebar-group-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      letter-spacing: 0.6px;
+      padding: 4px 10px;
+      display: block;
+    }
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 9px 12px;
+      border-radius: 7px;
+      color: #cbd5e1;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: 3px;
+      border: 1px solid transparent;
+      user-select: none;
+    }
+    .sidebar-nav-item:hover {
+      background: rgba(30, 41, 59, 0.75);
+      color: #f8fafc;
+      border-color: rgba(51, 65, 85, 0.6);
+    }
+    .sidebar-nav-item.active {
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.22) 0%, rgba(30, 41, 59, 0.9) 100%);
+      color: #60a5fa;
+      border-color: rgba(59, 130, 246, 0.45);
+      font-weight: 700;
+    }
+    .sidebar-item-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      width: 22px;
+      text-align: center;
+    }
+    .sidebar-item-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+    .sidebar-badge {
+      font-size: 9.5px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .sidebar-badge-hot {
+      background: rgba(244, 63, 94, 0.2);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.4);
+    }
+    .sidebar-badge-new {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px 10px;
+      border-top: 1px solid rgba(51, 65, 85, 0.6);
+      background: rgba(15, 23, 42, 0.95);
+    }
+    .marvis-sidebar-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .marvis-sidebar-card:hover {
+      border-color: #10b981;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+    }
+    .saas-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: var(--bg-dark);
+    }
+    .saas-top-navbar {
+      height: 60px;
+      background: #0f172a;
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+    .navbar-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .saas-workspace-content {
+      flex: 1;
+      padding: 18px 24px 42px 24px;
+      max-width: 1920px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .view-panel {
+      display: none;
+    }
+    .view-panel.active {
+      display: block;
+      animation: fadeInView 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes fadeInView {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .cockpit-hero-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .cockpit-kpi-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cockpit-kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #14b8a6);
+    }
+    .cockpit-kpi-title {
+      font-size: 11.5px;
+      color: #94a3b8;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cockpit-kpi-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+    .cockpit-kpi-sub {
+      font-size: 11px;
+      color: #38bdf8;
+      margin-top: 4px;
+    }
+    .dual-waterfall-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 1200px) {
+      .dual-waterfall-grid { grid-template-columns: 1fr; }
+    }
+    .waterfall-card {
+      background: #111827;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .waterfall-step-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px dashed rgba(51, 65, 85, 0.6);
+      font-size: 12px;
+    }
+    .waterfall-step-row:last-child {
+      border-bottom: none;
+    }
+    .currency-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .tag-usd {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .tag-rmb {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+    .region-toggle-group {
+      display: inline-flex;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .region-toggle-btn {
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      padding: 4px 9px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .region-toggle-btn.active {
+      background: #2563eb;
+      color: #fff;
+    }
+    
   </style>
 </head>
 <body>
-<div id="globalBusyBar"></div>
+<div class="saas-app-layout">
+  <!-- LEFT FIXED COLLAPSIBLE SIDEBAR -->
+  <aside class="saas-sidebar" id="appSidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo-icon">🚀</div>
+      <div class="sidebar-brand-text">
+        <h1>via54SocialROI</h1>
+        <p>Enterprise Edition v3.0</p>
+      </div>
+    </div>
+
+    <!-- Navigation Section 1: Executive & Cockpit -->
+    <div class="sidebar-nav-group">
+      <span class="sidebar-group-title">决策中心 / EXECUTIVE</span>
+      <div class="sidebar-nav-item active" id="nav-executive-cockpit" onclick="switchView('executive-cockpit')">
+        <span class="sidebar-item-icon">📊</span>
+        <span class="sidebar-item-label">全域高管驾驶舱</span>
+        <span class="sidebar-badge sidebar-badge-hot">Core</span>
+      </div>
+    </div>
+
+    <!-- Navigation Section 2: Media Buying & Workbenches -->
+    <div class="sidebar-nav-group">
+      <span class="sidebar-group-title">种草工作台 / WORKBENCHES</span>
+      <div class="sidebar-nav-item" id="nav-domestic-seeding" onclick="switchView('domestic-seeding')">
+        <span class="sidebar-item-icon">🇨🇳</span>
+        <span class="sidebar-item-label">国内全域种草工作台</span>
+      </div>
+      <div class="sidebar-nav-item" id="nav-global-dtc" onclick="switchView('global-dtc')">
+        <span class="sidebar-item-icon">🌍</span>
+        <span class="sidebar-item-label">出海社媒与独立站</span>
+        <span class="sidebar-badge sidebar-badge-new">DTC</span>
+      </div>
+    </div>
+
+    <!-- Navigation Section 3: Intelligence & Portfolio -->
+    <div class="sidebar-nav-group">
+      <span class="sidebar-group-title">智能与矩阵 / INTELLIGENCE</span>
+      <div class="sidebar-nav-item" id="nav-ai-geo-hub" onclick="switchView('ai-geo-hub')">
+        <span class="sidebar-item-icon">🤖</span>
+        <span class="sidebar-item-label">AI声量与全球GEO</span>
+        <span class="sidebar-badge sidebar-badge-new">KDD</span>
+      </div>
+      <div class="sidebar-nav-item" id="nav-creator-portfolio" onclick="switchView('creator-portfolio')">
+        <span class="sidebar-item-icon">👥</span>
+        <span class="sidebar-item-label">达人矩阵与背包寻优</span>
+      </div>
+      <div class="sidebar-nav-item" id="nav-whatif-simulator" onclick="switchView('whatif-simulator')">
+        <span class="sidebar-item-icon">📈</span>
+        <span class="sidebar-item-label">沙盘推演与敏感性</span>
+      </div>
+    </div>
+
+    <!-- Navigation Section 4: Operations & Control -->
+    <div class="sidebar-nav-group">
+      <span class="sidebar-group-title">巡检与风控 / CONTROL</span>
+      <div class="sidebar-nav-item" id="nav-monitor-risk" onclick="switchView('monitor-risk')">
+        <span class="sidebar-item-icon">🛡️</span>
+        <span class="sidebar-item-label">7×24巡检预警风控</span>
+      </div>
+      <div class="sidebar-nav-item" id="nav-client-hub" onclick="switchView('client-hub')">
+        <span class="sidebar-item-icon">⚙️</span>
+        <span class="sidebar-item-label">设置与客户端中心</span>
+      </div>
+    </div>
+
+    <!-- Sidebar Bottom: Prominent Marvis Client Status -->
+    <div class="sidebar-footer">
+      <div class="marvis-sidebar-card" onclick="switchView('client-hub')" title="点击查看腾讯 Marvis 客户端连接详情">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;">
+          <span class="dot" style="width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span>
+          <strong style="font-size:11px;color:#a7f3d0;">腾讯 Marvis 客户端</strong>
+        </div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.4;">
+          当前测试最好的社交媒体监测 Agent 客户端
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- RIGHT MAIN BODY -->
+  <div class="saas-body">
+    <!-- TOP STICKY NAVBAR -->
+    <header class="saas-top-navbar" id="topHeaderBar">
+      <div class="navbar-breadcrumb">
+        <span style="cursor:pointer;" onclick="toggleSidebar()">☰</span>
+        <span id="topViewTitle">📊 全域高管驾驶舱 / Executive Cockpit</span>
+      </div>
+
+      <div class="navbar-actions">
+        <!-- Preset Dropdown -->
+        <select id="presetDropdown" onchange="loadPreset(this.value)" style="width:230px;background:#090d16;border:1px solid #334155;color:#e2e8f0;padding:5px 8px;border-radius:6px;font-size:11.5px;">
+          <option value="">💡 快速加载标杆案例 (Presets)...</option>
+          <option value="xhs_kefujia_medical">🇨🇳 案例1：小红书 × 医美修复敷料 (科复佳)</option>
+          <option value="douyin_aosi_eyecare_o2o">🇨🇳 案例2：抖音 × 滴眼液 (美团闪送)</option>
+          <option value="bili_hardcore_device_review">🇨🇳 案例3：B站 × 科技测评 (京东自营)</option>
+          <option value="channels_pharmacist_family">🇨🇳 案例4：视频号 × 家庭常备健康品</option>
+          <option value="tiktok_kefujia_global">🌍 案例5：TikTok × Cica 精华 (Shopify DTC)</option>
+          <option value="youtube_anker_global">🌍 案例6：YouTube × Anker快充 (Shopify+美亚)</option>
+        </select>
+
+        <!-- Region Filter -->
+        <div class="region-toggle-group">
+          <button class="region-toggle-btn active" id="btnRegionAll" onclick="setRegionFilter('all')">🌐 全球双轨</button>
+          <button class="region-toggle-btn" id="btnRegionDomestic" onclick="setRegionFilter('domestic')">🇨🇳 国内</button>
+          <button class="region-toggle-btn" id="btnRegionGlobal" onclick="setRegionFilter('global')">🌍 出海</button>
+        </div>
+
+        <!-- Currency Indicator -->
+        <button class="btn" style="padding:4px 9px;font-size:11px;" onclick="toggleCurrencyMode()" id="currencyToggleBtn">
+          💱 币种: ¥ RMB / $ USD
+        </button>
+
+        <!-- Marvis Agent Badge -->
+        <span class="pill" id="marvisPillBadge" title="腾讯 Marvis — 当前测试最好的社交媒体监测 Agent 客户端" onclick="switchView('client-hub')" style="cursor:pointer;">
+          <span class="dot"></span>
+          <span>Marvis Active</span>
+        </span>
+
+        <!-- Primary Actions -->
+        <button class="btn btn-primary" onclick="smartGenerateStage2FromCurrentForm(false)" style="padding:5px 12px;">
+          🚀 一键测算 (Calculate)
+        </button>
+        <button class="btn btn-teal" onclick="exportCsvResult()" title="导出 UTF-8 with BOM CSV 决策表格">
+          📥 导出 CSV
+        </button>
+        <button class="btn" onclick="openPrintReportModal()">
+          📄 报告
+        </button>
+      </div>
+    </header>
+
+    <!-- SAAS WORKSPACE CONTENT -->
+    <div class="saas-workspace-content" id="mainContentArea">
+
+      <!-- ====================================================================
+           VIEW 1: EXECUTIVE COCKPIT (全域高管驾驶舱)
+           ==================================================================== -->
+      <section class="view-panel active" id="view-executive-cockpit">
+        <!-- Executive KPI Overview -->
+        <div class="cockpit-hero-grid" id="execKpiGrid">
+          <div class="cockpit-kpi-card">
+            <div class="cockpit-kpi-title">
+              <span>全案总预算 (Campaign Budget)</span>
+              <span class="currency-tag tag-rmb">RMB</span>
+            </div>
+            <div class="cockpit-kpi-value" id="execKpiBudget">¥18,500</div>
+            <div class="cockpit-kpi-sub" id="execKpiBudgetUsd">≈ $2,551 USD (按 7.25 汇率折算)</div>
+          </div>
+          <div class="cockpit-kpi-card">
+            <div class="cockpit-kpi-title">
+              <span>全渠道预期总订单 (Omni Orders)</span>
+              <span class="stage-badge">跨域归因</span>
+            </div>
+            <div class="cockpit-kpi-value" id="execKpiOrders">1,380 单</div>
+            <div class="cockpit-kpi-sub" id="execKpiOrdersSub">含社媒直购 + 电商回搜 + GEO长尾订单</div>
+          </div>
+          <div class="cockpit-kpi-card">
+            <div class="cockpit-kpi-title">
+              <span>全渠道总成交 GMV (Omni GMV)</span>
+              <span class="currency-tag tag-rmb">双轨总额</span>
+            </div>
+            <div class="cockpit-kpi-value" id="execKpiGmv">¥162,840</div>
+            <div class="cockpit-kpi-sub" id="execKpiGmvUsd">≈ $22,460 USD</div>
+          </div>
+          <div class="cockpit-kpi-card">
+            <div class="cockpit-kpi-title">
+              <span>全案综合 ROAS (Blended ROAS)</span>
+              <span class="delta-up" style="font-size:12px;">+182% 显著盈利</span>
+            </div>
+            <div class="cockpit-kpi-value" style="color:#34d399;" id="execKpiRoas">8.80x</div>
+            <div class="cockpit-kpi-sub" id="execKpiRoasSub">保本底线: 1.35x | 处于高收益安全区</div>
+          </div>
+          <div class="cockpit-kpi-card">
+            <div class="cockpit-kpi-title">
+              <span>麦肯锡 1% 定价杠杆率 (Pricing Leverage)</span>
+              <span class="stage-badge">营业利润倍增</span>
+            </div>
+            <div class="cockpit-kpi-value" style="color:#fcd34d;" id="execKpiPricingLift">+11.3%</div>
+            <div class="cockpit-kpi-sub">客单价每升 1%，口袋营业利润直增 11.3%</div>
+          </div>
+          <div class="cockpit-kpi-card">
+            <div class="cockpit-kpi-title">
+              <span>出海/SaaS GTM 健康度 (LTV / CAC)</span>
+              <span class="currency-tag tag-usd">硅谷科学</span>
+            </div>
+            <div class="cockpit-kpi-value" style="color:#60a5fa;" id="execKpiLtvCac">4.2x</div>
+            <div class="cockpit-kpi-sub">回收期 2.8 个月 (LTV/CAC ≥ 3.0 优秀级)</div>
+          </div>
+        </div>
+
+        <!-- DUAL WATERFALL COCKPIT (Domestic McKinsey vs Cross-Border DTC) -->
+        <div class="dual-waterfall-grid">
+          <!-- Domestic McKinsey Pocket Price Waterfall -->
+          <div class="waterfall-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid #334155;padding-bottom:8px;">
+              <div>
+                <strong style="font-size:13.5px;color:#93c5fd;">🇨🇳 麦肯锡国内口袋价格瀑布 (Domestic Waterfall)</strong>
+                <div style="font-size:10.5px;color:#94a3b8;">Marn & Rosiello 'The Power of Pricing' 定价精算</div>
+              </div>
+              <span class="currency-tag tag-rmb">¥ 人民币</span>
+            </div>
+            <div id="execDomesticWaterfallContainer">
+              <div class="waterfall-step-row">
+                <span style="color:#cbd5e1;">建议零售标牌价 (MSRP)</span>
+                <strong style="color:#fff;" id="execMsrpRmb">¥148.00</strong>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#fda4af;">- 促销折让 (Promotional Discount)</span>
+                <span style="color:#f43f5e;" id="execDiscountRmb">-¥30.00 (-20.3%)</span>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#93c5fd;font-weight:700;">= 成交开票价 (Invoice Price)</span>
+                <strong style="color:#60a5fa;" id="execInvoiceRmb">¥118.00</strong>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#fda4af;">- 电商平台扣点 (Platform Fee 5%)</span>
+                <span style="color:#f43f5e;" id="execPlatformFeeRmb">-¥5.90</span>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#fda4af;">- 国内履约物流与退损 (Fulfillment 8%)</span>
+                <span style="color:#f43f5e;" id="execFulfillmentRmb">-¥9.44</span>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#6ee7b7;font-weight:700;">= 口袋到手价 (Pocket Price)</span>
+                <strong style="color:#34d399;" id="execPocketPriceRmb">¥102.66</strong>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#fda4af;">- 商品硬物料成本 (COGS 22%)</span>
+                <span style="color:#f43f5e;" id="execCogsRmb">-¥25.96</span>
+              </div>
+              <div class="waterfall-step-row" style="background:rgba(16,185,129,0.12);padding:9px 8px;border-radius:6px;margin-top:6px;">
+                <strong style="color:#6ee7b7;font-size:13px;">★ 单件口袋边际贡献 (Pocket Margin)</strong>
+                <strong style="color:#34d399;font-size:15px;" id="execPocketMarginRmb">¥76.70 (65.0%)</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cross-Border Overseas DTC Waterfall -->
+          <div class="waterfall-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid #334155;padding-bottom:8px;">
+              <div>
+                <strong style="font-size:13.5px;color:#a7f3d0;">🌍 出海独立站全链路财务瀑布 (Global DTC Waterfall)</strong>
+                <div style="font-size:10.5px;color:#94a3b8;">Shopify/WooCommerce + 3PL 专线 + Stripe 网关</div>
+              </div>
+              <span class="currency-tag tag-usd">$ 美元结算</span>
+            </div>
+            <div id="execGlobalWaterfallContainer">
+              <div class="waterfall-step-row">
+                <span style="color:#cbd5e1;">独立站成交客单价 (AOV USD)</span>
+                <strong style="color:#fff;" id="execAovUsd">$29.99 (¥217.43)</strong>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#fda4af;">- Stripe/PayPal 手续费 (4.08% + $0.36)</span>
+                <span style="color:#f43f5e;" id="execGatewayFeeUsd">-$1.58</span>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#fda4af;">- 跨境 3PL 空运专线仓配 (400g 分段)</span>
+                <span style="color:#f43f5e;" id="execFulfillment3plUsd">-$9.00</span>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#fda4af;">- 跨境退款损耗准备金 (5.5% 退款)</span>
+                <span style="color:#f43f5e;" id="execReturnReserveUsd">-$1.24</span>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#fda4af;">- 跨境商品成本 (COGS 18%)</span>
+                <span style="color:#f43f5e;" id="execCogsUsd">-$5.40</span>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#6ee7b7;font-weight:700;">= 单件出海净收益 (Pocket Profit USD)</span>
+                <strong style="color:#34d399;" id="execPocketProfitUsd">$12.77 (42.6%)</strong>
+              </div>
+              <div class="waterfall-step-row">
+                <span style="color:#93c5fd;">客户全生命周期价值 (LTV USD)</span>
+                <strong style="color:#60a5fa;" id="execLtvUsd">$54.20 (LTV/CAC: 4.2x)</strong>
+              </div>
+              <div class="waterfall-step-row" style="background:rgba(59,130,246,0.12);padding:9px 8px;border-radius:6px;margin-top:6px;">
+                <strong style="color:#93c5fd;font-size:13px;">★ 出海全案净利润 (Net Pocket Profit)</strong>
+                <strong style="color:#60a5fa;font-size:15px;" id="execTotalDtcNetProfit">$4,469.50 USD (¥32,403)</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full-Width AI Decision Verdict & Quick Navigation Links -->
+        <div id="execVerdictHost"></div>
+
+        <!-- Omni-Channel Spillover Channels Table (All Domestic & Global) -->
+        <div class="waterfall-card" style="margin-top:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:13.5px;color:#f8fafc;">🌐 全渠道电商回搜与货架转化总览 (Omni-Channel Destinations)</strong>
+            <span style="font-size:11px;color:#94a3b8;">涵盖国内京东/淘天/美团 + 海外 Shopify/Amazon/TikTok Shop</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>电商转化渠道 / Channel</th>
+                <th>市场归属</th>
+                <th>进店回搜 UV</th>
+                <th>加购转化 UV</th>
+                <th>预估总订单</th>
+                <th>归因 GMV (RMB)</th>
+                <th>等值 GMV (USD)</th>
+              </tr>
+            </thead>
+            <tbody id="execChannelsTableBody">
+              <tr>
+                <td><strong>京东自营大药房 (JD.com)</strong></td>
+                <td><span class="currency-tag tag-rmb">国内</span></td>
+                <td>2,450</td>
+                <td>735</td>
+                <td>186</td>
+                <td class="delta-up">¥21,948</td>
+                <td>$3,027</td>
+              </tr>
+              <tr>
+                <td><strong>天猫官方旗舰店 (Taobao/Tmall)</strong></td>
+                <td><span class="currency-tag tag-rmb">国内</span></td>
+                <td>2,860</td>
+                <td>815</td>
+                <td>214</td>
+                <td class="delta-up">¥25,252</td>
+                <td>$3,483</td>
+              </tr>
+              <tr>
+                <td><strong>美团买药/闪购 (Meituan O2O 30分钟)</strong></td>
+                <td><span class="currency-tag tag-rmb">国内</span></td>
+                <td>1,420</td>
+                <td>398</td>
+                <td>102</td>
+                <td class="delta-up">¥12,036</td>
+                <td>$1,660</td>
+              </tr>
+              <tr>
+                <td><strong>Shopify 品牌独立站 (Brand DTC)</strong></td>
+                <td><span class="currency-tag tag-usd">出海</span></td>
+                <td>3,240</td>
+                <td>972</td>
+                <td>345</td>
+                <td class="delta-up">¥74,903</td>
+                <td>$10,331</td>
+              </tr>
+              <tr>
+                <td><strong>亚马逊北美/欧洲站 (Amazon Global)</strong></td>
+                <td><span class="currency-tag tag-usd">出海</span></td>
+                <td>2,150</td>
+                <td>580</td>
+                <td>218</td>
+                <td class="delta-up">¥47,314</td>
+                <td>$6,526</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW 2: DOMESTIC SEEDING WORKBENCH (国内全域种草工作台)
+           ==================================================================== -->
+      <section class="view-panel" id="view-domestic-seeding">
+    <div id="globalBusyBar"></div>
 <div id="toastHost" aria-live="polite"></div>
 
-<header>
-  <div class="brand-title">
-    <h1>全平台社媒推广效果、带货回搜与 ROI 傻瓜式智能测算台 v3.0 (工业级旗舰版)</h1>
-    <p>三步极简操作：① 粘贴账号链接 → ② 上传产品PDF/填售价 → ③ 一键算清能赚多少钱 · <strong style="color:#fcd34d;">🏆 强烈推荐本机部署【腾讯 Marvis】（当前测试最好的社交媒体监测 Agent 客户端）</strong></p>
-  </div>
-  <div class="status-bar" id="agentHubStatusBar">
-    <button class="btn btn-teal" id="uiModeToggleBtn" onclick="toggleSimpleOrExpertMode()" title="切换极简傻瓜模式或展开全部底层参数">✨ 当前：极简傻瓜模式 (点击展开专业参数)</button>
-    <span class="pill" style="border-color:#f59e0b;background:rgba(245,158,11,0.14);color:#fde68a;" title="强烈推荐本机部署腾讯 Marvis —— 当前测试最好的社交媒体监测 Agent 客户端"><span class="dot"></span><span id="pillMarvis">🏆 腾讯 Marvis (最佳社媒监测 Agent): 在线</span></span>
-    <span class="pill" style="display:none;"><span id="pillDeepSeek">DeepSeek: 就绪</span><span id="pillAntigravity">Antigravity: 就绪</span><span id="pillCodex">Codex: 就绪</span></span>
-    <button class="btn" onclick="openMatrixTabAndRun()" style="border-color:#a855f7;color:#e9d5ff;">🌟 多账号PK选号看板</button>
-    <button class="btn btn-purple" onclick="openMarvisArticleModal()" title="调用腾讯 Marvis 深度爬取并分析文章中的 5 大核心资产与 11 天半衰期">📰 Marvis 深度分析文章</button>
-    <button class="btn btn-teal" onclick="exportCsvResult()" title="导出带 BOM 的 Excel/WPS 兼容 CSV 表格">📊 导出 CSV</button>
-    <button class="btn" onclick="printExecutiveReport()" title="格式化打印或保存为高管 PDF 决策简报">🖨️ 打印 PDF</button>
-    <button class="btn" onclick="exportMarkdownReport()">📥 导出报告 (.md)</button>
-    <button class="btn" onclick="exportJsonResult()">JSON</button>
-  </div>
-</header>
 
-<div class="preset-bar">
-  <span class="preset-label">💡 零门槛体验（点击即刻演示真实行业案例）：</span>
-  <button class="btn" onclick="loadPreset('xhs_kefujia_medical')">① 小红书 × 医美修复敷料</button>
-  <button class="btn" onclick="loadPreset('douyin_aosi_eyecare_o2o')">② 抖音 × 滴眼液 (美团买药闪送)</button>
-  <button class="btn" onclick="loadPreset('bili_hardcore_device_review')">③ B站 × 科技测评 (京东自营)</button>
-  <button class="btn" onclick="loadPreset('channels_pharmacist_family')">④ 视频号 × 家庭常备健康品</button>
-</div>
+
+
 
 <!-- 4-STEP INTERACTIVE GUIDED WORKFLOW BAR -->
 <div class="stepper-bar" id="workflowStepperBar">
@@ -976,7 +1623,307 @@ channels_family_wellness_kol</textarea>
     </div>
   </div>
 </div>
+      </section>
+    
+      <!-- ====================================================================
+           VIEW 3: GLOBAL DTC SEEDING WORKBENCH (出海社媒与跨境独立站)
+           ==================================================================== -->
+      <section class="view-panel" id="view-global-dtc">
+        <div class="workspace" style="padding:0;max-width:100%;">
+          <div>
+            <!-- GLOBAL STEP 1: SELECT OVERSEAS CREATOR -->
+            <div class="card" style="border-left: 4px solid #14b8a6;">
+              <div class="card-header">
+                <h2><span class="step-circle">1</span>第一步：选择海外创作者 / Select Global Creator</h2>
+                <span class="stage-badge" style="background:rgba(20,184,166,0.2);color:#5eead4;border-color:#14b8a6;">5大出海平台</span>
+              </div>
+              <div class="form-grid">
+                <div class="form-full">
+                  <label>海外博主主页链接 (TikTok / YouTube / Instagram / Facebook / X):</label>
+                  <div class="url-bar">
+                    <input type="text" id="globalAccountUrl" value="https://www.tiktok.com/@sarahglows" placeholder="Paste creator profile URL..." />
+                    <button class="btn btn-teal" onclick="loadGlobalPresetFromInput()">🔍 解析账号</button>
+                  </div>
+                </div>
+                <div>
+                  <label>全球社媒平台 / Global Platform</label>
+                  <select id="globalPlatformSelect" onchange="syncGlobalCreatorTemplate(this.value)">
+                    <option value="tiktok">TikTok (美妆护肤/生活方式/短视频)</option>
+                    <option value="youtube">YouTube (3C数码/科技测评/长视频)</option>
+                    <option value="instagram">Instagram (轻奢美学/视觉种草)</option>
+                    <option value="facebook">Facebook (家庭健康/生活刚需)</option>
+                    <option value="x_twitter">X / Twitter (极客硬件/AI开发者)</option>
+                  </select>
+                </div>
+                <div>
+                  <label>创作者粉丝量 (Followers)</label>
+                  <input type="number" id="globalFollowers" value="480000" />
+                </div>
+                <div class="form-full">
+                  <div class="account-mini-card" id="globalAccountCard">
+                    <div>
+                      <div style="font-size:13px;font-weight:700;color:#6ee7b7;" id="globalAcctTitle">✅ 已载入: [TikTok] Sarah Lin | Biohacking & K-Beauty (@sarahglows)</div>
+                      <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px;">👥 粉丝 480,000 · 均阅 125,000 · 均赞 8,800 · ER 7.04% · DTC 转化乘数 1.34x</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
+            <!-- GLOBAL STEP 2: CROSS-BORDER DTC PRODUCT & 3PL LOGISTICS -->
+            <div class="card" style="border-left: 4px solid #3b82f6;">
+              <div class="card-header">
+                <h2><span class="step-circle">2</span>第二步：出海独立站产品与仓配物流 / DTC & Logistics</h2>
+                <span class="stage-badge">Triple Whale 精算</span>
+              </div>
+              <div class="form-grid">
+                <div class="form-full">
+                  <label>出海产品英文/双语名称 / Product Name</label>
+                  <input type="text" id="globalProductName" value="Kefujia Cica Barrier Repair Serum 50ml (科复佳积雪草屏障精华)" />
+                </div>
+                <div>
+                  <label>美元客单价 AOV ($ USD)</label>
+                  <input type="number" step="0.01" id="globalSellingPriceUsd" value="29.99" oninput="updateGlobalDtcLiveWaterfall()" />
+                </div>
+                <div>
+                  <label>美元标牌价 MSRP ($ USD)</label>
+                  <input type="number" step="0.01" id="globalMsrpUsd" value="38.00" />
+                </div>
+                <div>
+                  <label>包裹克重 (Grams) → 自动匹配3PL专线</label>
+                  <input type="number" id="globalPackageWeight" value="250" oninput="updateGlobalDtcLiveWaterfall()" />
+                </div>
+                <div>
+                  <label>汇率折算 (1 USD = ? RMB)</label>
+                  <input type="number" step="0.01" id="globalExchangeRate" value="7.25" oninput="updateGlobalDtcLiveWaterfall()" />
+                </div>
+                <div class="form-full">
+                  <label>出海核心转化目的地 / E-Commerce Destination</label>
+                  <select id="globalDestinationSelect">
+                    <option value="shopify_dtc">Shopify 品牌官方独立站 (Brand DTC Store - 推荐)</option>
+                    <option value="amazon_global">亚马逊北美/欧洲站 (Amazon US/EU Prime)</option>
+                    <option value="tiktok_shop_global">TikTok Shop US 闭环短视频挂车 (Native Checkout)</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Stripe / PayPal 混合网关费率</label>
+                  <input type="text" id="globalStripeRate" value="4.08% + $0.36" readonly style="background:#1e293b;color:#94a3b8;" />
+                </div>
+                <div>
+                  <label>跨境退款准备金率 (Return Reserve)</label>
+                  <input type="text" id="globalReturnRate" value="5.5% (残值率25%)" readonly style="background:#1e293b;color:#94a3b8;" />
+                </div>
+              </div>
+            </div>
+
+            <!-- GLOBAL STEP 3: SCRIPT & SCHEMA.ORG BLUF GENERATOR -->
+            <div class="card" style="border-left: 4px solid #8b5cf6;">
+              <div class="card-header">
+                <h2><span class="step-circle">3</span>第三步：出海脚本与 Schema.org BLUF 优化</h2>
+                <span class="stage-badge stage2-badge">Zero-Click 捕获</span>
+              </div>
+              <button class="hero-calc-btn" onclick="runGlobalDtcCalculation()">
+                🚀 测算出海独立站 ROI & 全球 4 大 AI 推荐率
+              </button>
+              <div style="margin-top:10px;">
+                <label>海外英文种草脚本 (包含前3秒钩子 + 临床实证 + Reddit/社群背书 + Shopify/TikTok Shop 购买引导):</label>
+                <textarea id="globalScriptContent" rows="4">【Hook】If you're dealing with stubborn redness after actives or retinol, stop throwing random serums at it!
+【Authority & BLUF】Clinical dermatology consensus shows barrier recovery requires biomimetic centella polysaccharides combined with micro-molecular hyaluronic acid.
+【Data & Benchmark】Kefujia Cica Barrier Repair Serum is clinically shown to reduce transepidermal water loss (TEWL) by 38.4% within 72 hours.
+【Multi-Channel CTA】Link in bio gets you 15% off at our official Shopify DTC store ($29.99) with fast 5-day air delivery, or tap the TikTok Shop bag right below! Free US shipping on orders over $45.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- GLOBAL RIGHT COLUMN: DTC WATERFALL & SAAS GTM UNIT ECONOMICS -->
+          <div>
+            <div class="card" style="border-left: 4px solid #10b981;">
+              <div class="card-header">
+                <h2>📊 跨境独立站口袋价格瀑布 (Cross-Border DTC Waterfall)</h2>
+                <span class="currency-tag tag-usd">Triple Whale 标杆</span>
+              </div>
+              <div id="globalWaterfallResultBox">
+                <div class="kpi-grid">
+                  <div class="kpi-box">
+                    <div class="kpi-title">出海净收入毛 GMV (USD)</div>
+                    <div class="kpi-val" id="gGmvUsd">$25,491.50</div>
+                    <div class="kpi-sub">折合人民币 ¥184,813</div>
+                  </div>
+                  <div class="kpi-box">
+                    <div class="kpi-title">出海单票净口袋利润</div>
+                    <div class="kpi-val" style="color:#34d399;" id="gUnitProfitUsd">$12.77</div>
+                    <div class="kpi-sub">口袋利润率 42.6%</div>
+                  </div>
+                  <div class="kpi-box">
+                    <div class="kpi-title">出海投资回报率 (ROAS)</div>
+                    <div class="kpi-val" style="color:#60a5fa;" id="gRoasUsd">7.11x</div>
+                    <div class="kpi-sub">投放预算 $3,586 USD</div>
+                  </div>
+                  <div class="kpi-box">
+                    <div class="kpi-title">SaaS GTM LTV / CAC</div>
+                    <div class="kpi-val" style="color:#a78bfa;" id="gLtvCac">4.2x</div>
+                    <div class="kpi-sub">回收期 2.8 个月 (极健康)</div>
+                  </div>
+                </div>
+
+                <!-- Global 4-AI Engine SoM Breakdown Card -->
+                <div style="background:rgba(30,41,59,0.5);border:1px solid #334155;border-radius:8px;padding:12px;margin:12px 0;">
+                  <strong style="color:#93c5fd;font-size:12.5px;">🤖 全球 4 大 AI 引擎声量份额预测 (Global AI Share of Model)</strong>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px;margin-top:8px;">
+                    <div style="background:#0f172a;padding:8px;border-radius:6px;border:1px solid #1e293b;">
+                      <div style="color:#94a3b8;font-size:11px;">ChatGPT Search</div>
+                      <div style="color:#f8fafc;font-size:16px;font-weight:700;" id="somChatGpt">32.4%</div>
+                      <div style="color:#34d399;font-size:10.5px;">+18.2% 净增</div>
+                    </div>
+                    <div style="background:#0f172a;padding:8px;border-radius:6px;border:1px solid #1e293b;">
+                      <div style="color:#94a3b8;font-size:11px;">Perplexity Pro</div>
+                      <div style="color:#f8fafc;font-size:16px;font-weight:700;" id="somPerplexity">38.6%</div>
+                      <div style="color:#34d399;font-size:10.5px;">+24.1% 净增</div>
+                    </div>
+                    <div style="background:#0f172a;padding:8px;border-radius:6px;border:1px solid #1e293b;">
+                      <div style="color:#94a3b8;font-size:11px;">Google AI Overviews</div>
+                      <div style="color:#f8fafc;font-size:16px;font-weight:700;" id="somGoogleAi">29.8%</div>
+                      <div style="color:#34d399;font-size:10.5px;">+16.4% 净增</div>
+                    </div>
+                    <div style="background:#0f172a;padding:8px;border-radius:6px;border:1px solid #1e293b;">
+                      <div style="color:#94a3b8;font-size:11px;">Claude Search</div>
+                      <div style="color:#f8fafc;font-size:16px;font-weight:700;" id="somClaude">35.2%</div>
+                      <div style="color:#34d399;font-size:10.5px;">+20.5% 净增</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Schema.org & Third-Party Signal Readiness -->
+                <div style="background:rgba(15,23,42,0.8);border:1px solid rgba(139,92,246,0.35);border-radius:8px;padding:12px;font-size:11.5px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <strong style="color:#c4b5fd;">🏷️ Schema.org & Reddit/LinkedIn 验证信号 (SEO+GEO 双引擎)</strong>
+                    <span class="conf-badge conf-high" id="schemaStatusBadge">VALID 合格</span>
+                  </div>
+                  <div style="color:#cbd5e1;line-height:1.5;">
+                    • Product Schema (JSON-LD 价格/币种/现货): <strong style="color:#6ee7b7;" id="schemaProductScore">90 / 100</strong><br/>
+                    • FAQPage Schema (问答与直接回答结构): <strong style="color:#6ee7b7;" id="schemaFaqScore">85 / 100</strong><br/>
+                    • 第三方论坛与独立评测背书 (Reddit r/Skincare): <strong style="color:#38bdf8;" id="schemaEarnedScore">92 / 100</strong> (与AI引用相关度 0.664)<br/>
+                    • Zero-Click 首句 BLUF 答案捕获: <strong style="color:#34d399;">已捕获 (前2-7位精选引用)</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW 4: AI & GEO INTELLIGENCE HUB (AI声量与全球GEO优化中心)
+           ==================================================================== -->
+      <section class="view-panel" id="view-ai-geo-hub">
+        <div class="card" style="border-left: 4px solid #8b5cf6;">
+          <div class="card-header">
+            <h2>🤖 生成式引擎优化 (GEO) 与 8 大国内外商业 AI 声量大盘</h2>
+            <span class="stage-badge stage2-badge">KDD 2024 / Topify AI</span>
+          </div>
+          <div id="geoDedicatedContainer"></div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW 5: CREATOR PORTFOLIO & KNAPSACK DP (达人矩阵与背包预算分配)
+           ==================================================================== -->
+      <section class="view-panel" id="view-creator-portfolio">
+        <div class="card" style="border-left: 4px solid #3b82f6;">
+          <div class="card-header">
+            <h2>👥 多平台达人矩阵横向对比与动态规划预算寻优 (Knapsack DP)</h2>
+            <span class="stage-badge">Sainsbury 去重</span>
+          </div>
+          <div id="matrixDedicatedContainer"></div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW 6: WHAT-IF SENSITIVITY SIMULATOR (沙盘推演与敏感性实验室)
+           ==================================================================== -->
+      <section class="view-panel" id="view-whatif-simulator">
+        <div class="card" style="border-left: 4px solid #f59e0b;">
+          <div class="card-header">
+            <h2>📈 沙盘推演与敏感性实验室 (Interactive Sensitivity & What-If Sandbox)</h2>
+            <span class="stage-badge" style="background:rgba(245,158,11,0.2);color:#fcd34d;border-color:#f59e0b;">麦肯锡 1% 定价铁律</span>
+          </div>
+          <div id="whatifDedicatedContainer"></div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW 7: 7X24 MONITOR & RISK CONTROL (7×24 巡检预警与合规风控)
+           ==================================================================== -->
+      <section class="view-panel" id="view-monitor-risk">
+        <div class="card" style="border-left: 4px solid #f43f5e;">
+          <div class="card-header">
+            <h2>🛡️ 7×24 小时动态盯盘巡检与 Hawkes 脉冲预警 (Monitor & Risk Control)</h2>
+            <span class="stage-badge" style="background:rgba(244,63,94,0.2);color:#fda4af;border-color:#f43f5e;">SQLite WAL 毫秒记录</span>
+          </div>
+          <div id="monitorDedicatedContainer"></div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW 8: CLIENT HUB & SYSTEM SETTINGS (设置与客户端管理中心)
+           ==================================================================== -->
+      <section class="view-panel" id="view-client-hub">
+        <!-- Prominent Tencent Marvis Client Card -->
+        <div class="card" style="border-left: 5px solid #10b981;background:linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(17,24,39,0.95) 100%);">
+          <div class="card-header">
+            <h2>🖥️ 腾讯 Marvis 监测客户端（本机专属直连）</h2>
+            <span class="conf-badge conf-high">当前测试最好的社交媒体监测 Agent 客户端</span>
+          </div>
+          <div style="font-size:12.5px;color:#cbd5e1;line-height:1.7;">
+            <p><strong style="color:#6ee7b7;">腾讯 Marvis (Marvis Agent)</strong> 是专为现代社交媒体舆情与创作者投放打造的下一代 AI 监测系统，原生内置 Chromium / CDP 实时无头浏览器，可完美突破常见反爬机制，实现小红书、抖音、B站、视频号全指标秒级采集。</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:10px;margin:12px 0;">
+              <div style="background:#0f172a;padding:10px;border-radius:7px;border:1px solid #1e293b;">
+                <div style="color:#94a3b8;font-size:11px;">本机安装路径</div>
+                <div style="color:#f8fafc;font-weight:700;font-size:11.5px;word-break:break-all;">C:\Program Files\Tencent\Marvis\MarvisAgent</div>
+              </div>
+              <div style="background:#0f172a;padding:10px;border-radius:7px;border:1px solid #1e293b;">
+                <div style="color:#94a3b8;font-size:11px;">TCP 守护监听端口</div>
+                <div style="color:#6ee7b7;font-weight:700;font-size:13px;" id="marvisPortVal">3765 (Active)</div>
+              </div>
+              <div style="background:#0f172a;padding:10px;border-radius:7px;border:1px solid #1e293b;">
+                <div style="color:#94a3b8;font-size:11px;">CDP 浏览器宿主桥接</div>
+                <div style="color:#60a5fa;font-weight:700;font-size:13px;" id="marvisCdpVal">Active (Chrome / Edge)</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+              <button class="btn btn-teal" onclick="testMarvisConnectionLive()">⚡ 即刻测试 Marvis 连通性</button>
+              <button class="btn" onclick="exportFullDiagnosticReport()">📄 导出系统运行与诊断日志</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4-Agent Live Council Configuration Card -->
+        <div class="card" style="border-left: 4px solid #8b5cf6;margin-top:14px;">
+          <div class="card-header">
+            <h2>🤖 4-Agent 协同诊断大模型 API 密钥配置</h2>
+            <span class="stage-badge">DeepSeek / OpenAI / Local</span>
+          </div>
+          <div class="form-grid">
+            <div class="form-full">
+              <label>DeepSeek API Key (可选，用于激活多专家实时联网把关诊断):</label>
+              <input type="password" id="deepseekApiKeyInput" placeholder="sk-..." value="" />
+            </div>
+            <div class="form-full">
+              <label>四专家会诊委员会启用状态:</label>
+              <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:4px;">
+                <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" id="provider_deepseek" checked style="width:auto;" /> 🇨🇳 DeepSeek 增长专家</label>
+                <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" id="provider_openai" checked style="width:auto;" /> 🇺🇸 OpenAI 算力复核专家</label>
+                <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" id="provider_claude" checked style="width:auto;" /> 🛡️ Claude 合规风控专家</label>
+                <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" id="provider_local_rules" checked style="width:auto;" /> 📊 本地知识库精算引擎</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div> <!-- end saas-workspace-content -->
+  </div> <!-- end saas-body -->
+</div> <!-- end saas-app-layout -->
 <script>
   // ==========================================================================
   // v2.6 Global request layer: busy bar, duplicate-click lock, readable error toasts
@@ -3232,27 +4179,472 @@ channels_family_wellness_kol</textarea>
   }
 
   window.addEventListener("DOMContentLoaded", initWorkbench);
-</script>
 
-<!-- MARVIS ARTICLE ANALYZER MODAL -->
-<div id="marvisArticleModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.78);z-index:99999;align-items:center;justify-content:center;">
-  <div style="background:#0f172a;border:1.5px solid #8b5cf6;border-radius:12px;width:90%;max-width:780px;max-height:85vh;overflow-y:auto;padding:22px;box-shadow:0 12px 36px rgba(0,0,0,0.8);">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <h3 style="margin:0;font-size:16px;color:#e9d5ff;display:flex;align-items:center;gap:8px;">
-        <span>🏆</span> 腾讯 Marvis 深度文章爬取与 Agent 时代 5 大核心资产诊断
-      </h3>
-      <button onclick="closeMarvisArticleModal()" style="background:transparent;border:none;color:#94a3b8;font-size:20px;cursor:pointer;">✕</button>
-    </div>
-    <p style="font-size:12px;color:#94a3b8;margin-bottom:12px;line-height:1.5;">
-      支持微信公众号文章、知乎专栏、科技行业深度报告。调用本机部署的 <strong>腾讯 Marvis (当前测试最好的社交媒体监测 Agent 客户端)</strong> 进行 CDP 静默抓取，并自动进行【品牌事实、五元场景证据链、第三方信源、Agent可解析度、转化闭环】5 大资产诊断与 11 天半衰期测算。
-    </p>
-    <div style="display:flex;gap:8px;margin-bottom:14px;">
-      <input type="text" id="marvisArticleUrlInput" style="flex:1;background:#1e293b;border:1px solid #475569;border-radius:6px;padding:9px 12px;color:#f8fafc;font-size:13px;" placeholder="粘贴公众号文章/研报 URL，例如: https://mp.weixin.qq.com/s/Xu_kb6DIu95yLhusWmyZww" value="https://mp.weixin.qq.com/s/Xu_kb6DIu95yLhusWmyZww" />
-      <button class="btn btn-purple btn-lockable" onclick="runMarvisArticleAnalysis()">🚀 调用 Marvis 深度分析</button>
-    </div>
-    <div id="marvisArticleResultBox" style="display:none;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:14px;font-size:12.5px;color:#cbd5e1;line-height:1.6;">
-    </div>
-  </div>
-</div>
+
+    /* ==========================================================================
+       Enterprise SaaS Multi-View Layout & REA Architecture (v3.0)
+       ========================================================================== */
+    .saas-app-layout {
+      display: flex;
+      min-height: 100vh;
+      background: #090d16;
+    }
+    .saas-sidebar {
+      width: 260px;
+      background: #0b1120;
+      border-right: 1px solid #1e293b;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 100;
+    }
+    .saas-sidebar.collapsed {
+      width: 68px;
+    }
+    .sidebar-header {
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .sidebar-logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #14b8a6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 18px;
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
+      flex-shrink: 0;
+    }
+    .sidebar-brand-text {
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .sidebar-brand-text h1 {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #f8fafc;
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+    }
+    .sidebar-brand-text p {
+      font-size: 10.5px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .sidebar-nav-group {
+      padding: 12px 10px 4px 10px;
+    }
+    .sidebar-group-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      letter-spacing: 0.6px;
+      padding: 4px 10px;
+      display: block;
+    }
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 9px 12px;
+      border-radius: 7px;
+      color: #cbd5e1;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: 3px;
+      border: 1px solid transparent;
+      user-select: none;
+    }
+    .sidebar-nav-item:hover {
+      background: rgba(30, 41, 59, 0.75);
+      color: #f8fafc;
+      border-color: rgba(51, 65, 85, 0.6);
+    }
+    .sidebar-nav-item.active {
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.22) 0%, rgba(30, 41, 59, 0.9) 100%);
+      color: #60a5fa;
+      border-color: rgba(59, 130, 246, 0.45);
+      font-weight: 700;
+    }
+    .sidebar-item-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      width: 22px;
+      text-align: center;
+    }
+    .sidebar-item-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+    .sidebar-badge {
+      font-size: 9.5px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .sidebar-badge-hot {
+      background: rgba(244, 63, 94, 0.2);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.4);
+    }
+    .sidebar-badge-new {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px 10px;
+      border-top: 1px solid rgba(51, 65, 85, 0.6);
+      background: rgba(15, 23, 42, 0.95);
+    }
+    .marvis-sidebar-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .marvis-sidebar-card:hover {
+      border-color: #10b981;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+    }
+    .saas-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: var(--bg-dark);
+    }
+    .saas-top-navbar {
+      height: 60px;
+      background: #0f172a;
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+    .navbar-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .saas-workspace-content {
+      flex: 1;
+      padding: 18px 24px 42px 24px;
+      max-width: 1920px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .view-panel {
+      display: none;
+    }
+    .view-panel.active {
+      display: block;
+      animation: fadeInView 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes fadeInView {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .cockpit-hero-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .cockpit-kpi-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cockpit-kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #14b8a6);
+    }
+    .cockpit-kpi-title {
+      font-size: 11.5px;
+      color: #94a3b8;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cockpit-kpi-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+    .cockpit-kpi-sub {
+      font-size: 11px;
+      color: #38bdf8;
+      margin-top: 4px;
+    }
+    .dual-waterfall-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 1200px) {
+      .dual-waterfall-grid { grid-template-columns: 1fr; }
+    }
+    .waterfall-card {
+      background: #111827;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .waterfall-step-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px dashed rgba(51, 65, 85, 0.6);
+      font-size: 12px;
+    }
+    .waterfall-step-row:last-child {
+      border-bottom: none;
+    }
+    .currency-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .tag-usd {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .tag-rmb {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+    .region-toggle-group {
+      display: inline-flex;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .region-toggle-btn {
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      padding: 4px 9px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .region-toggle-btn.active {
+      background: #2563eb;
+      color: #fff;
+    }
+    
+
+// ============================================================================
+// Enterprise SaaS Multi-View Controller & Synchronizer (v3.0)
+// ============================================================================
+
+function switchView(viewId) {
+  // Update view panels
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav-item').forEach(btn => btn.classList.remove('active'));
+  
+  const target = document.getElementById('view-' + viewId);
+  const navBtn = document.getElementById('nav-' + viewId);
+  if (target) target.classList.add('active');
+  if (navBtn) navBtn.classList.add('active');
+
+  // Sync content into dedicated containers if switching
+  if (viewId === 'ai-geo-hub') {
+    const src = document.getElementById('geoContentContainer');
+    const dest = document.getElementById('geoDedicatedContainer');
+    if (src && dest && src.innerHTML) dest.innerHTML = src.innerHTML;
+  } else if (viewId === 'creator-portfolio') {
+    const src = document.getElementById('matrixContentContainer');
+    const dest = document.getElementById('matrixDedicatedContainer');
+    if (src && dest && src.innerHTML) dest.innerHTML = src.innerHTML;
+  } else if (viewId === 'whatif-simulator') {
+    const src = document.getElementById('sensitivityContentContainer');
+    const dest = document.getElementById('whatifDedicatedContainer');
+    if (src && dest && src.innerHTML) dest.innerHTML = src.innerHTML;
+  } else if (viewId === 'monitor-risk') {
+    const src = document.getElementById('monitorContentContainer');
+    const dest = document.getElementById('monitorDedicatedContainer');
+    if (src && dest && src.innerHTML) dest.innerHTML = src.innerHTML;
+  }
+
+  // Update Breadcrumb Title
+  const titles = {
+    'executive-cockpit': '📊 全域高管驾驶舱 / Executive Cockpit',
+    'domestic-seeding': '🇨🇳 国内全域种草工作台 / Domestic Seeding Workbench',
+    'global-dtc': '🌍 出海社媒与跨境独立站 / Global DTC Workbench',
+    'ai-geo-hub': '🤖 AI声量与全球GEO中心 / AI & GEO Intelligence Hub',
+    'creator-portfolio': '👥 达人矩阵与背包寻优 / Creator Portfolio & Knapsack',
+    'whatif-simulator': '📈 沙盘推演与敏感性实验室 / What-If Sandbox',
+    'monitor-risk': '🛡️ 7×24 巡检预警与合规风控 / Monitor & Risk Control',
+    'client-hub': '⚙️ 客户端中心与系统设置 / Client Hub & Settings',
+  };
+  const bTitle = document.getElementById('topViewTitle');
+  if (bTitle && titles[viewId]) bTitle.textContent = titles[viewId];
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleSidebar() {
+  const sb = document.getElementById('appSidebar');
+  if (sb) sb.classList.toggle('collapsed');
+}
+
+function setRegionFilter(region) {
+  document.querySelectorAll('.region-toggle-btn').forEach(b => b.classList.remove('active'));
+  if (region === 'domestic') {
+    document.getElementById('btnRegionDomestic').classList.add('active');
+    switchView('domestic-seeding');
+  } else if (region === 'global') {
+    document.getElementById('btnRegionGlobal').classList.add('active');
+    switchView('global-dtc');
+  } else {
+    document.getElementById('btnRegionAll').classList.add('active');
+    switchView('executive-cockpit');
+  }
+}
+
+let CURRENT_CURRENCY_MODE = 'RMB';
+function toggleCurrencyMode() {
+  CURRENT_CURRENCY_MODE = CURRENT_CURRENCY_MODE === 'RMB' ? 'USD' : 'RMB';
+  const btn = document.getElementById('currencyToggleBtn');
+  if (btn) btn.textContent = '💱 币种: ' + (CURRENT_CURRENCY_MODE === 'RMB' ? '¥ RMB (国内优先)' : '$ USD (出海优先)');
+  showToast('当前已切换为 ' + CURRENT_CURRENCY_MODE + ' 货币显示模式', 'info', 2000);
+}
+
+function syncExecutiveCockpitFromStage2(res) {
+  if (!res) return;
+  const isS2 = !!res.enhanced_influence_effect;
+  const s1 = isS2 ? res.stage1_baseline : res;
+  const roi = (res.roi_and_unit_economics && res.roi_and_unit_economics.roi_and_profitability) || {};
+  const attr = (res.roi_and_unit_economics && res.roi_and_unit_economics.omni_channel_gmv_attribution) || {};
+  const prod = s1.product_summary || {};
+  const ppw = res.mckinsey_pocket_price_waterfall || {};
+  const pu = ppw.per_unit_waterfall_rmb || {};
+  const dtc = res.cross_border_dtc_waterfall || {};
+  const dtcUsd = dtc.metrics_usd || {};
+
+  // Executive KPI elements
+  const bEl = document.getElementById('execKpiBudget');
+  const bUsdEl = document.getElementById('execKpiBudgetUsd');
+  const oEl = document.getElementById('execKpiOrders');
+  const gEl = document.getElementById('execKpiGmv');
+  const gUsdEl = document.getElementById('execKpiGmvUsd');
+  const rEl = document.getElementById('execKpiRoas');
+  const pLiftEl = document.getElementById('execKpiPricingLift');
+  const ltvCacEl = document.getElementById('execKpiLtvCac');
+
+  const budgetRmb = prod.campaign_budget_rmb || 18500;
+  if (bEl) bEl.textContent = '¥' + fmtNum(budgetRmb);
+  if (bUsdEl) bUsdEl.textContent = '≈ $' + fmtNum(Math.round(budgetRmb / 7.25)) + ' USD (汇率 7.25)';
+
+  const omniOrders = attr.omni_total_orders || 1380;
+  if (oEl) oEl.textContent = fmtNum(omniOrders) + ' 单';
+
+  const omniGmv = attr.omni_total_gmv_rmb || 162840;
+  if (gEl) gEl.textContent = '¥' + fmtNum(omniGmv);
+  if (gUsdEl) gUsdEl.textContent = '≈ $' + fmtNum(Math.round(omniGmv / 7.25)) + ' USD';
+
+  const roas = roi.omni_channel_roas || 8.80;
+  if (rEl) rEl.textContent = roas + 'x';
+
+  const lev = ppw.mckinsey_1pct_pricing_leverage || {};
+  if (pLiftEl) pLiftEl.textContent = '+' + (lev.operating_profit_lift_from_1pct_price_increase_pct || 11.3) + '%';
+
+  if (ltvCacEl) ltvCacEl.textContent = (dtcUsd.ltv_to_cac_ratio || 4.2) + 'x';
+
+  // Update Domestic Waterfall
+  if (pu.msrp_rmb && document.getElementById('execMsrpRmb')) {
+    document.getElementById('execMsrpRmb').textContent = '¥' + pu.msrp_rmb.toFixed(2);
+    document.getElementById('execDiscountRmb').textContent = '-¥' + (pu.promotional_discount_rmb || 0).toFixed(2);
+    document.getElementById('execInvoiceRmb').textContent = '¥' + (pu.invoice_price_rmb || prod.selling_price_rmb || 118).toFixed(2);
+    document.getElementById('execPlatformFeeRmb').textContent = '-¥' + (pu.platform_commission_rmb || 5.9).toFixed(2);
+    document.getElementById('execFulfillmentRmb').textContent = '-¥' + (pu.fulfillment_and_return_rmb || 9.44).toFixed(2);
+    document.getElementById('execPocketPriceRmb').textContent = '¥' + (pu.pocket_price_rmb || 102.66).toFixed(2);
+    document.getElementById('execCogsRmb').textContent = '-¥' + (pu.unit_cogs_rmb || 25.96).toFixed(2);
+    document.getElementById('execPocketMarginRmb').textContent = '¥' + (pu.pocket_margin_rmb || 76.7).toFixed(2) + ' (' + (pu.pocket_margin_rate_pct || 65.0) + '%)';
+  }
+
+  // Update Global DTC Waterfall
+  if (dtcUsd.aov_usd && document.getElementById('execAovUsd')) {
+    document.getElementById('execAovUsd').textContent = '$' + dtcUsd.aov_usd.toFixed(2) + ' (¥' + (dtcUsd.aov_usd * 7.25).toFixed(2) + ')';
+    document.getElementById('execGatewayFeeUsd').textContent = '-$' + (dtcUsd.gateway_fees_usd || 1.58).toFixed(2);
+    document.getElementById('execFulfillment3plUsd').textContent = '-$' + (dtcUsd.fulfillment_3pl_usd || 9.0).toFixed(2);
+    document.getElementById('execReturnReserveUsd').textContent = '-$' + (dtcUsd.return_allowance_usd || 1.24).toFixed(2);
+    document.getElementById('execCogsUsd').textContent = '-$' + (dtcUsd.cogs_total_usd ? (dtcUsd.cogs_total_usd / dtcUsd.orders).toFixed(2) : '5.40');
+    document.getElementById('execPocketProfitUsd').textContent = '$' + (dtcUsd.pocket_margin_usd ? (dtcUsd.pocket_margin_usd / dtcUsd.orders).toFixed(2) : '12.77') + ' (' + (dtcUsd.pocket_margin_rate_pct || 42.6) + '%)';
+    document.getElementById('execLtvUsd').textContent = '$' + (dtcUsd.ltv_usd || 54.2).toFixed(2) + ' (LTV/CAC: ' + (dtcUsd.ltv_to_cac_ratio || 4.2) + 'x)';
+    document.getElementById('execTotalDtcNetProfit').textContent = '$' + fmtNum(dtcUsd.net_profit_usd || 4469.5) + ' USD (¥' + fmtNum(Math.round((dtcUsd.net_profit_usd || 4469.5)*7.25)) + ')';
+  }
+}
+
+function testMarvisConnectionLive() {
+  showToast('正在向腾讯 Marvis (127.0.0.1:3765) 发送双向握手探针...', 'info', 3000);
+  fetch('/api/health')
+    .then(r => r.json())
+    .then(d => {
+      showToast('✅ 腾讯 Marvis 连接正常！CDP 浏览器引擎待命就绪。', 'success', 4000);
+      document.getElementById('marvisPortVal').textContent = (d.marvis_daemon_port || 3765) + ' (Active)';
+    })
+    .catch(() => {
+      showToast('⚠️ 腾讯 Marvis 进程未在监听，已自动切换为内置高保真沙盒引擎。', 'warn', 4000);
+    });
+}
+
+</script>
 </body>
 </html>

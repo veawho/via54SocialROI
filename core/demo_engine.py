@@ -31,6 +31,16 @@ from core.schemas import HistoricalPost, ProductInput, SocialAccountProfile, Sta
 
 def detect_platform_from_url(url: str) -> str:
     u = (url or "").lower()
+    if "tiktok.com" in u or u.startswith("tiktok_") or u.startswith("tt_"):
+        return "tiktok"
+    if "youtube.com" in u or "youtu.be" in u or u.startswith("yt_") or u.startswith("youtube_"):
+        return "youtube"
+    if "instagram.com" in u or "instagr.am" in u or u.startswith("ig_") or u.startswith("instagram_"):
+        return "instagram"
+    if "facebook.com" in u or "fb.com" in u or u.startswith("fb_") or u.startswith("facebook_"):
+        return "facebook"
+    if "x.com" in u or "twitter.com" in u or u.startswith("x_") or u.startswith("twitter_"):
+        return "x_twitter"
     if "douyin.com" in u or "iesdouyin" in u or u.startswith("douyin_"):
         return "douyin"
     if "bilibili.com" in u or "b23.tv" in u or u.startswith("bili_"):
@@ -274,6 +284,248 @@ def compute_mckinsey_pocket_price_waterfall(
                 f"McKinsey Pricing Law: A 1% price increase (volume constant) lifts operating pocket profit by {margin_lift_from_1pct_price_pct}%; "
                 f"conversely, a 5% price cut requires a {breakeven_vol_increase_pct}% volume surge just to break even."
             ),
+        },
+    }
+
+
+
+
+# ============================================================================
+# Global Social & Cross-Border DTC Benchmarks (Triple Whale, Northbeam, Sprout Social)
+# 全球社媒与出海独立站行业基准与扣除瀑布模型
+# ============================================================================
+
+GLOBAL_PLATFORMS = {"tiktok", "youtube", "instagram", "facebook", "x_twitter"}
+
+GLOBAL_CHANNEL_BENCHMARKS: Dict[str, Dict[str, float]] = {
+    "tiktok": {
+        "er_mean": 0.058,
+        "cpm_usd": 8.20,
+        "cpc_usd": 0.62,
+        "ctr_mean": 0.018,
+        "cvr_lift_multiplier": 1.34,
+        "half_life_days": 2.8,
+    },
+    "youtube": {
+        "er_mean": 0.038,
+        "cpm_usd": 28.00,
+        "cpc_usd": 2.40,
+        "ctr_mean": 0.012,
+        "cvr_lift_multiplier": 1.65,
+        "half_life_days": 45.0,
+    },
+    "instagram": {
+        "er_mean": 0.042,
+        "cpm_usd": 12.80,
+        "cpc_usd": 1.05,
+        "ctr_mean": 0.015,
+        "cvr_lift_multiplier": 1.25,
+        "half_life_days": 4.2,
+    },
+    "facebook": {
+        "er_mean": 0.018,
+        "cpm_usd": 16.50,
+        "cpc_usd": 1.30,
+        "ctr_mean": 0.019,
+        "cvr_lift_multiplier": 1.40,
+        "half_life_days": 5.5,
+    },
+    "x_twitter": {
+        "er_mean": 0.015,
+        "cpm_usd": 6.50,
+        "cpc_usd": 0.68,
+        "ctr_mean": 0.011,
+        "cvr_lift_multiplier": 1.15,
+        "half_life_days": 1.9,
+    },
+}
+
+CROSS_BORDER_FEES = {
+    "blended_gateway_rate": 0.0408,  # 70% Stripe (3.9%) + 30% PayPal (4.49%)
+    "blended_gateway_fixed_usd": 0.36,
+    "pick_and_pack_usd": 2.20,
+    "customs_admin_fee_usd": 0.90,
+    "return_rate": 0.055,            # 5.5% return allowance
+    "return_salvage_rate": 0.25,     # 25% salvage recovery
+}
+
+
+def calculate_3pl_shipping_usd(weight_grams: float) -> float:
+    """Calculate cross-border air linehaul + last mile fulfillment by weight tier"""
+    w = max(50.0, float(weight_grams or 400.0))
+    if w <= 300:
+        return 6.50
+    elif w <= 600:
+        return 9.00
+    elif w <= 1000:
+        return 13.20
+    else:
+        excess = (w - 1000) / 500.0
+        return 13.20 + (excess * 2.50)
+
+
+def compute_cross_border_dtc_waterfall(
+    orders: int,
+    aov_usd: float,
+    cogs_usd: float,
+    ad_spend_usd: float,
+    weight_grams: float = 400.0,
+    annual_repeat_rate: float = 0.28,
+    exchange_rate: float = 7.25,
+) -> Dict[str, Any]:
+    """
+    McKinsey / Triple Whale Cross-Border DTC Pocket Waterfall & SaaS GTM Unit Economics.
+    出海独立站单件与全案口袋利润瀑布与客户全生命周期价值测算。
+    """
+    orders = max(1, int(orders))
+    aov = max(1.0, float(aov_usd))
+    gross_gmv_usd = round(orders * aov, 2)
+    
+    # 1. Gateway fees (Stripe/PayPal)
+    gateway_fees_usd = round(
+        gross_gmv_usd * CROSS_BORDER_FEES["blended_gateway_rate"]
+        + orders * CROSS_BORDER_FEES["blended_gateway_fixed_usd"], 2
+    )
+    
+    # 2. 3PL & Fulfillment
+    unit_shipping = calculate_3pl_shipping_usd(weight_grams)
+    fulfillment_fees_usd = round(
+        orders * (unit_shipping + CROSS_BORDER_FEES["pick_and_pack_usd"] + CROSS_BORDER_FEES["customs_admin_fee_usd"]), 2
+    )
+    
+    # 3. Return & chargeback allowance
+    return_loss_usd = round(
+        gross_gmv_usd * CROSS_BORDER_FEES["return_rate"] * (1.0 - CROSS_BORDER_FEES["return_salvage_rate"]), 2
+    )
+    
+    # 4. COGS
+    unit_cogs = max(0.0, float(cogs_usd))
+    total_cogs_usd = round(orders * unit_cogs, 2)
+    
+    # 5. Pocket Profit & ROAS
+    total_non_ad_costs_usd = round(gateway_fees_usd + fulfillment_fees_usd + return_loss_usd + total_cogs_usd, 2)
+    pocket_contribution_margin_usd = round(gross_gmv_usd - total_non_ad_costs_usd, 2)
+    net_profit_usd = round(pocket_contribution_margin_usd - ad_spend_usd, 2)
+    roas = round(gross_gmv_usd / max(1.0, ad_spend_usd), 2)
+    net_margin_pct = round((pocket_contribution_margin_usd / max(1.0, gross_gmv_usd)) * 100.0, 2)
+    
+    # 6. SaaS GTM LTV / CAC Metrics (Silicon Valley Blueprint)
+    cac_usd = round(ad_spend_usd / max(1, orders), 2)
+    gross_margin_rate = max(0.1, 1.0 - (unit_cogs / aov))
+    ltv_usd = round(aov * (1.0 + annual_repeat_rate * 1.5) * gross_margin_rate, 2)
+    ltv_to_cac_ratio = round(ltv_usd / max(1.0, cac_usd), 2)
+    estimated_payback_months = round(max(0.5, (cac_usd / max(1.0, aov * gross_margin_rate)) * 12.0), 1)
+    
+    # Currency conversions to RMB
+    ex = float(exchange_rate or 7.25)
+    return {
+        "framework": "Cross-Border DTC Pocket Price Waterfall & SaaS GTM Unit Economics",
+        "currency_base": "USD",
+        "exchange_rate_to_rmb": ex,
+        "metrics_usd": {
+            "aov_usd": aov,
+            "orders": orders,
+            "ad_spend_usd": round(ad_spend_usd, 2),
+            "gross_gmv_usd": gross_gmv_usd,
+            "gateway_fees_usd": gateway_fees_usd,
+            "fulfillment_3pl_usd": fulfillment_fees_usd,
+            "return_allowance_usd": return_loss_usd,
+            "cogs_total_usd": total_cogs_usd,
+            "pocket_margin_usd": pocket_contribution_margin_usd,
+            "net_profit_usd": net_profit_usd,
+            "roas": roas,
+            "pocket_margin_rate_pct": net_margin_pct,
+            "cac_usd": cac_usd,
+            "ltv_usd": ltv_usd,
+            "ltv_to_cac_ratio": ltv_to_cac_ratio,
+            "cac_payback_months": estimated_payback_months,
+        },
+        "metrics_rmb_equivalent": {
+            "aov_rmb": round(aov * ex, 2),
+            "ad_spend_rmb": round(ad_spend_usd * ex, 2),
+            "gross_gmv_rmb": round(gross_gmv_usd * ex, 2),
+            "pocket_margin_rmb": round(pocket_contribution_margin_usd * ex, 2),
+            "net_profit_rmb": round(net_profit_usd * ex, 2),
+            "cac_rmb": round(cac_usd * ex, 2),
+            "ltv_rmb": round(ltv_usd * ex, 2),
+        },
+        "health_verdict": (
+            "EXCELLENT (LTV/CAC >= 3.0)" if ltv_to_cac_ratio >= 3.0
+            else "VIABLE (1.5 <= LTV/CAC < 3.0)" if ltv_to_cac_ratio >= 1.5
+            else "HIGH RISK (LTV/CAC < 1.5, Optimization Required)"
+        ),
+    }
+
+
+def compute_global_geo_and_schema_readiness(
+    content_text: str,
+    brand_name: str,
+    product_name: str,
+) -> Dict[str, Any]:
+    """
+    Evaluates Global AI Engine Optimization (ChatGPT Search, Perplexity, Google AI Overviews, Claude)
+    and SEO+GEO Schema & Earned Media Readiness from Knowledge Base monograph.
+    """
+    text = (content_text or "").strip()
+    low = text.lower()
+    
+    # 1. Product Schema Readiness (JSON-LD signals: Price, Availability, SKU, Brand)
+    has_price = bool(re.search(r"(\$|usd|¥|rmb|price|€)", low))
+    has_brand = brand_name.lower() in low or "brand" in low
+    has_spec = any(k in low for k in ("spec", "feature", "param", "certification", "ce", "fda", "ul", "watt", "100w", "cica", "ingredient"))
+    schema_product_score = min(100.0, 30.0 + (30.0 if has_price else 0.0) + (20.0 if has_brand else 0.0) + (20.0 if has_spec else 0.0))
+    
+    # 2. FAQPage Schema Readiness (Question + Direct Answer structure)
+    has_question = any(q in text for q in ("?", "？", "how", "what", "why", "怎么", "如何", "为什么"))
+    has_faq_marker = any(k in low for k in ("faq", "q&a", "问答", "常见问题"))
+    schema_faq_score = min(100.0, 35.0 + (35.0 if has_question else 0.0) + (30.0 if has_faq_marker else 0.0))
+    
+    # 3. Third-party Earned Media & Independent Verification Signal (Reddit, LinkedIn, B2B)
+    has_reddit_or_forum = any(k in low for k in ("reddit", "forum", "community", "review", "testimonial", "论坛", "社群", "讨论"))
+    has_authoritative_thirdparty = any(k in low for k in ("clinical", "lab", "registry", "certified", "consensus", "共识", "临床", "检测"))
+    earned_media_score = min(100.0, 25.0 + (40.0 if has_authoritative_thirdparty else 0.0) + (35.0 if has_reddit_or_forum else 0.0))
+    
+    # 4. Zero-Click Answer Capture (BLUF: Direct answer within first 60 words / 100 characters)
+    first_chunk = text[:120].lower()
+    bluf_captured = any(k in first_chunk for k in ("is", "are", "features", "provides", "certified", "首选", "明确", "核心", "采用"))
+    zero_click_score = 88.0 if bluf_captured else 52.0
+    
+    # 5. Global 4-AI Share of Model (SoM) projection
+    composite_geo = round(
+        0.30 * schema_product_score
+        + 0.25 * earned_media_score
+        + 0.25 * zero_click_score
+        + 0.20 * schema_faq_score, 1
+    )
+    
+    som_chatgpt = round(min(88.0, max(12.0, composite_geo * 0.92)), 1)
+    som_perplexity = round(min(92.0, max(15.0, composite_geo * 1.05)), 1)
+    som_google_ai = round(min(85.0, max(10.0, composite_geo * 0.88)), 1)
+    som_claude = round(min(90.0, max(14.0, composite_geo * 0.98)), 1)
+    
+    return {
+        "framework": "Global SEO+GEO Dual Engine & Schema.org Verification (Aggarwal et al. / Martinez 2026)",
+        "composite_global_geo_score": composite_geo,
+        "schema_org_readiness": {
+            "product_schema_score": schema_product_score,
+            "faqpage_schema_score": schema_faq_score,
+            "status": "VALID" if (schema_product_score + schema_faq_score) >= 120 else "NEEDS_OPTIMIZATION",
+        },
+        "third_party_earned_media_signal": {
+            "score": earned_media_score,
+            "correlation_to_ai_visibility": 0.664,
+            "academic_basis": "Ahrefs 75,000 Brand Study & Toronto University Empirical Findings",
+        },
+        "zero_click_answer_capture": {
+            "score": zero_click_score,
+            "bluf_first_sentence_direct_answer": bluf_captured,
+            "citation_slot_competition": "Competitive for Top 2-7 Generative Citation Slots",
+        },
+        "global_4_ai_som_projection": {
+            "chatgpt_search": som_chatgpt,
+            "perplexity_pro": som_perplexity,
+            "google_ai_overviews": som_google_ai,
+            "claude_search": som_claude,
         },
     }
 
@@ -587,6 +839,128 @@ DEMO_PROFILES: Dict[str, Dict[str, Any]] = {
         "historical_top_keywords": ["家庭护理", "疤痕修复", "微信搜一搜", "慢病管理", "高尿酸"],
         "commercial_quote_rmb": 19500.0,
     },
+
+    "tiktok_beauty_lifestyle_creator": {
+        "account_id": "demo_tt_001",
+        "account_name": "Sarah Lin | Biohacking & K-Beauty (@sarahglows)",
+        "platform": "tiktok",
+        "platform_cn": "TikTok (海外)",
+        "account_url": "https://www.tiktok.com/@sarahglows",
+        "followers": 480000,
+        "vertical_category": "美妆/修护/跨境独立站DTC (Beauty & Barrier Care DTC)",
+        "avg_views": 125000,
+        "median_views": 98000,
+        "std_views": 45000,
+        "avg_likes": 8800,
+        "avg_collects": 4200,
+        "avg_comments": 480,
+        "avg_shares": 920,
+        "avg_follows_gained": 310,
+        "avg_3s_retention": 0.73,
+        "avg_completion_rate": 0.49,
+        "historical_viral_rate": 0.26,
+        "audience_female_ratio": 0.82,
+        "audience_tier1_2_city_ratio": 0.78,
+        "historical_top_keywords": ["Cica Barrier", "K-Beauty Serum", "Shopify DTC", "Skin Repair", "Glass Skin"],
+        "commercial_quote_rmb": 26000.0,
+    },
+    "youtube_tech_edc_reviewer": {
+        "account_id": "demo_yt_002",
+        "account_name": "DaveTech & Everyday Carry Lab (Demo)",
+        "platform": "youtube",
+        "platform_cn": "YouTube (海外)",
+        "account_url": "https://www.youtube.com/@davetechedc_demo",
+        "followers": 650000,
+        "vertical_category": "消费电子/GaN快充/出海3C测评 (Consumer Tech & EDC)",
+        "avg_views": 185000,
+        "median_views": 142000,
+        "std_views": 68000,
+        "avg_likes": 7600,
+        "avg_collects": 3800,
+        "avg_comments": 650,
+        "avg_shares": 1100,
+        "avg_follows_gained": 420,
+        "avg_3s_retention": 0.76,
+        "avg_completion_rate": 0.62,
+        "historical_viral_rate": 0.28,
+        "audience_female_ratio": 0.24,
+        "audience_tier1_2_city_ratio": 0.85,
+        "historical_top_keywords": ["Anker Fast Charging", "GaN Charger", "Amazon US Best Seller", "EDC Tech", "Benchmarking"],
+        "commercial_quote_rmb": 42000.0,
+    },
+    "instagram_aesthetic_derma": {
+        "account_id": "demo_ig_003",
+        "account_name": "Dr. Elena Vance | Aesthetic & Skin Health (@drelenavance)",
+        "platform": "instagram",
+        "platform_cn": "Instagram (海外)",
+        "account_url": "https://www.instagram.com/drelenavance",
+        "followers": 290000,
+        "vertical_category": "轻医美/科学护肤/抗衰 (Aesthetic Derma & Skincare)",
+        "avg_views": 68000,
+        "median_views": 54000,
+        "std_views": 22000,
+        "avg_likes": 3900,
+        "avg_collects": 2400,
+        "avg_comments": 310,
+        "avg_shares": 450,
+        "avg_follows_gained": 160,
+        "avg_3s_retention": 0.70,
+        "avg_completion_rate": 0.52,
+        "historical_viral_rate": 0.21,
+        "audience_female_ratio": 0.88,
+        "audience_tier1_2_city_ratio": 0.82,
+        "historical_top_keywords": ["Medical Grade Skincare", "Post Procedure", "Hyaluronic Acid", "Shopify Store", "Derm Approved"],
+        "commercial_quote_rmb": 22000.0,
+    },
+    "facebook_family_home_wellness": {
+        "account_id": "demo_fb_004",
+        "account_name": "Modern Family Living & Practical Health (Demo)",
+        "platform": "facebook",
+        "platform_cn": "Facebook (海外)",
+        "account_url": "https://www.facebook.com/modernfamilywellness_demo",
+        "followers": 380000,
+        "vertical_category": "家庭健康/常备护理 (Family Wellness & Everyday Health)",
+        "avg_views": 82000,
+        "median_views": 66000,
+        "std_views": 31000,
+        "avg_likes": 2900,
+        "avg_collects": 1500,
+        "avg_comments": 420,
+        "avg_shares": 850,
+        "avg_follows_gained": 190,
+        "avg_3s_retention": 0.65,
+        "avg_completion_rate": 0.44,
+        "historical_viral_rate": 0.17,
+        "audience_female_ratio": 0.72,
+        "audience_tier1_2_city_ratio": 0.68,
+        "historical_top_keywords": ["Family First Aid", "Dry Eye Relief", "DTC Subscription", "Wellness Routine"],
+        "commercial_quote_rmb": 25000.0,
+    },
+    "x_twitter_ai_hardware_pro": {
+        "account_id": "demo_x_005",
+        "account_name": "Alex Chen | Hardware Architect & Edge AI (@alexchen_tech)",
+        "platform": "x_twitter",
+        "platform_cn": "X / Twitter (海外)",
+        "account_url": "https://x.com/alexchen_tech",
+        "followers": 195000,
+        "vertical_category": "硬核极客/半导体/出海科技 (Hardware Architecture & AI Hardware)",
+        "avg_views": 75000,
+        "median_views": 58000,
+        "std_views": 36000,
+        "avg_likes": 3200,
+        "avg_collects": 2600,
+        "avg_comments": 380,
+        "avg_shares": 720,
+        "avg_follows_gained": 220,
+        "avg_3s_retention": 0.75,
+        "avg_completion_rate": 0.58,
+        "historical_viral_rate": 0.24,
+        "audience_female_ratio": 0.18,
+        "audience_tier1_2_city_ratio": 0.88,
+        "historical_top_keywords": ["GaN Power Delivery", "Thermal Performance", "Kickstarter Tech", "Amazon Global", "Benchmarking"],
+        "commercial_quote_rmb": 21000.0,
+    },
+
 }
 
 
@@ -632,6 +1006,11 @@ class DemoSocialCrawler(BaseSocialCrawler):
                 "douyin": "douyin_health_otc_kol",
                 "bilibili": "bili_hardcore_tech_review",
                 "wechat_channels": "channels_family_wellness_kol",
+                "tiktok": "tiktok_beauty_lifestyle_creator",
+                "youtube": "youtube_tech_edc_reviewer",
+                "instagram": "instagram_aesthetic_derma",
+                "facebook": "facebook_family_home_wellness",
+                "x_twitter": "x_twitter_ai_hardware_pro",
             }
             base = dict(DEMO_PROFILES[by_plat.get(plat, "xhs_medical_skincare_kol")])
             if key.startswith("http"):
@@ -802,16 +1181,28 @@ class DemoPromotionEngine(BasePromotionEngine):
         orders = max(0, int(round(store_uv * 0.14 * price_elasticity)))
         gmv = round(orders * product.selling_price_rmb, 2)
 
-        daily_curve = [
-            {
-                "day": d,
-                "baidu_delta": int(180 * (0.88 ** d)),
-                "wechat_delta": int(520 * (0.89 ** d)),
-                "douyin_delta": int(680 * (0.87 ** d)),
-                "xiaohongshu_delta": int(750 * (0.90 ** d)),
-            }
-            for d in range(1, 31)
-        ]
+        is_global = account.platform in GLOBAL_PLATFORMS
+        if is_global:
+            daily_curve = [
+                {
+                    "day": d,
+                    "google_trends_delta": int(320 * (0.91 ** d)),
+                    "tiktok_search_delta": int(680 * (0.88 ** d)),
+                    "amazon_search_delta": int(450 * (0.92 ** d)),
+                }
+                for d in range(1, 31)
+            ]
+        else:
+            daily_curve = [
+                {
+                    "day": d,
+                    "baidu_delta": int(180 * (0.88 ** d)),
+                    "wechat_delta": int(520 * (0.89 ** d)),
+                    "douyin_delta": int(680 * (0.87 ** d)),
+                    "xiaohongshu_delta": int(750 * (0.90 ** d)),
+                }
+                for d in range(1, 31)
+            ]
 
         return {
             "stage": "Stage 1 Baseline (Open-Core Demo Sandbox)",
@@ -858,52 +1249,88 @@ class DemoPromotionEngine(BasePromotionEngine):
             },
             "index_lift_effect": {
                 "adstock_model": "Demo Exponential Carryover (Open-Core Reference)",
-                "platforms": {
-                    "baidu_index": {
-                        "name_cn": "百度指数",
-                        "name_en": "Baidu Index",
-                        "baseline_daily": 1850,
-                        "peak_daily_delta": 320,
-                        "stage1_peak_daily_delta": 320,
-                        "peak_lift_pct": 17.3,
-                        "avg_30d_daily_delta": 110,
-                        "avg_30d_lift_pct": 5.9,
-                        "cumulative_30d_search_impulse": 3300,
-                    },
-                    "wechat_index": {
-                        "name_cn": "微信指数",
-                        "name_en": "WeChat Index",
-                        "baseline_daily": 42000,
-                        "peak_daily_delta": 6800,
-                        "stage1_peak_daily_delta": 6800,
-                        "peak_lift_pct": 16.2,
-                        "avg_30d_daily_delta": 2400,
-                        "avg_30d_lift_pct": 5.7,
-                        "cumulative_30d_search_impulse": 72000,
-                    },
-                    "douyin_index": {
-                        "name_cn": "抖音巨量算数",
-                        "name_en": "Douyin Index",
-                        "baseline_daily": 26500,
-                        "peak_daily_delta": 5400,
-                        "stage1_peak_daily_delta": 5400,
-                        "peak_lift_pct": 20.4,
-                        "avg_30d_daily_delta": 1900,
-                        "avg_30d_lift_pct": 7.2,
-                        "cumulative_30d_search_impulse": 57000,
-                    },
-                    "xiaohongshu_index": {
-                        "name_cn": "小红书搜索指数",
-                        "name_en": "Xiaohongshu Search Index",
-                        "baseline_daily": 9800,
-                        "peak_daily_delta": 2900,
-                        "stage1_peak_daily_delta": 2900,
-                        "peak_lift_pct": 29.6,
-                        "avg_30d_daily_delta": 1050,
-                        "avg_30d_lift_pct": 10.7,
-                        "cumulative_30d_search_impulse": 31500,
-                    },
-                },
+                "platforms": (
+                    {
+                        "google_trends": {
+                            "name_cn": "谷歌趋势 (Google Trends)",
+                            "name_en": "Google Trends",
+                            "baseline_daily": 3200,
+                            "peak_daily_delta": 650,
+                            "stage1_peak_daily_delta": 650,
+                            "peak_lift_pct": 20.3,
+                            "avg_30d_daily_delta": 220,
+                            "avg_30d_lift_pct": 6.9,
+                            "cumulative_30d_search_impulse": 6600,
+                        },
+                        "tiktok_search": {
+                            "name_cn": "TikTok 搜索趋势 (TikTok Search)",
+                            "name_en": "TikTok Search Trends",
+                            "baseline_daily": 14000,
+                            "peak_daily_delta": 3800,
+                            "stage1_peak_daily_delta": 3800,
+                            "peak_lift_pct": 27.1,
+                            "avg_30d_daily_delta": 1300,
+                            "avg_30d_lift_pct": 9.3,
+                            "cumulative_30d_search_impulse": 39000,
+                        },
+                        "amazon_search": {
+                            "name_cn": "亚马逊站内搜索 (Amazon Search Index)",
+                            "name_en": "Amazon Search Volume",
+                            "baseline_daily": 8500,
+                            "peak_daily_delta": 2100,
+                            "stage1_peak_daily_delta": 2100,
+                            "peak_lift_pct": 24.7,
+                            "avg_30d_daily_delta": 750,
+                            "avg_30d_lift_pct": 8.8,
+                            "cumulative_30d_search_impulse": 22500,
+                        },
+                    } if is_global else {
+                        "baidu_index": {
+                            "name_cn": "百度指数",
+                            "name_en": "Baidu Index",
+                            "baseline_daily": 1850,
+                            "peak_daily_delta": 320,
+                            "stage1_peak_daily_delta": 320,
+                            "peak_lift_pct": 17.3,
+                            "avg_30d_daily_delta": 110,
+                            "avg_30d_lift_pct": 5.9,
+                            "cumulative_30d_search_impulse": 3300,
+                        },
+                        "wechat_index": {
+                            "name_cn": "微信指数",
+                            "name_en": "WeChat Index",
+                            "baseline_daily": 42000,
+                            "peak_daily_delta": 6800,
+                            "stage1_peak_daily_delta": 6800,
+                            "peak_lift_pct": 16.2,
+                            "avg_30d_daily_delta": 2400,
+                            "avg_30d_lift_pct": 5.7,
+                            "cumulative_30d_search_impulse": 72000,
+                        },
+                        "douyin_index": {
+                            "name_cn": "抖音巨量算数",
+                            "name_en": "Douyin Index",
+                            "baseline_daily": 26500,
+                            "peak_daily_delta": 5400,
+                            "stage1_peak_daily_delta": 5400,
+                            "peak_lift_pct": 20.4,
+                            "avg_30d_daily_delta": 1900,
+                            "avg_30d_lift_pct": 7.2,
+                            "cumulative_30d_search_impulse": 57000,
+                        },
+                        "xiaohongshu_index": {
+                            "name_cn": "小红书搜索指数",
+                            "name_en": "Xiaohongshu Search Index",
+                            "baseline_daily": 9800,
+                            "peak_daily_delta": 2900,
+                            "stage1_peak_daily_delta": 2900,
+                            "peak_lift_pct": 29.6,
+                            "avg_30d_daily_delta": 1050,
+                            "avg_30d_lift_pct": 10.7,
+                            "cumulative_30d_search_impulse": 31500,
+                        },
+                    }
+                ),
                 "daily_30d_curve": daily_curve,
             },
             "ecommerce_search_lift_effect": {
@@ -914,44 +1341,86 @@ class DemoPromotionEngine(BasePromotionEngine):
                 "total_add_to_cart_uv": int(store_uv * 0.28),
                 "total_expected_search_orders": orders,
                 "total_attributed_search_gmv_rmb": gmv,
-                "channels": {
-                    "jd": {
-                        "name_cn": "京东 (JD.com)",
-                        "stage1_search_uv": jd_uv,
-                        "incremental_search_uv": jd_uv,
-                        "search_uv_lift_vs_stage1_pct": 0.0,
-                        "search_keyword_lift_pct_7d": 18.5,
-                        "store_entry_ctr": 0.60,
-                        "store_visit_uv": int(jd_uv * 0.60),
-                        "add_to_cart_uv": int(jd_uv * 0.18),
-                        "expected_orders": max(1, int(jd_uv * 0.09)),
-                        "attributed_search_gmv_rmb": round(max(1, int(jd_uv * 0.09)) * product.selling_price_rmb, 2),
-                    },
-                    "taobao_tmall": {
-                        "name_cn": "淘天 (Taobao & Tmall)",
-                        "stage1_search_uv": tmall_uv,
-                        "incremental_search_uv": tmall_uv,
-                        "search_uv_lift_vs_stage1_pct": 0.0,
-                        "search_keyword_lift_pct_7d": 21.2,
-                        "store_entry_ctr": 0.58,
-                        "store_visit_uv": int(tmall_uv * 0.58),
-                        "add_to_cart_uv": int(tmall_uv * 0.17),
-                        "expected_orders": max(1, int(tmall_uv * 0.085)),
-                        "attributed_search_gmv_rmb": round(max(1, int(tmall_uv * 0.085)) * product.selling_price_rmb, 2),
-                    },
-                    "meituan": {
-                        "name_cn": "美团闪购/买药 (Meituan O2O)",
-                        "stage1_search_uv": mt_uv,
-                        "incremental_search_uv": mt_uv,
-                        "search_uv_lift_vs_stage1_pct": 0.0,
-                        "search_keyword_lift_pct_7d": 16.4,
-                        "store_entry_ctr": 0.55,
-                        "store_visit_uv": int(mt_uv * 0.55),
-                        "add_to_cart_uv": int(mt_uv * 0.16),
-                        "expected_orders": max(1, int(mt_uv * 0.08)),
-                        "attributed_search_gmv_rmb": round(max(1, int(mt_uv * 0.08)) * product.selling_price_rmb, 2),
-                    },
-                },
+                "channels": (
+                    {
+                        "shopify_dtc": {
+                            "name_cn": "Shopify 独立站 (Brand DTC Store)",
+                            "name_en": "Shopify Brand Store",
+                            "stage1_search_uv": int(search_uv * 0.45),
+                            "incremental_search_uv": int(search_uv * 0.45),
+                            "search_uv_lift_vs_stage1_pct": 0.0,
+                            "search_keyword_lift_pct_7d": 22.5,
+                            "store_entry_ctr": 0.65,
+                            "store_visit_uv": int(search_uv * 0.45 * 0.65),
+                            "add_to_cart_uv": int(search_uv * 0.45 * 0.22),
+                            "expected_orders": max(1, int(orders * 0.48)),
+                            "attributed_search_gmv_rmb": round(max(1, int(orders * 0.48)) * product.selling_price_rmb, 2),
+                        },
+                        "amazon_global": {
+                            "name_cn": "亚马逊北美/欧洲站 (Amazon Global)",
+                            "name_en": "Amazon Global Store",
+                            "stage1_search_uv": int(search_uv * 0.35),
+                            "incremental_search_uv": int(search_uv * 0.35),
+                            "search_uv_lift_vs_stage1_pct": 0.0,
+                            "search_keyword_lift_pct_7d": 19.8,
+                            "store_entry_ctr": 0.58,
+                            "store_visit_uv": int(search_uv * 0.35 * 0.58),
+                            "add_to_cart_uv": int(search_uv * 0.35 * 0.18),
+                            "expected_orders": max(1, int(orders * 0.36)),
+                            "attributed_search_gmv_rmb": round(max(1, int(orders * 0.36)) * product.selling_price_rmb, 2),
+                        },
+                        "tiktok_shop": {
+                            "name_cn": "TikTok Shop 闭环电商",
+                            "name_en": "TikTok Shop Global",
+                            "stage1_search_uv": int(search_uv * 0.20),
+                            "incremental_search_uv": int(search_uv * 0.20),
+                            "search_uv_lift_vs_stage1_pct": 0.0,
+                            "search_keyword_lift_pct_7d": 25.4,
+                            "store_entry_ctr": 0.70,
+                            "store_visit_uv": int(search_uv * 0.20 * 0.70),
+                            "add_to_cart_uv": int(search_uv * 0.20 * 0.26),
+                            "expected_orders": max(1, int(orders * 0.16)),
+                            "attributed_search_gmv_rmb": round(max(1, int(orders * 0.16)) * product.selling_price_rmb, 2),
+                        },
+                    } if is_global else {
+                        "jd": {
+                            "name_cn": "京东 (JD.com)",
+                            "stage1_search_uv": jd_uv,
+                            "incremental_search_uv": jd_uv,
+                            "search_uv_lift_vs_stage1_pct": 0.0,
+                            "search_keyword_lift_pct_7d": 18.5,
+                            "store_entry_ctr": 0.60,
+                            "store_visit_uv": int(jd_uv * 0.60),
+                            "add_to_cart_uv": int(jd_uv * 0.18),
+                            "expected_orders": max(1, int(jd_uv * 0.09)),
+                            "attributed_search_gmv_rmb": round(max(1, int(jd_uv * 0.09)) * product.selling_price_rmb, 2),
+                        },
+                        "taobao_tmall": {
+                            "name_cn": "淘天 (Taobao & Tmall)",
+                            "stage1_search_uv": tmall_uv,
+                            "incremental_search_uv": tmall_uv,
+                            "search_uv_lift_vs_stage1_pct": 0.0,
+                            "search_keyword_lift_pct_7d": 21.2,
+                            "store_entry_ctr": 0.58,
+                            "store_visit_uv": int(tmall_uv * 0.58),
+                            "add_to_cart_uv": int(tmall_uv * 0.17),
+                            "expected_orders": max(1, int(tmall_uv * 0.085)),
+                            "attributed_search_gmv_rmb": round(max(1, int(tmall_uv * 0.085)) * product.selling_price_rmb, 2),
+                        },
+                        "meituan": {
+                            "name_cn": "美团闪购/买药 (Meituan O2O)",
+                            "stage1_search_uv": mt_uv,
+                            "incremental_search_uv": mt_uv,
+                            "search_uv_lift_vs_stage1_pct": 0.0,
+                            "search_keyword_lift_pct_7d": 16.4,
+                            "store_entry_ctr": 0.55,
+                            "store_visit_uv": int(mt_uv * 0.55),
+                            "add_to_cart_uv": int(mt_uv * 0.16),
+                            "expected_orders": max(1, int(mt_uv * 0.08)),
+                            "attributed_search_gmv_rmb": round(max(1, int(mt_uv * 0.08)) * product.selling_price_rmb, 2),
+                        },
+                    }
+                ),
             },
         }
 
@@ -1160,6 +1629,17 @@ class DemoPromotionEngine(BasePromotionEngine):
             ),
             "consumer_decision_journey": cdj_funnel,
             "mckinsey_pocket_price_waterfall": ppw_detailed,
+            "cross_border_dtc_waterfall": compute_cross_border_dtc_waterfall(
+                orders=max(1, int(omni_orders * 0.45 if account.platform in GLOBAL_PLATFORMS else 120)),
+                aov_usd=getattr(product, "selling_price_usd", 29.9) or 29.9,
+                cogs_usd=(getattr(product, "selling_price_usd", 29.9) or 29.9) * 0.22,
+                ad_spend_usd=round(spend / 7.25, 2),
+                weight_grams=getattr(product, "package_weight_grams", 400.0) or 400.0,
+                exchange_rate=getattr(product, "exchange_rate_to_rmb", 7.25) or 7.25,
+            ),
+            "global_geo_and_schema": compute_global_geo_and_schema_readiness(
+                stage2_input.script_content, product.brand_name, product.product_name
+            ),
             "roi_and_unit_economics": {
                 "omni_channel_gmv_attribution": {
                     "stage1_baseline_total_gmv_rmb": s1_gmv,

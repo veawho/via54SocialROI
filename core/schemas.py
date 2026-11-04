@@ -75,8 +75,20 @@ class ProductInput:
     campaign_budget_rmb: float = 15000.0
     core_selling_points: List[str] = field(default_factory=list)
     target_audience: str = "一二线城市22-40岁品质消费与健康管理人群"
+    primary_ecommerce_focus: List[str] = field(default_factory=lambda: ["jd", "taobao_tmall", "meituan"])
+    fulfillment_and_return_rate: float = 0.08
     repeat_purchase_rate_annual: float = 0.32
     Repeat_orders_per_buyer: float = 2.2
+    # Global & Cross-Border DTC Attributes / 出海独立站与跨境电商属性
+    currency: str = "RMB"
+    target_region: str = "domestic"
+    selling_price_usd: float = 0.0
+    msrp_usd: float = 0.0
+    exchange_rate_to_rmb: float = 7.25
+    package_weight_grams: float = 400.0
+    stripe_fee_rate: float = 0.029
+    cross_border_shipping_usd: float = 7.50
+    global_ecommerce_destination: str = "shopify_dtc"
     brand_baseline_search_daily: Dict[str, int] = field(
         default_factory=lambda: {
             "baidu_index": 1850,
@@ -95,6 +107,7 @@ class Stage2ContentInput:
     """Stage 2 content enhancement specification (Hashtags + Campaign Theme + Promotion Script)."""
     topics_hashtags: List[str] = field(default_factory=list)
     campaign_theme: str = ""
+    cdj_stage: str = "Active Evaluation & Urgent O2O Trigger"
     script_content: str = ""
     post_count_matrix: int = 1
     account_compliance_track: str = "official_compliant"

@@ -22,6 +22,9 @@ from core.demo_engine import (
     compute_sensitivity_matrix,
     compute_geo_bench_9_strategies,
     compute_adstock_decay_curve,
+    compute_cross_border_dtc_waterfall,
+    compute_global_geo_and_schema_readiness,
+    GLOBAL_PLATFORMS,
 )
 from core.schemas import ProductInput, SocialAccountProfile, Stage2ContentInput
 
@@ -44,4 +47,7 @@ __all__ = [
     "UnifiedAgentHub",
     "HourlyAccountMonitor",
     "generate_bilingual_markdown_report",
+    "compute_cross_border_dtc_waterfall",
+    "compute_global_geo_and_schema_readiness",
+    "GLOBAL_PLATFORMS",
 ]
