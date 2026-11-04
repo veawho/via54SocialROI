@@ -19,6 +19,9 @@ from core.demo_engine import (
     generate_bilingual_markdown_report,
     generate_smart_stage2_from_product,
     parse_chinese_number,
+    compute_sensitivity_matrix,
+    compute_geo_bench_9_strategies,
+    compute_adstock_decay_curve,
 )
 from core.schemas import ProductInput, SocialAccountProfile, Stage2ContentInput
 

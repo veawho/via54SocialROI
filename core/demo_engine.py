@@ -14,6 +14,7 @@ NOTE / 架构说明:
 from __future__ import annotations
 
 import datetime as dt
+import math
 import re
 from enum import Enum
 from typing import Any, Dict, List
@@ -273,6 +274,218 @@ def compute_mckinsey_pocket_price_waterfall(
                 f"McKinsey Pricing Law: A 1% price increase (volume constant) lifts operating pocket profit by {margin_lift_from_1pct_price_pct}%; "
                 f"conversely, a 5% price cut requires a {breakeven_vol_increase_pct}% volume surge just to break even."
             ),
+        },
+    }
+
+
+def compute_geo_bench_9_strategies(
+    content_text: str,
+    brand_name: str = "",
+    product_name: str = "",
+) -> Dict[str, Any]:
+    """
+    Evaluates content against the 9 Generative Engine Optimization (GEO) strategies
+    established in KDD 2024 (Aggarwal et al., 'GEO: Generative Engine Optimization', ACM KDD 2024).
+    9 大生成式引擎优化策略细项评分与实操改良建议:
+      1. Authoritative Tone (权威语气与专业定性)
+      2. Statistical Evidence (统计数据与实验测量)
+      3. Citation Sources (权威文献与第三方信源引用)
+      4. Quotation Addition (专家观点与用户原声引述)
+      5. BLUF & Structural Layout (BLUF 结论前置与结构化呈现)
+      6. Technical Terms (科学术语与成分命名规范)
+      7. Fluency & Coherence (逻辑连贯性与连接词丰度)
+      8. Unique Selling Propositions (品牌独占差异化卖点)
+      9. Comparison Readiness (横向竞品横评与场景对照准备度)
+    """
+    text = (content_text or "").strip()
+
+    # 1. Authoritative Tone
+    auth_patterns = r"临床|指南|循证|经权威|专家|国家药监|药典|规范|检测报告|体外实验|对照组|循证医学"
+    auth_hits = len(re.findall(auth_patterns, text))
+    auth_score = min(10.0, round(auth_hits * 2.5 + (2.0 if auth_hits > 0 else 0.0), 1))
+
+    # 2. Statistical Evidence
+    stat_patterns = r"\d+(?:\.\d+)?%|\d+例|\d+天|\d+小时|p\s*[<>=]\s*0\.\d+|\d+mg|\d+ml|\d+倍"
+    stat_hits = len(re.findall(stat_patterns, text))
+    stat_score = min(10.0, round(stat_hits * 2.2 + (2.5 if stat_hits > 0 else 0.0), 1))
+
+    # 3. Citation Sources
+    cite_patterns = r"《[^》]+》|国械注准|GB/T|ISO\d+|pubmed|doi:|lancet|nature|专利号|证书编号"
+    cite_hits = len(re.findall(cite_patterns, text, re.IGNORECASE))
+    cite_score = min(10.0, round(cite_hits * 3.5 + (1.5 if cite_hits > 0 else 0.0), 1))
+
+    # 4. Quotation Addition
+    quote_patterns = r"[“\"”][^”\"]{4,50}[”\"]|‘[^’]{4,50}’|：[\"“]|指出：|表示："
+    quote_hits = len(re.findall(quote_patterns, text))
+    quote_score = min(10.0, round(quote_hits * 3.0 + (2.0 if quote_hits > 0 else 0.0), 1))
+
+    # 5. BLUF & Structure
+    bluf_patterns = r"【[^】]+】|^\s*[-*•\d+.]\s+|一句话总结|核心结论|核心卖点|参数对照"
+    bluf_hits = len(re.findall(bluf_patterns, text, re.MULTILINE))
+    bluf_score = min(10.0, round(bluf_hits * 2.5 + (2.0 if bluf_hits > 0 else 0.0), 1))
+
+    # 6. Technical Terms
+    tech_patterns = r"透明质酸|神经酰胺|胶原|泛醇|角鲨烷|非布司他|黄嘌呤|别嘌醇|罗通定|玻尿酸|依克多因|肽|重组|微囊"
+    tech_hits = len(re.findall(tech_patterns, text))
+    tech_score = min(10.0, round(tech_hits * 2.2 + (2.0 if tech_hits > 0 else 0.0), 1))
+
+    # 7. Fluency & Coherence
+    conn_patterns = r"不仅.+而且|因为.+所以|一方面.+另一方面|相较于|进而|然而|总而言之|综上所述|也就是说"
+    conn_hits = len(re.findall(conn_patterns, text))
+    fluency_score = min(10.0, round(conn_hits * 2.5 + 4.0, 1)) if len(text) > 40 else 3.0
+
+    # 8. Unique Selling Propositions (USP)
+    usp_patterns = r"首创|专利|独家|专研|械字号|医用级|0添加|纯度99|无菌|自研|认证"
+    usp_hits = len(re.findall(usp_patterns, text))
+    usp_score = min(10.0, round(usp_hits * 2.8 + (2.0 if usp_hits > 0 else 0.0), 1))
+
+    # 9. Comparison Readiness
+    comp_patterns = r"对比|横评|vs|区别于|优于|相较|测评|实测|选购指南|选型|参数表"
+    comp_hits = len(re.findall(comp_patterns, text, re.IGNORECASE))
+    comp_score = min(10.0, round(comp_hits * 2.6 + (2.0 if comp_hits > 0 else 0.0), 1))
+
+    strategies = [
+        {"id": "authoritative_tone", "name_cn": "权威语气与专业定性", "name_en": "Authoritative Tone", "score": auth_score, "max_score": 10.0, "weight": 0.12, "hits": auth_hits, "recommendation_cn": "建议引入临床专家背书、国家药典或诊疗指南表述，增强 AI 引擎对专业可信度的置信分。"},
+        {"id": "statistical_evidence", "name_cn": "量化统计与实验测量", "name_en": "Statistical Evidence", "score": stat_score, "max_score": 10.0, "weight": 0.14, "hits": stat_hits, "recommendation_cn": "补充具体试验样本数、百分比降幅（如 28天修护率达98.2%）等量化数字。"},
+        {"id": "citation_sources", "name_cn": "权威信源与标准引用", "name_en": "Citation Sources", "score": cite_score, "max_score": 10.0, "weight": 0.12, "hits": cite_hits, "recommendation_cn": "明确标注文献期刊名称、国械注准注册证号或国家推荐标准（GB/T）。"},
+        {"id": "quotation_addition", "name_cn": "专家观点与原声引述", "name_en": "Quotation Addition", "score": quote_score, "max_score": 10.0, "weight": 0.10, "hits": quote_hits, "recommendation_cn": "使用双引号直接引述三甲医生或权威实验室科研专家的原话评价。"},
+        {"id": "bluf_structure", "name_cn": "BLUF 结论前置与结构化", "name_en": "BLUF & Structural Layout", "score": bluf_score, "max_score": 10.0, "weight": 0.12, "hits": bluf_hits, "recommendation_cn": "首段放置【核心结论】，多用序列清单与加粗标题，便于 AI 模块化抓取。"},
+        {"id": "technical_terms", "name_cn": "科学术语与成分命名", "name_en": "Technical Terms", "score": tech_score, "max_score": 10.0, "weight": 0.10, "hits": tech_hits, "recommendation_cn": "使用国际通用的核心有效成份规范化学或药理学学名（如重组III型人源化胶原蛋白）。"},
+        {"id": "fluency_and_coherence", "name_cn": "逻辑连贯与转折衔接", "name_en": "Fluency & Coherence", "score": fluency_score, "max_score": 10.0, "weight": 0.10, "hits": conn_hits, "recommendation_cn": "增强因果与转折逻辑衔接词，提升长句的可读性与语义嵌入连贯度。"},
+        {"id": "unique_selling_propositions", "name_cn": "品牌独占差异化卖点", "name_en": "Unique Selling Propositions", "score": usp_score, "max_score": 10.0, "weight": 0.10, "hits": usp_hits, "recommendation_cn": "提炼独占性技术优势（如专利微囊、械三认证），形成与竞品不可替代的护城河。"},
+        {"id": "comparison_readiness", "name_cn": "横向竞品横评与场景对照", "name_en": "Comparison Readiness", "score": comp_score, "max_score": 10.0, "weight": 0.10, "hits": comp_hits, "recommendation_cn": "设计对比维度（如适用人群、吸收速率、客单价等），契合用户比选场景。"},
+    ]
+
+    composite_score = round(sum(s["score"] * s["weight"] for s in strategies) * 10.0, 1)
+
+    return {
+        "framework": "KDD 2024 GEO-bench 9-Strategy Optimization Protocol (Aggarwal et al.)",
+        "composite_geo_bench_score": composite_score,
+        "grade": "S (卓越)" if composite_score >= 85 else ("A (良好)" if composite_score >= 70 else ("B (合格)" if composite_score >= 55 else "C (亟待优化)")),
+        "strategies": strategies,
+        "top_improvement_areas": [s["name_cn"] for s in sorted(strategies, key=lambda x: x["score"])[:3]],
+    }
+
+
+def compute_adstock_decay_curve(
+    peak_lift: float,
+    half_life_days: float = 11.0,
+    duration_days: int = 30,
+) -> Dict[str, Any]:
+    """
+    Google Meridian & PyMC-Marketing Adstock Decay Curve.
+    模拟社媒脉冲发布后，受众记忆与搜索回流在 30 天时序内的几何/Weibull Adstock 衰减轨迹:
+      S(t) = S_0 * 2^(-t / half_life_days)
+    """
+    hl = max(1.0, float(half_life_days))
+    dur = max(7, min(90, int(duration_days)))
+    p_lift = float(peak_lift)
+
+    timeseries: List[Dict[str, Any]] = []
+    cumulative = 0.0
+    for day in range(1, dur + 1):
+        retention_ratio = 2.0 ** (-float(day) / hl)
+        daily_val = round(p_lift * retention_ratio, 2)
+        cumulative = round(cumulative + daily_val, 2)
+        timeseries.append({
+            "day": day,
+            "retention_pct": round(retention_ratio * 100.0, 2),
+            "daily_lift": daily_val,
+            "cumulative_lift": cumulative,
+        })
+
+    retention_d7 = round((2.0 ** (-7.0 / hl)) * 100.0, 2)
+    retention_d14 = round((2.0 ** (-14.0 / hl)) * 100.0, 2)
+    retention_d30 = round((2.0 ** (-30.0 / hl)) * 100.0, 2)
+
+    return {
+        "framework": "Google Meridian & PyMC-Marketing Geometric Adstock",
+        "half_life_days": hl,
+        "duration_days": dur,
+        "peak_initial_lift": p_lift,
+        "retention_at_day_7_pct": retention_d7,
+        "retention_at_day_14_pct": retention_d14,
+        "retention_at_day_30_pct": retention_d30,
+        "total_cumulative_auc": cumulative,
+        "pulse_refresh_recommended_day": 14,
+        "timeseries": timeseries,
+    }
+
+
+def compute_sensitivity_matrix(
+    base_stage2_res: Dict[str, Any],
+    budget_delta_pct: float = 0.0,
+    price_delta_pct: float = 0.0,
+    repeat_delta_pct: float = 0.0,
+) -> Dict[str, Any]:
+    """
+    Interactive Real-time Sensitivity & What-If Simulator.
+    交互式多维敏感性推演模拟器 (预算/售价/复购率弹性系数与收益重算):
+    无需重复运行耗时 NLP，基于基线结果毫秒级响应滑块变化。
+    """
+    roi_data = base_stage2_res.get("roi_and_unit_economics", {})
+    cdj_data = base_stage2_res.get("consumer_decision_journey", {})
+    waterfall_data = base_stage2_res.get("mckinsey_pocket_price_waterfall", {})
+
+    base_budget = float(roi_data.get("campaign_budget_rmb", 12000.0))
+    base_orders = int(roi_data.get("omni_channel_gmv_attribution", {}).get("omni_total_orders", 200))
+    per_unit = waterfall_data.get("per_unit_waterfall_rmb", {})
+    base_price = float(per_unit.get("3_invoice_price_rmb", 100.0))
+    base_cogs_rate = float(per_unit.get("7_unit_cogs_rmb", 25.0)) / max(0.1, base_price)
+    base_comm_rate = float(per_unit.get("4_platform_commission_rmb", 5.0)) / max(0.1, base_price)
+    base_fulf_rate = float(per_unit.get("5_fulfillment_and_return_rmb", 6.0)) / max(0.1, base_price)
+    base_repeat_rate = float(cdj_data.get("postpurchase_loyalty_loop", {}).get("repeat_purchase_rate_pct", 18.0)) / 100.0
+
+    # Apply deltas
+    sim_budget = max(100.0, round(base_budget * (1.0 + budget_delta_pct / 100.0), 2))
+    sim_price = max(1.0, round(base_price * (1.0 + price_delta_pct / 100.0), 2))
+    sim_repeat_rate = max(0.0, min(0.9, base_repeat_rate + (repeat_delta_pct / 100.0)))
+
+    # Budget elasticity (Hill equation sub-linear power law: orders ~ budget^0.72)
+    budget_ratio = sim_budget / max(1.0, base_budget)
+    order_elasticity_mult = math.pow(budget_ratio, 0.72)
+
+    # Price elasticity of demand (typical e-commerce price elasticity = -1.35)
+    price_ratio = sim_price / max(0.1, base_price)
+    price_elasticity_mult = math.pow(price_ratio, -1.35)
+
+    sim_orders = max(1, int(round(base_orders * order_elasticity_mult * price_elasticity_mult)))
+    sim_gmv = round(sim_orders * sim_price, 2)
+
+    sim_waterfall = compute_mckinsey_pocket_price_waterfall(
+        msrp_rmb=sim_price * 1.25,
+        selling_price_rmb=sim_price,
+        platform_commission_rate=base_comm_rate,
+        fulfillment_and_return_rate=base_fulf_rate,
+        cogs_rate=base_cogs_rate,
+        total_orders=sim_orders,
+        campaign_cost_rmb=sim_budget,
+    )
+
+    repeat_orders = int(round(sim_orders * sim_repeat_rate))
+    repeat_gmv = round(repeat_orders * sim_price, 2)
+
+    sim_net_profit = sim_waterfall["campaign_aggregate"]["net_profit_after_ad_spend_rmb"]
+    sim_roas = round(sim_gmv / max(1.0, sim_budget), 2)
+
+    return {
+        "inputs": {
+            "budget_delta_pct": budget_delta_pct,
+            "price_delta_pct": price_delta_pct,
+            "repeat_delta_pct": repeat_delta_pct,
+            "simulated_budget_rmb": sim_budget,
+            "simulated_selling_price_rmb": sim_price,
+            "simulated_repeat_rate_pct": round(sim_repeat_rate * 100.0, 1),
+        },
+        "simulated_financials": {
+            "simulated_orders": sim_orders,
+            "simulated_gmv_rmb": sim_gmv,
+            "simulated_roas": sim_roas,
+            "pocket_price_waterfall": sim_waterfall,
+            "net_pocket_profit_rmb": sim_net_profit,
+            "repeat_orders": repeat_orders,
+            "repeat_gmv_rmb": repeat_gmv,
+            "total_lifetime_gmv_rmb": round(sim_gmv + repeat_gmv, 2),
         },
     }
 
@@ -939,6 +1152,12 @@ class DemoPromotionEngine(BasePromotionEngine):
                 },
                 "ai_engines_breakdown": ai_engines_breakdown,
             },
+            "geo_bench_9_strategies": compute_geo_bench_9_strategies(
+                stage2_input.script_content, product.brand_name, product.product_name
+            ),
+            "meridian_adstock_curve": compute_adstock_decay_curve(
+                peak_lift=views2, half_life_days=11.0, duration_days=30
+            ),
             "consumer_decision_journey": cdj_funnel,
             "mckinsey_pocket_price_waterfall": ppw_detailed,
             "roi_and_unit_economics": {

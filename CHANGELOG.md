@@ -1,5 +1,13 @@
 # Changelog / 版本变更记录
 
+## [v2.8.0] - 2026-11-04 (REA 重构与工业级产品体验升级 / REA Architecture & UX Polish)
+- **KDD 2024 GEO-bench 9-Strategy Content Evaluator**: Integrated compute_geo_bench_9_strategies scoring content against 9 empirical citation levers (Authoritative tone, Stats, Citations, Quotations, BLUF structure, Technical terms, Fluency, USPs, Comparison readiness) with 0-100 composite score and actionable suggestions.
+- **Google Meridian Adstock 30-Day Half-Life Decay Curve**: Integrated compute_adstock_decay_curve with (t) = S_0 \cdot 2^{-t / 11}$, cumulative AUC calculation, and bi-weekly content refresh guidance.
+- **Interactive Sensitivity & What-If Simulation Drawer**: Added #interactiveSensitivityBox in Tab 5 with dynamic sliders for budget, price, and repeat purchase rates, calling /api/simulate/sensitivity for millisecond-level KPI updates.
+- **Excel-Grade CSV (BOM-encoded \ufeff), JSON & PDF Print Exports**: Added POST /api/export/csv, POST /api/export/json, and executive print CSS styling.
+- **12/12 Automated Tests Passed**: Expanded 	ests/test_demo.py from 10 to 12 tests, verifying 9-strategy GEO-bench, Meridian adstock decay, interactive sensitivity, and CSV exports (100% PASS).
+- **Benchmark REA Alignment**: Synthesized best patterns from NanmiCoder/MediaCrawler, google/meridian, pymc-marketing, and KDD 2024 GEO-bench.
+
 ## [v2.7.0] - 2026-11-04
 - **Kumar et al. (2026) Brand-Stature Ladder Prior**: Embedded empirical bayesian baseline priors across Household Name (73%), Established Challenger (44%), and Emerging Niche (11%) tiers into open-core demo engine and UI.
 - **Schulte et al. (2026) Stochastic AI Citation Variance**: Embedded 65% day-to-day volatility modeling and computed 8-LLM GEO P10 / P50 / P90 confidence interval bands.

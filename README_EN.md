@@ -4,7 +4,7 @@
 
 > **🌐 Language**: [Bilingual README](./README.md) · [🇨🇳 中文版](./README.zh-CN.md) · **🇺🇸 English**
 
-[![Release](https://img.shields.io/badge/version-v2.7.0-blue.svg)](https://github.com/veawho/via54SocialROI)
+[![Release](https://img.shields.io/badge/version-v2.8.0-blue.svg)](https://github.com/veawho/via54SocialROI)
 [![Edition](https://img.shields.io/badge/Edition-Open--Core%20Trial%20%2B%20Skill%20%2B%20Plugin-10b981.svg)](#architecture--edition-matrix)
 [![Agent Skill](https://img.shields.io/badge/Agent%20Skill-via54socialroi-8b5cf6.svg)](./via54socialroi/SKILL.md)
 [![Best Client](https://img.shields.io/badge/%E6%9C%80%E4%BD%B3%E7%9B%91%E6%B5%8B%E5%AE%A2%E6%88%B7%E7%AB%AF-%E8%85%BE%E8%AE%AF%20Marvis%20(Best%20Social%20Monitoring%20Agent)-f97316.svg)](#-top-deployment-recommendation-deploy-tencent-marvis-locally)
@@ -28,7 +28,7 @@
 
 ## 📌 Scientific Foundations & SOTA Marketing Canon Upgrades
 
-`via54SocialROI v2.7.0` integrates rigorous marketing science and 2026 SOTA GEO research:
+`via54SocialROI v2.8.0` integrates rigorous marketing science and 2026 SOTA GEO research:
 
 1. **Brand-Stature Ladder Prior (Kumar et al. 2026)**:
    - Employs empirical Bayesian prior calibration across brand stature tiers: **Household Name (73%)**, **Established Challenger (44%)**, and **Emerging Niche (11%)**.

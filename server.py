@@ -29,6 +29,7 @@ from core import (
     UnifiedAgentHub,
     generate_bilingual_markdown_report,
     generate_smart_stage2_from_product,
+    compute_sensitivity_matrix,
 )
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -282,6 +283,68 @@ def build_product_from_dict(d: Dict[str, Any]) -> ProductInput:
 
 def build_stage2_from_dict(d: Dict[str, Any]) -> Stage2ContentInput:
     return _build_dataclass(Stage2ContentInput, d, "stage2")
+
+
+def generate_csv_from_data(export_type: str, data: Dict[str, Any]) -> str:
+    """Generates UTF-8 with BOM CSV format for Excel/WPS compatibility."""
+    lines = []
+    if export_type == "stage2":
+        res = data.get("result") or data
+        roi = res.get("roi_and_unit_economics", {})
+        waterfall = res.get("mckinsey_pocket_price_waterfall", {})
+        ecom = res.get("enhanced_ecommerce_effect") or res.get("enhanced_ecommerce_search_lift_effect") or {}
+        geo = res.get("geo_effect", {})
+        bench9 = res.get("geo_bench_9_strategies", {})
+
+        lines.append("via54SocialROI 投前精算全维度决策报告 (Stage 2 Evaluation Export),,,")
+        lines.append(f"导出时间 / Export Time,{data.get('timestamp', '2026-11-04')},,,")
+        lines.append("")
+        lines.append("【核心财务与决策指标 (Core Financials & Decision)】,,,")
+        lines.append(f"总投放预算 (RMB),{roi.get('campaign_budget_rmb', 0)},单篇成本 (RMB),{roi.get('unit_campaign_cost_rmb', 0)}")
+        lines.append(f"全渠道预期总订单,{roi.get('omni_total_orders', 0)},全渠道成交 GMV (RMB),{roi.get('omni_total_gmv_rmb', 0)}")
+        lines.append(f"全渠道总 ROAS,{roi.get('omni_total_roas', 0)},保本订单量 (Break-even),{roi.get('break_even_orders', 0)}")
+        lines.append(f"麦肯锡口袋净利润 (RMB),{waterfall.get('campaign_aggregate', {}).get('net_profit_after_ad_spend_rmb', 0)},1% 定价杠杆率 (%),{waterfall.get('mckinsey_1pct_pricing_leverage', {}).get('operating_profit_lift_from_1pct_price_increase_pct', 0)}")
+        lines.append("")
+        lines.append("【麦肯锡口袋价格瀑布 (Pocket Price Waterfall)】,,,")
+        pu = waterfall.get("per_unit_waterfall_rmb", {})
+        lines.append(f"建议零售价 MSRP (RMB),{pu.get('1_msrp_rmb', 0)},促销折让 (RMB),{pu.get('2_promotional_discount_rmb', 0)}")
+        lines.append(f"开票售价 (RMB),{pu.get('3_invoice_price_rmb', 0)},平台佣金扣点 (RMB),{pu.get('4_platform_commission_rmb', 0)}")
+        lines.append(f"履约退货损耗 (RMB),{pu.get('5_fulfillment_and_return_rmb', 0)},最终口袋到手价 (RMB),{pu.get('6_pocket_price_rmb', 0)}")
+        lines.append(f"单件商品硬成本 COGS (RMB),{pu.get('7_unit_cogs_rmb', 0)},单件口袋边际贡献 (RMB),{pu.get('8_pocket_margin_rmb', 0)}")
+        lines.append("")
+        lines.append("【三大电商回搜与全域外溢 (E-Commerce Search Spillover)】,,,")
+        lines.append("平台渠道,进店UV,加购UV,预估订单,成交GMV(RMB)")
+        for ch_key, ch_val in ecom.get("channels", {}).items():
+            lines.append(f"{ch_val.get('name_cn', ch_key)},{ch_val.get('store_visit_uv', 0)},{ch_val.get('add_to_cart_uv', 0)},{ch_val.get('expected_orders', 0)},{ch_val.get('attributed_search_gmv_rmb', 0)}")
+        lines.append("")
+        lines.append("【8大 AI 引擎 GEO 评测与置信区间 (GEO SoM & P10/P50/P90)】,,,")
+        lines.append("AI 引擎名称,基线推荐率 (%),投后预测 (%),P10 下界 (%),P50 中位 (%),P90 上界 (%)")
+        for eng in geo.get("ai_engines_breakdown", []):
+            lines.append(f"{eng.get('name_cn', '')},{eng.get('baseline_som_pct', 0)},{eng.get('post_campaign_som_pct', 0)},{eng.get('som_p10_pct', 0)},{eng.get('som_p50_pct', 0)},{eng.get('som_p90_pct', 0)}")
+        lines.append("")
+        lines.append("【KDD 2024 GEO-bench 9 大优化策略得分】,,,")
+        lines.append(f"综合评分 (0-100),{bench9.get('composite_geo_bench_score', 0)},评级,{bench9.get('grade', '')}")
+        lines.append("策略名称,得分 (0-10),权重,命中特征数,改良建议")
+        for st in bench9.get("strategies", []):
+            lines.append(f"\"{st.get('name_cn', '')}\",{st.get('score', 0)},{st.get('weight', 0)},{st.get('hits', 0)},\"{st.get('recommendation_cn', '')}\"")
+    elif export_type == "matrix":
+        mat = data.get("result") or data
+        summary = mat.get("matrix_summary", {})
+        accounts = mat.get("accounts_evaluated", [])
+        lines.append("via54SocialROI 多账号矩阵检测与预算寻优报告 (Matrix Board Export),,,")
+        lines.append(f"候选账号数,{summary.get('accounts_count', 0)},总投放预算 (RMB),{summary.get('matrix_total_budget_rmb', 0)}")
+        lines.append(f"去重净触达 UV,{summary.get('deduplicated_net_reach_uv', 0)},矩阵总 GMV (RMB),{summary.get('matrix_total_omni_gmv_rmb', 0)}")
+        lines.append(f"矩阵综合 ROAS,{summary.get('matrix_overall_roas', 0)},跨平台搜推协同乘数,{summary.get('cross_platform_synergy_multiplier', 1.0)}")
+        lines.append("")
+        lines.append("【矩阵博主横向 PK 与预算分配表 (KOL Comparison & Allocation)】,,,")
+        lines.append("账号名称,平台,粉丝数,本单预算(RMB),人货契合度,预期曝光,预估订单,预期GMV(RMB),预期ROAS,AI 梯度建议,推荐最优分配(RMB)")
+        for a in accounts:
+            alloc = a.get("optimal_budget_allocation", {})
+            lines.append(f"\"{a.get('account_name', '')}\",{a.get('platform', '')},{a.get('followers_count', 0)},{a.get('budget_rmb', 0)},{a.get('fit_multiplier', 1.0)},{a.get('expected_views', 0)},{a.get('expected_orders', 0)},{a.get('expected_gmv_rmb', 0)},{a.get('expected_roas', 0)},\"{a.get('allocation_tier_cn', '')}\",{alloc.get('recommended_budget_rmb', a.get('budget_rmb', 0))}")
+    else:
+        lines.append("type,data")
+        lines.append(f"{export_type},\"{json.dumps(data, ensure_ascii=False)}\"")
+    return "\ufeff" + "\n".join(lines)
 
 
 class CalculatorRequestHandler(BaseHTTPRequestHandler):
@@ -656,6 +719,44 @@ class CalculatorRequestHandler(BaseHTTPRequestHandler):
                     raise ApiError("Missing required field 'target_id'", status=400)
                 mon = MONITOR.remove_target(target_id=target_id)
                 self._send_json({"success": True, "monitoring": mon})
+                return
+
+            if path == "/api/simulate/sensitivity":
+                base_stage2 = payload.get("stage2_result")
+                if not base_stage2:
+                    raise ApiError("缺少基线测算数据 / stage2_result is required for sensitivity simulation", status=400)
+                b_delta = float(payload.get("budget_delta_pct") or 0.0)
+                p_delta = float(payload.get("price_delta_pct") or 0.0)
+                r_delta = float(payload.get("repeat_delta_pct") or 0.0)
+                sim_res = compute_sensitivity_matrix(
+                    base_stage2_res=base_stage2,
+                    budget_delta_pct=b_delta,
+                    price_delta_pct=p_delta,
+                    repeat_delta_pct=r_delta,
+                )
+                self._send_json({"success": True, "simulation": sim_res})
+                return
+
+            if path == "/api/export/csv":
+                export_type = str(payload.get("type") or "stage2")
+                data = payload.get("data") or {}
+                csv_text = generate_csv_from_data(export_type, data)
+                self._send_json({
+                    "success": True,
+                    "filename": f"via54SocialROI_{export_type}_export.csv",
+                    "csv_content": csv_text,
+                })
+                return
+
+            if path == "/api/export/json":
+                export_type = str(payload.get("type") or "stage2")
+                data = payload.get("data") or {}
+                json_str = json.dumps(data, indent=2, ensure_ascii=False)
+                self._send_json({
+                    "success": True,
+                    "filename": f"via54SocialROI_{export_type}_export.json",
+                    "json_content": json_str,
+                })
                 return
 
             self._send_json({"error": f"Unknown POST endpoint: {path}"}, status=404)

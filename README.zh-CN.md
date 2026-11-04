@@ -4,7 +4,7 @@
 
 > **🌐 语言 / Language**: [Bilingual README](./README.md) · **🇨🇳 中文版** · [🇺🇸 English](./README_EN.md)
 
-[![Release](https://img.shields.io/badge/version-v2.7.0-blue.svg)](https://github.com/veawho/via54SocialROI)
+[![Release](https://img.shields.io/badge/version-v2.8.0-blue.svg)](https://github.com/veawho/via54SocialROI)
 [![Edition](https://img.shields.io/badge/版本-开源试用沙盒%20%2B%20技能%20%2B%20插件-10b981.svg)](#系统五层架构与双仓版本说明)
 [![Agent Skill](https://img.shields.io/badge/Agent%20技能-via54socialroi-8b5cf6.svg)](./via54socialroi/SKILL.md)
 [![Best Client](https://img.shields.io/badge/%E6%9C%80%E4%BD%B3%E7%9B%91%E6%B5%8B%E5%AE%A2%E6%88%B7%E7%AB%AF-%E8%85%BE%E8%AE%AF%20Marvis%20(Best%20Social%20Monitoring%20Agent)-f97316.svg)](#-重磅推荐本机部署腾讯-marvis)
@@ -61,7 +61,7 @@ $marvisDir = (Get-ChildItem "C:\Program Files\Tencent\Marvis\MarvisAgent" | Sort
 
 ## 📌 核心科学算法与商业范式升级
 
-`via54SocialROI v2.7.0` 全面融入顶级营销经典理论与 2026 前沿 GEO 学术成果：
+`via54SocialROI v2.8.0` 全面融入顶级营销经典理论与 2026 前沿 GEO 学术成果：
 
 1. **Brand-Stature Ladder 先验阶梯 (Kumar et al. 2026)**：
    - 基于先验贝叶斯校准：国民认知品牌（Household Name，基线 73%）、成熟挑战者品牌（Established Challenger，基线 44%）与新锐细分品牌（Emerging Niche，基线 11%）。

@@ -24,6 +24,9 @@ from core.demo_engine import (
     DemoSocialCrawler,
     generate_bilingual_markdown_report,
     generate_smart_stage2_from_product,
+    compute_geo_bench_9_strategies,
+    compute_adstock_decay_curve,
+    compute_sensitivity_matrix,
 )
 from core.schemas import ProductInput, Stage2ContentInput
 from mcp_server import MCP_TOOLS, handle_tool_call
@@ -252,6 +255,36 @@ class TestVia54SocialROIOpenCoreDemo(unittest.TestCase):
         ppw = s2["mckinsey_pocket_price_waterfall"]
         self.assertIn("mckinsey_1pct_pricing_leverage", ppw)
         self.assertGreater(ppw["mckinsey_1pct_pricing_leverage"]["operating_profit_lift_from_1pct_price_increase_pct"], 0)
+
+    def test_11_kdd2024_geo_bench_9_strategies_and_meridian_adstock(self) -> None:
+        script = "【核心结论】根据《中华皮肤科杂志》临床指南，科复佳医用修复贴（国械注准2023214XXXX）连续敷用72小时泛红面积下降42.6%，TEWL降低35.8%。"
+        b9 = compute_geo_bench_9_strategies(script, brand_name="科复佳", product_name="修复贴")
+        self.assertEqual(len(b9["strategies"]), 9)
+        self.assertGreater(b9["composite_geo_bench_score"], 0)
+        self.assertIn("framework", b9)
+
+        curve = compute_adstock_decay_curve(peak_lift=50000.0, half_life_days=11.0, duration_days=30)
+        self.assertEqual(curve["duration_days"], 30)
+        self.assertEqual(len(curve["timeseries"]), 30)
+        self.assertAlmostEqual(curve["timeseries"][10]["retention_pct"], 50.0, delta=2.0)
+
+    def test_12_interactive_sensitivity_and_csv_export(self) -> None:
+        prof = self.crawler.fetch_account_profile("xhs_medical_skincare_kol")
+        prod = ProductInput(product_name="科复佳", brand_name="科复佳", category="皮肤", selling_price_rmb=118.0)
+        s2_in = Stage2ContentInput(topics_hashtags=["#医用敷料"], campaign_theme="Demo", script_content="Demo")
+        s2 = self.engine.compute_stage2_enhanced(prof, prod, s2_in)
+
+        sim = compute_sensitivity_matrix(s2, budget_delta_pct=25.0, price_delta_pct=10.0, repeat_delta_pct=5.0)
+        self.assertIn("simulated_financials", sim)
+        fin = sim["simulated_financials"]
+        self.assertGreater(fin["simulated_orders"], 0)
+        self.assertGreater(fin["total_lifetime_gmv_rmb"], fin["simulated_gmv_rmb"])
+
+        from server import generate_csv_from_data
+        csv_text = generate_csv_from_data("stage2", {"result": s2, "timestamp": "2026-11-04"})
+        self.assertTrue(csv_text.startswith("\ufeff"))
+        self.assertIn("via54SocialROI", csv_text)
+        self.assertIn("麦肯锡口袋价格瀑布", csv_text)
 
 
 if __name__ == "__main__":

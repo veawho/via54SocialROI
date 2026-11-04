@@ -418,6 +418,15 @@
     .conf-low { background: rgba(245,158,11,.2); color: #fcd34d; border: 1px solid #f59e0b; }
     .input-invalid { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239,68,68,.35) !important; }
     #modelWarningsBox { display: none; margin-bottom: 10px; padding: 8px 12px; border-radius: 8px; background: rgba(120,53,15,.35); border: 1px solid rgba(245,158,11,.55); color: #fde68a; font-size: 12px; line-height: 1.6; }
+    @media print {
+      body { background: #fff !important; color: #000 !important; font-size: 11pt !important; }
+      header, .preset-bar, #workflowStepperBar, .tab-bar, .url-bar, .modality-tabs, #globalBusyBar, #toastHost, .btn, details summary, .adv-drawer, #sliderBudgetDelta, #sliderPriceDelta, #sliderRepeatDelta { display: none !important; }
+      .workspace { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+      .card, .foolproof-verdict-card, .table-card { border: 1px solid #999 !important; background: #fff !important; color: #000 !important; break-inside: avoid; margin-bottom: 12pt !important; box-shadow: none !important; }
+      .kpi-title, label, .step-sub { color: #444 !important; }
+      .kpi-val, h1, h2, h3 { color: #000 !important; }
+      .tab-pane { display: block !important; }
+    }
   </style>
 </head>
 <body>
@@ -426,7 +435,7 @@
 
 <header>
   <div class="brand-title">
-    <h1>全平台社媒推广效果、带货回搜与 ROI 傻瓜式智能测算台 v2.6</h1>
+    <h1>全平台社媒推广效果、带货回搜与 ROI 傻瓜式智能测算台 v3.0 (工业级旗舰版)</h1>
     <p>三步极简操作：① 粘贴账号链接 → ② 上传产品PDF/填售价 → ③ 一键算清能赚多少钱 · <strong style="color:#fcd34d;">🏆 强烈推荐本机部署【腾讯 Marvis】（当前测试最好的社交媒体监测 Agent 客户端）</strong></p>
   </div>
   <div class="status-bar" id="agentHubStatusBar">
@@ -435,6 +444,8 @@
     <span class="pill" style="display:none;"><span id="pillDeepSeek">DeepSeek: 就绪</span><span id="pillAntigravity">Antigravity: 就绪</span><span id="pillCodex">Codex: 就绪</span></span>
     <button class="btn" onclick="openMatrixTabAndRun()" style="border-color:#a855f7;color:#e9d5ff;">🌟 多账号PK选号看板</button>
     <button class="btn btn-purple" onclick="openMarvisArticleModal()" title="调用腾讯 Marvis 深度爬取并分析文章中的 5 大核心资产与 11 天半衰期">📰 Marvis 深度分析文章</button>
+    <button class="btn btn-teal" onclick="exportCsvResult()" title="导出带 BOM 的 Excel/WPS 兼容 CSV 表格">📊 导出 CSV</button>
+    <button class="btn" onclick="printExecutiveReport()" title="格式化打印或保存为高管 PDF 决策简报">🖨️ 打印 PDF</button>
     <button class="btn" onclick="exportMarkdownReport()">📥 导出报告 (.md)</button>
     <button class="btn" onclick="exportJsonResult()">JSON</button>
   </div>
@@ -2094,6 +2105,76 @@ channels_family_wellness_kol</textarea>
           </div>
         ` : ''}
 
+        <!-- KDD 2024 GEO-BENCH 9-STRATEGY OPTIMIZATION SCORECARD -->
+        ${(() => {
+          const bench9 = res.geo_bench_9_strategies || {};
+          const strats = bench9.strategies || [];
+          if (!strats.length) return '';
+          return `
+            <div style="background:rgba(30,41,59,0.5);border:1.5px solid rgba(59,130,246,0.4);border-radius:10px;padding:14px 16px;margin:14px 0;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+                <div style="font-size:13.5px;font-weight:700;color:#93c5fd;">
+                  🧪 KDD 2024 GEO-bench 9 大内容优化策略评分 (Aggarwal et al. ACM KDD 2024)
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <span class="conf-badge conf-high">综合得分: ${bench9.composite_geo_bench_score || 0} / 100</span>
+                  <span class="stage-badge" style="background:rgba(16,185,129,0.2);color:#34d399;border-color:#10b981;">${bench9.grade || 'A'}</span>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:9px;font-size:11.5px;">
+                ${strats.map(s => `
+                  <div style="background:rgba(15,23,42,0.7);border:1px solid #334155;border-radius:7px;padding:9px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                      <strong style="color:#f8fafc;">${s.name_cn}</strong>
+                      <span style="color:#38bdf8;font-weight:700;">${s.score} / 10.0</span>
+                    </div>
+                    <div style="width:100%;height:6px;background:#090d16;border-radius:3px;overflow:hidden;margin-bottom:6px;">
+                      <div style="width:${s.score * 10}%;height:100%;background:${s.score >= 8 ? '#10b981' : (s.score >= 5 ? '#3b82f6' : '#f59e0b')};"></div>
+                    </div>
+                    <div style="color:#94a3b8;font-size:10.5px;line-height:1.4;">${s.recommendation_cn}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        })()}
+
+        <!-- GOOGLE MERIDIAN & PYMC ADSTOCK 30-DAY DECAY CURVE -->
+        ${(() => {
+          const adstock = res.meridian_adstock_curve || {};
+          const ts = adstock.timeseries || [];
+          if (!ts.length) return '';
+          const pts = ts.map((d, i) => `${(50 + (i / 29) * 780).toFixed(1)},${(130 - (d.retention_pct / 100) * 105).toFixed(1)}`).join(" ");
+          return `
+            <div style="background:rgba(15,23,42,0.7);border:1px solid rgba(139,92,246,0.35);border-radius:10px;padding:14px 16px;margin:14px 0;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+                <div style="font-size:13.5px;font-weight:700;color:#c4b5fd;">
+                  📉 Google Meridian & PyMC-Marketing Adstock 30 天脉冲滞后与半衰期衰减
+                </div>
+                <span class="conf-badge conf-medium">半衰期: 11.0 天 | 累计曝光 AUC: ${fmtNum(adstock.total_cumulative_auc || 0)}</span>
+              </div>
+              <div style="display:flex;gap:12px;margin-bottom:8px;font-size:11.5px;color:#cbd5e1;flex-wrap:wrap;">
+                <span>第 7 天存留: <strong style="color:#6ee7b7;">${adstock.retention_at_day_7_pct}%</strong></span>
+                <span>第 14 天存留: <strong style="color:#93c5fd;">${adstock.retention_at_day_14_pct}%</strong></span>
+                <span>第 30 天存留: <strong style="color:#fcd34d;">${adstock.retention_at_day_30_pct}%</strong></span>
+                <span style="color:#c084fc;">💡 建议补种周期: 第 ${adstock.pulse_refresh_recommended_day} 天</span>
+              </div>
+              <div style="width:100%;overflow-x:auto;">
+                <svg viewBox="0 0 860 155" style="width:100%;max-height:155px;background:#090d16;border-radius:8px;border:1px solid #1e293b;">
+                  <line x1="50" y1="130" x2="830" y2="130" stroke="#334155" />
+                  <line x1="50" y1="20" x2="50" y2="130" stroke="#334155" />
+                  <line x1="${(50 + (11/30)*780).toFixed(1)}" y1="20" x2="${(50 + (11/30)*780).toFixed(1)}" y2="130" stroke="#ef4444" stroke-dasharray="4,4" />
+                  <text x="${(50 + (11/30)*780).toFixed(1)}" y="15" fill="#fca5a5" font-size="10" text-anchor="middle">★ 第11天中位半衰期 (50% 衰减)</text>
+                  <polyline points="${pts}" fill="none" stroke="#8b5cf6" stroke-width="2.5" />
+                  <text x="50" y="145" fill="#94a3b8" font-size="10">Day 1 (100%)</text>
+                  <text x="440" y="145" fill="#94a3b8" font-size="10">Day 15</text>
+                  <text x="810" y="145" fill="#94a3b8" font-size="10">Day 30 (15%)</text>
+                </svg>
+              </div>
+            </div>
+          `;
+        })()}
+
         <table>
           <thead>
             <tr>
@@ -2247,6 +2328,65 @@ channels_family_wellness_kol</textarea>
         <!-- MCKINSEY 1% PRICING LEVERAGE NOTE -->
         <div style="background:rgba(245,158,11,0.1);border:1px dashed rgba(245,158,11,0.5);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:12px;color:#fde68a;line-height:1.5;">
           ⚖️ <strong>麦肯锡定价力量 (1% 法则) 实测</strong>：客单价若提升 1%（销量不变）→ 口袋利润跃升 <strong>+${(ppw.mckinsey_1pct_pricing_leverage && ppw.mckinsey_1pct_pricing_leverage.operating_profit_lift_from_1pct_price_increase_pct) || '8.2'}%</strong>！反之若降价 5%，销量必须增加 <strong>+${(ppw.mckinsey_1pct_pricing_leverage && ppw.mckinsey_1pct_pricing_leverage.volume_increase_needed_to_breakeven_on_5pct_price_cut_pct) || '19.4'}%</strong> 方可保本。社媒种草强化品牌心智是守住价格底线的最优解。
+        </div>
+
+        <!-- INTERACTIVE SENSITIVITY & WHAT-IF SIMULATOR DRAWER -->
+        <div style="background:rgba(15,23,42,0.85);border:1.5px solid rgba(16,185,129,0.45);border-radius:10px;padding:14px 16px;margin:14px 0;" id="interactiveSensitivityBox">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+            <div style="font-size:13.5px;font-weight:700;color:#34d399;">
+              🎛️ 交互式多维敏感度与 What-If 动态推演模拟器 (Interactive Sensitivity Simulator)
+            </div>
+            <span class="conf-badge conf-high">毫秒级实时重算 · 零刷新</span>
+          </div>
+          <p style="font-size:11.5px;color:#94a3b8;margin-bottom:12px;">
+            拖动下方滑块实时模拟【预算微调】、【售价浮动】与【复购率增量】，即时观测麦肯锡 1% 定价杠杆、全域 GMV 与口袋净利变化：
+          </p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:14px;background:#090d16;padding:12px;border-radius:8px;border:1px solid #1e293b;">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px;">
+                <span style="color:#cbd5e1;">💰 投放预算微调:</span>
+                <strong id="labelBudgetDelta" style="color:#60a5fa;">0% (¥${fmtNum(roi.campaign_budget_rmb)})</strong>
+              </div>
+              <input type="range" id="sliderBudgetDelta" min="-50" max="100" step="5" value="0" style="width:100%;accent-color:#3b82f6;" oninput="updateLiveSensitivitySimulation()" />
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px;">
+                <span style="color:#cbd5e1;">🏷️ 终端售价浮动:</span>
+                <strong id="labelPriceDelta" style="color:#f59e0b;">0% (¥${fmtNum(ppw.invoice_selling_price_rmb || 100)})</strong>
+              </div>
+              <input type="range" id="sliderPriceDelta" min="-30" max="50" step="5" value="0" style="width:100%;accent-color:#f59e0b;" oninput="updateLiveSensitivitySimulation()" />
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px;">
+                <span style="color:#cbd5e1;">🔄 年度复购率浮动:</span>
+                <strong id="labelRepeatDelta" style="color:#f472b6;">0%</strong>
+              </div>
+              <input type="range" id="sliderRepeatDelta" min="-15" max="30" step="5" value="0" style="width:100%;accent-color:#f472b6;" oninput="updateLiveSensitivitySimulation()" />
+            </div>
+          </div>
+          <!-- Live Simulation Feedback KPI Cards -->
+          <div id="liveSimulationResultGrid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:10px;margin-top:12px;font-size:12px;">
+            <div style="background:#0f172a;border:1px solid #334155;border-radius:6px;padding:9px;">
+              <div style="color:#94a3b8;font-size:11px;">模拟全域成交订单</div>
+              <div style="color:#f8fafc;font-size:15px;font-weight:700;">${fmtNum(roi.omni_total_orders)} 单</div>
+              <div style="color:#60a5fa;font-size:10.5px;">基线 ROAS: <strong>${prof.omni_channel_roas}x</strong></div>
+            </div>
+            <div style="background:#0f172a;border:1px solid #334155;border-radius:6px;padding:9px;">
+              <div style="color:#94a3b8;font-size:11px;">模拟总成交 GMV</div>
+              <div style="color:#34d399;font-size:15px;font-weight:700;">¥${fmtNum(roi.omni_total_gmv_rmb)}</div>
+              <div style="color:#94a3b8;font-size:10.5px;">含首购 + 延期回搜</div>
+            </div>
+            <div style="background:#0f172a;border:1px solid #334155;border-radius:6px;padding:9px;">
+              <div style="color:#94a3b8;font-size:11px;">口袋净利润 (Net Profit)</div>
+              <div style="color:#34d399;font-size:15px;font-weight:700;">¥${fmtNum(prof.net_profit_after_ad_spend_rmb)}</div>
+              <div style="color:#94a3b8;font-size:10.5px;">当前测算基准值</div>
+            </div>
+            <div style="background:#0f172a;border:1px solid #334155;border-radius:6px;padding:9px;">
+              <div style="color:#94a3b8;font-size:11px;">含复购终身 GMV (LTV)</div>
+              <div style="color:#f472b6;font-size:15px;font-weight:700;">¥${fmtNum(roi.ltv_gross_gmv_rmb || roi.omni_total_gmv_rmb * 1.36)}</div>
+              <div style="color:#94a3b8;font-size:10.5px;">基于客户生命周期</div>
+            </div>
+          </div>
         </div>
         <h3 style="font-size:13px;margin:12px 0 5px;color:#93c5fd;">Monte Carlo 1,000次随机模拟与 5×5 敏感性矩阵</h3>
         <table>
@@ -2899,6 +3039,122 @@ channels_family_wellness_kol</textarea>
     a.download = "Omni_Social_ROI_GEO_v2_Result.json";
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  function exportCsvResult() {
+    const isMatrix = document.getElementById("tab-matrix") && document.getElementById("tab-matrix").classList.contains("active");
+    const targetData = isMatrix ? (LAST_MATRIX_RESULT || LAST_RESULT) : (LAST_RESULT || LAST_MATRIX_RESULT);
+    if (!targetData) {
+      showToast("暂无可导出的测算数据，请先运行测算！", "warn");
+      return;
+    }
+    const type = isMatrix ? "matrix" : "stage2";
+    fetch("/api/export/csv", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: type, data: targetData })
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.success && d.csv_content) {
+        const blob = new Blob([d.csv_content], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = d.filename || `via54SocialROI_${type}_export.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("已成功导出 CSV 决策数据表！", "ok");
+      } else {
+        showToast("导出失败: " + (d.error || "未知错误"), "error");
+      }
+    })
+    .catch(err => showToast("导出网络请求失败: " + err, "error"));
+  }
+
+  function printExecutiveReport() {
+    if (!LAST_RESULT && !LAST_MATRIX_RESULT) {
+      showToast("暂无可打印的测算数据，请先运行测算！", "warn");
+      return;
+    }
+    window.print();
+  }
+
+  function updateLiveSensitivitySimulation() {
+    if (!LAST_RESULT || !LAST_RESULT.result) return;
+    const res = LAST_RESULT.result;
+    const bSlider = document.getElementById("sliderBudgetDelta");
+    const pSlider = document.getElementById("sliderPriceDelta");
+    const rSlider = document.getElementById("sliderRepeatDelta");
+    if (!bSlider || !pSlider || !rSlider) return;
+
+    const bDelta = parseFloat(bSlider.value) || 0;
+    const pDelta = parseFloat(pSlider.value) || 0;
+    const rDelta = parseFloat(rSlider.value) || 0;
+
+    const roi = res.roi_and_unit_economics || {};
+    const ppw = res.mckinsey_pocket_price_waterfall || {};
+    const pu = ppw.per_unit_waterfall_rmb || {};
+    const baseBudget = parseFloat(roi.campaign_budget_rmb || 18500);
+    const basePrice = parseFloat(pu.invoice_selling_price_rmb || pu["3_invoice_price_rmb"] || 118);
+
+    const simBudget = Math.round(baseBudget * (1 + bDelta / 100));
+    const simPrice = Math.round(basePrice * (1 + pDelta / 100) * 10) / 10;
+
+    document.getElementById("labelBudgetDelta").textContent = `${bDelta > 0 ? '+' : ''}${bDelta}% (¥${fmtNum(simBudget)})`;
+    document.getElementById("labelPriceDelta").textContent = `${pDelta > 0 ? '+' : ''}${pDelta}% (¥${simPrice})`;
+    document.getElementById("labelRepeatDelta").textContent = `${rDelta > 0 ? '+' : ''}${rDelta}%`;
+
+    fetch("/api/simulate/sensitivity", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        stage2_result: res,
+        budget_delta_pct: bDelta,
+        price_delta_pct: pDelta,
+        repeat_delta_pct: rDelta,
+      })
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.success && d.simulation) {
+        renderSimulationFeedback(d.simulation);
+      }
+    })
+    .catch(() => {});
+  }
+
+  function renderSimulationFeedback(sim) {
+    const grid = document.getElementById("liveSimulationResultGrid");
+    if (!grid) return;
+    const fin = sim.simulated_financials || {};
+    const wf = fin.pocket_price_waterfall || {};
+    const lev = wf.mckinsey_1pct_pricing_leverage || {};
+
+    grid.innerHTML = `
+      <div style="background:#0f172a;border:1px solid #334155;border-radius:6px;padding:9px;">
+        <div style="color:#94a3b8;font-size:11px;">模拟全域成交订单</div>
+        <div style="color:#f8fafc;font-size:15px;font-weight:700;">${fmtNum(fin.simulated_orders)} 单</div>
+        <div style="color:#60a5fa;font-size:10.5px;">综合 ROAS: <strong>${fin.simulated_roas}x</strong></div>
+      </div>
+      <div style="background:#0f172a;border:1px solid #334155;border-radius:6px;padding:9px;">
+        <div style="color:#94a3b8;font-size:11px;">模拟总成交 GMV</div>
+        <div style="color:#34d399;font-size:15px;font-weight:700;">¥${fmtNum(fin.simulated_gmv_rmb)}</div>
+        <div style="color:#94a3b8;font-size:10.5px;">含首购 + 延期回搜</div>
+      </div>
+      <div style="background:#0f172a;border:1px solid #334155;border-radius:6px;padding:9px;">
+        <div style="color:#94a3b8;font-size:11px;">口袋净利润 (Net Profit)</div>
+        <div style="color:${fin.net_pocket_profit_rmb >= 0 ? '#34d399' : '#f87171'};font-size:15px;font-weight:700;">
+          ¥${fmtNum(fin.net_pocket_profit_rmb)}
+        </div>
+        <div style="color:#94a3b8;font-size:10.5px;">1%提价杠杆: <strong>${lev.operating_profit_lift_from_1pct_price_increase_pct || 0}%</strong></div>
+      </div>
+      <div style="background:#0f172a;border:1px solid #334155;border-radius:6px;padding:9px;">
+        <div style="color:#94a3b8;font-size:11px;">含复购终身 GMV (LTV)</div>
+        <div style="color:#f472b6;font-size:15px;font-weight:700;">¥${fmtNum(fin.total_lifetime_gmv_rmb)}</div>
+        <div style="color:#94a3b8;font-size:10.5px;">二次复购订单: +${fmtNum(fin.repeat_orders)} 单</div>
+      </div>
+    `;
   }
 
   function openMarvisArticleModal() {

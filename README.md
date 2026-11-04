@@ -4,7 +4,7 @@
 
 > **🌐 语言 / Language**: 本文为中英双语旗舰版 (This file is bilingual) · [🇨🇳 中文版](./README.zh-CN.md) · [🇺🇸 English](./README_EN.md)
 
-[![Release](https://img.shields.io/badge/version-v2.7.0-blue.svg)](https://github.com/veawho/via54SocialROI)
+[![Release](https://img.shields.io/badge/version-v2.8.0-blue.svg)](https://github.com/veawho/via54SocialROI)
 [![Edition](https://img.shields.io/badge/Edition-Open--Core%20Trial%20%2B%20Skill%20%2B%20Plugin-10b981.svg)](#open-core-architecture--开源架构与核心闭源说明)
 [![Agent Skill](https://img.shields.io/badge/Agent%20Skill-via54socialroi-8b5cf6.svg)](./via54socialroi/SKILL.md)
 [![Best Client](https://img.shields.io/badge/%E6%9C%80%E4%BD%B3%E7%9B%91%E6%B5%8B%E5%AE%A2%E6%88%B7%E7%AB%AF-%E8%85%BE%E8%AE%AF%20Marvis%20(Best%20Social%20Monitoring%20Agent)-f97316.svg)](#-重磅推荐本机部署腾讯-marvis--recommended-local-deployment-tencent-marvis)
@@ -63,7 +63,7 @@ $marvisDir = (Get-ChildItem "C:\Program Files\Tencent\Marvis\MarvisAgent" | Sort
 
 ## 📌 核心科学算法与商业范式升级 / SOTA Marketing Canon Upgrades
 
-`via54SocialROI v2.7.0` 全面重构并融入了顶级营销经典理论与 2026 前沿 GEO 学术成果：
+`via54SocialROI v2.8.0` 全面重构并融入了顶级营销经典理论与 2026 前沿 GEO 学术成果：
 
 1. **Brand-Stature Ladder 先验阶梯 (Kumar et al. 2026)**：
    - 告别无差别 GEO 预测，基于先验贝叶斯校准：国民认知品牌（Household Name，基线 73%）、成熟挑战者品牌（Established Challenger，基线 44%）与新锐细分品牌（Emerging Niche，基线 11%）。
@@ -73,6 +73,10 @@ $marvisDir = (Get-ChildItem "C:\Program Files\Tencent\Marvis\MarvisAgent" | Sort
    - 采用 4 阶段非线性漏斗替代传统线性 AIDA 漏斗：**初始考虑集合 (Initial Consideration) $\to$ 主动评估比选 (Active Evaluation) $\to$ 最终购买决策 (Moment of Purchase) $\to$ 购后复购忠诚环 (Loyalty Loop)**，精准测算终身复购价值。
 4. **麦肯锡口袋价格瀑布流与 1% 价格杠杆法则 (McKinsey Pocket Price Waterfall & 1% Pricing Leverage Law)**：
    - 穿透表面 GMV，逐层扣除平台佣金、履约退货、渠道折扣与硬性成本，真实反映到达品牌口袋的净利润；并量化提升 1% 终端售价带来的利润杠杆倍数（Marn & Rosiello 经典定律）。
+5. **KDD 2024 GEO-bench 9 大内容优化策略评估 (Aggarwal et al. 2024)**：
+   - 包含权威语调、统计证据、学术引用、直接引语、BLUF 结论先行结构等 9 维诊断卡与综合得分（0-100）。
+6. **Google Meridian 30 天 Adstock 衰减曲线与交互式敏感性抽屉**：
+   - (t) = S_0 \cdot 2^{-t / 11}$ 直观呈现 11 天半衰期与双周内容轮换窗口；支持在界面动态拖拽预算、价格、复购滑块（What-If 模拟）并一键导出 UTF-8 with BOM (\ufeff) Excel 级 CSV 报表。
 
 ---
 
@@ -208,7 +212,7 @@ via54SocialROI/
 ├── server.py                     # REST API 与 Web 工作台服务端 (支持动态 Marvis 检测)
 ├── cli.py                        # 命令行工具 (支持 --info / --preset / --matrix / --json)
 ├── mcp_server.py                 # 零依赖 JSON-RPC 2.0 Stdio MCP 服务端
-├── tests/test_demo.py            # 10项全量开源试用沙盒、插件形态、学术公式与防泄漏自动化测试套件
+├── tests/test_demo.py            # 12项全量开源试用沙盒、插件形态、学术公式与防泄漏自动化测试套件
 ├── README.md                     # 中英双语主文档 (Default Bilingual README)
 ├── README.zh-CN.md               # 中文说明文档
 └── README_EN.md                  # Technical English Documentation
