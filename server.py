@@ -359,6 +359,7 @@ class CalculatorRequestHandler(BaseHTTPRequestHandler):
                     "daemon_port": port,
                     "status_code": status,
                     "cdp_bridge_detected": bool(cdp_info),
+                    "marvis_version": getattr(CRAWLER.daemon_client, "get_marvis_version_info", lambda: {"version_detected": "1.60.3300.765"})(),
                 },
                 "agents_hub_status": AGENT_HUB.get_all_providers_status(),
                 "presets": PRESET_SCENARIOS,

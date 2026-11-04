@@ -193,6 +193,66 @@ class TestVia54SocialROIOpenCoreDemo(unittest.TestCase):
         self.assertEqual(geo["ai_citation_half_life_dynamics"]["median_half_life_days"], 11.0)
         self.assertEqual(geo["agent_era_5_assets"]["composite_asset_score_100"], 85.0)
 
+    def test_09_brand_stature_and_schulte_confidence_intervals(self) -> None:
+        from core.demo_engine import classify_brand_stature, BrandStatureTier
+        t1 = classify_brand_stature("欧莱雅复颜抗皱紧致日霜", "护肤")
+        t2 = classify_brand_stature("科复佳医用透明质酸钠修复贴", "医疗器械")
+        t3 = classify_brand_stature("普通无名测试白牌产品", "日化")
+
+        self.assertEqual(t1["tier"], BrandStatureTier.TIER1_HOUSEHOLD.value)
+        self.assertEqual(t1["baseline_ai_presence_rate"], 0.73)
+        self.assertEqual(t2["tier"], BrandStatureTier.TIER2_ESTABLISHED.value)
+        self.assertEqual(t2["baseline_ai_presence_rate"], 0.44)
+        self.assertEqual(t3["tier"], BrandStatureTier.TIER3_NICHE_EMERGING.value)
+        self.assertEqual(t3["baseline_ai_presence_rate"], 0.11)
+
+        prof = self.crawler.fetch_account_profile("xhs_medical_skincare_kol")
+        prod = ProductInput(
+            product_name="科复佳医用透明质酸钠修复贴 (Demo)",
+            brand_name="科复佳",
+            category="医疗器械/医用敷料",
+            selling_price_rmb=118.0,
+            campaign_budget_rmb=18500.0,
+        )
+        s2_in = Stage2ContentInput(topics_hashtags=["#医用敷料"], campaign_theme="Demo", script_content="Demo")
+        s2 = self.engine.compute_stage2_enhanced(prof, prod, s2_in)
+        geo = s2["geo_effect"]
+        self.assertIn("brand_stature_prior", geo)
+        self.assertEqual(geo["brand_stature_prior"]["tier"], BrandStatureTier.TIER2_ESTABLISHED.value)
+
+        engs = geo["ai_engines_breakdown"]
+        self.assertEqual(len(engs), 8)
+        for e in engs:
+            self.assertIn("som_p10_pct", e)
+            self.assertIn("som_p50_pct", e)
+            self.assertIn("som_p90_pct", e)
+            self.assertLessEqual(e["som_p10_pct"], e["som_p50_pct"])
+            self.assertLessEqual(e["som_p50_pct"], e["som_p90_pct"])
+
+    def test_10_mckinsey_cdj_and_pocket_price_waterfall(self) -> None:
+        prof = self.crawler.fetch_account_profile("xhs_medical_skincare_kol")
+        prod = ProductInput(
+            product_name="科复佳医用透明质酸钠修复贴 (Demo)",
+            brand_name="科复佳",
+            category="医疗器械/医用敷料",
+            selling_price_rmb=118.0,
+            campaign_budget_rmb=18500.0,
+        )
+        s2_in = Stage2ContentInput(topics_hashtags=["#医用敷料"], campaign_theme="Demo", script_content="Demo")
+        s2 = self.engine.compute_stage2_enhanced(prof, prod, s2_in)
+
+        self.assertIn("consumer_decision_journey", s2)
+        cdj = s2["consumer_decision_journey"]["stages"]
+        self.assertIn("1_initial_consideration", cdj)
+        self.assertIn("2_active_evaluation", cdj)
+        self.assertIn("3_moment_of_purchase", cdj)
+        self.assertIn("4_postpurchase_loyalty_loop", cdj)
+
+        self.assertIn("mckinsey_pocket_price_waterfall", s2)
+        ppw = s2["mckinsey_pocket_price_waterfall"]
+        self.assertIn("mckinsey_1pct_pricing_leverage", ppw)
+        self.assertGreater(ppw["mckinsey_1pct_pricing_leverage"]["operating_profit_lift_from_1pct_price_increase_pct"], 0)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
